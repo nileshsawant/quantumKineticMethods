@@ -1,0 +1,119 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                 3D DIRAC QLB SOLVER - QUICK REFERENCE              ║
+╚════════════════════════════════════════════════════════════════════╝
+
+## SETUP (One-time)
+```bash
+module load anaconda3/2024.06.1
+conda create -p ./dirac_qlb_env python=3.11 numpy matplotlib -y
+source activate ./dirac_qlb_env
+```
+
+## RUNNING
+
+### Complete Verification
+```bash
+./verify_all.sh
+```
+Runs all tests + quick simulation. Takes ~30 seconds.
+
+### Individual Components
+```bash
+# 1. Test suite only (9 test categories)
+python test_dirac_qlb_solver.py
+
+# 2. Quick simulation (100 steps, 32×32 grid, ~10 sec)
+python run_short_test.py
+
+# 3. Full simulation (500 steps, 64×64 grid, ~2-3 min)
+python dirac_qlb_solver.py
+```
+
+## FILES
+
+### Main Implementation
+- `dirac_qlb_solver.py` (21 KB)
+  Main solver with all QLB algorithm components
+
+### Testing & Verification
+- `test_dirac_qlb_solver.py` (24 KB)
+  Comprehensive test suite - 48 assertions across 9 categories
+  
+- `run_short_test.py` (1.8 KB)
+  Quick workflow verification
+  
+- `verify_all.sh` (2.3 KB)
+  Complete automated verification script
+
+### Documentation
+- `README.md` (11 KB)
+  Complete documentation with theory, usage, and validation
+
+## TEST RESULTS ✓
+
+All 9 test categories passed:
+✓ Physical Parameters (6/6)
+✓ Pauli Matrices (8/8)
+✓ Dirac Matrices (10/10)
+✓ Rotation Matrices (7/7)
+✓ Wave Function Init (4/4)
+✓ Collision Coefficients (2/2)
+✓ 1D QLB Step (4/4)
+✓ Operator Splitting (2/2)
+✓ Graphene Setup (5/5)
+
+Total: 48/48 individual assertions passed
+
+## KEY FEATURES
+
+✓ Full 3D Dirac equation solver
+✓ Quantum Lattice Boltzmann method
+✓ Operator splitting for efficiency
+✓ Massless fermions for graphene
+✓ Random impurity scattering
+✓ Probability conservation
+✓ Real-time visualization
+✓ Transmission coefficient tracking
+
+## SPECIFICATIONS VERIFIED
+
+Per original requirements:
+✓ Part 1: Project setup & constants
+✓ Part 2: Dirac matrices & rotations (Dellar 2011)
+✓ Part 3: Wave function initialization
+✓ Part 4: Core QLB 1D step function
+✓ Part 5: Main simulation loop with operator splitting
+✓ Part 6: Graphene adaptation (massless, 2D, impurities)
+
+## OUTPUT FILES
+
+Generated in `qlb_graphene_test_output/` or `qlb_graphene_output/`:
+- prob_density_xy_t####.png - Probability density snapshots
+- observables_summary.png - Density & transmission vs time
+
+## PARAMETERS (Easily Adjustable)
+
+In dirac_qlb_solver.py:
+- NX, NY, NZ: Grid resolution (default: 64×64×1)
+- T_STEPS: Simulation duration (default: 500)
+- M_PARTICLE: Particle mass (0 for graphene)
+- Impurity concentration: 5% (adjustable)
+- Impurity strength: 0.1 eV (adjustable)
+
+## PERFORMANCE
+
+- Quick test (32×32, 100 steps): ~10 seconds
+- Full simulation (64×64, 500 steps): ~2-3 minutes
+- Memory usage: ~10 MB
+- Scales as O(N²) for 2D, O(N³) for 3D
+
+## REFERENCES
+
+1. Dellar (2011) - Lattice Boltzmann algorithms
+2. Palpacelli et al. (2008) - QLB collision-streaming
+3. Palpacelli et al. (2012) - Graphene applications
+
+═══════════════════════════════════════════════════════════════════════
+Status: FULLY TESTED AND VERIFIED ✓
+Date: February 9, 2026
+═══════════════════════════════════════════════════════════════════════
