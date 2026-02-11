@@ -157,14 +157,14 @@ def initialize_wave_packet_gpu():
     gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_initial**2))
     phase_factor = np.exp(1j * initial_momentum_x * rx / HBAR)
     
-    # Initialize as positive-energy, right-moving eigenstate
-    # For massless Dirac with momentum in +x: eigenstate is (1, 0, 1, 0)^T / sqrt(2)
+    # Initialize as pure right-moving eigenstate: (0, 1, 0, 1)/sqrt(2)
+    # This state has 100% probability in right-moving characteristics (u1, u2)
     psi_cpu = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
     base_amplitude = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
     
-    # Right-moving wave packet (components 0 and 3 for +x momentum)
-    psi_cpu[:, :, :, 0] = base_amplitude / np.sqrt(2)  # Upper component
-    psi_cpu[:, :, :, 3] = base_amplitude / np.sqrt(2)  # Lower component (right-moving)
+    # Pure right-moving eigenstate (verified by characteristic decomposition)
+    psi_cpu[:, :, :, 1] = base_amplitude / np.sqrt(2)  # Component 1
+    psi_cpu[:, :, :, 3] = base_amplitude / np.sqrt(2)  # Component 3
     
     # Normalize
     norm_factor = np.sum(np.abs(psi_cpu)**2) * DX * DY * DZ
