@@ -445,7 +445,7 @@ def save_snapshot(psi_cpu, V_field_cpu, step, time_val, total_prob, inlet_prob,
     ax1.set_xlabel('x (nm)')
     ax1.set_ylabel('y (nm)')
     ax1.set_title(f'Probability Density | t={time_val*1e9:.2f} ns')
-    plt.colorbar(im1, ax=ax1, label='Probability per Pixel')
+    plt.colorbar(im1, ax=ax1, label='Probability per Pixel', orientation='horizontal', pad=0.1)
     
     # Potential with overlay
     ax2 = plt.subplot(1, 2, 2)
@@ -460,7 +460,7 @@ def save_snapshot(psi_cpu, V_field_cpu, step, time_val, total_prob, inlet_prob,
     ax2.set_xlabel('x (nm)')
     ax2.set_ylabel('y (nm)')
     ax2.set_title('Potential + Wave Packet')
-    plt.colorbar(im2, ax=ax2, label='Potential (meV)')
+    plt.colorbar(im2, ax=ax2, label='Potential (meV)', orientation='horizontal', pad=0.1)
     
     # Add text overlay with statistics (upper right to avoid blocking wave packet)
     stats_text = f'Step: {step}\nP_total: {total_prob:.4f}\nInlet: {inlet_prob:.3f}\nImpurity: {impurity_prob:.3f}\nOutlet: {outlet_prob:.3f}'
