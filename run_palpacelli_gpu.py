@@ -251,7 +251,13 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
     print("\n[2/4] Initializing wave packet...")
     psi = initialize_wave_packet_gpu()
     
-    # No initial boundary condition saving needed - will handle in streaming
+    # Get initial probability density for consistent colormap scaling
+    if GPU_AVAILABLE:
+        psi_cpu_temp = cp.asnumpy(psi)
+    else:
+        psi_cpu_temp = psi
+    prob_density_initial = np.sum(np.abs(psi_cpu_temp[:, :, 0, :])**2, axis=-1)
+    PROB_DENSITY_MAX = np.max(prob_density_initial) * 1.2  # 20% headroom
     
     # Storage (keep on CPU for efficiency)
     time_points = []
@@ -306,16 +312,28 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
             )
         psi = psi_new
         
-        # Re-apply boundary conditions after Y-sweep to ensure full absorption
+        # Re-apply boundary conditions after Y-sweep with exponential damping
+        # Apply stronger absorption near boundaries to prevent reflections
+        sponge_width = 10  # cells
         for j in range(NY):
+            # Inlet (x=0): zero incoming forward waves
             psi_rot_inlet = xp.einsum('ij,j->i', X_INV_MATRIX_GPU, psi[0, j, 0, :])
-            psi_rot_outlet = xp.einsum('ij,j->i', X_INV_MATRIX_GPU, psi[-1, j, 0, :])
-            psi_rot_inlet[0] = 0.0
-            psi_rot_inlet[1] = 0.0
-            psi_rot_outlet[2] = 0.0
-            psi_rot_outlet[3] = 0.0
+            psi_rot_inlet[0] = 0.0  # u1
+            psi_rot_inlet[1] = 0.0  # u2
             psi[0, j, 0, :] = xp.einsum('ij,j->i', X_MATRIX_GPU, psi_rot_inlet)
+            
+            # Outlet (x=NX-1): zero incoming backward waves
+            psi_rot_outlet = xp.einsum('ij,j->i', X_INV_MATRIX_GPU, psi[-1, j, 0, :])
+            psi_rot_outlet[2] = 0.0  # d1
+            psi_rot_outlet[3] = 0.0  # d2
             psi[-1, j, 0, :] = xp.einsum('ij,j->i', X_MATRIX_GPU, psi_rot_outlet)
+        
+        # Apply exponential damping in sponge layer near outlet
+        for i in range(max(0, NX - sponge_width), NX):
+            distance_from_outlet = NX - 1 - i
+            damping_factor = xp.exp(-0.5 * (sponge_width - distance_from_outlet) / sponge_width)
+            for j in range(NY):
+                psi[i, j, 0, :] *= damping_factor
         
         # Diagnostics
         if step % output_freq == 0:
@@ -359,7 +377,7 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
                 
                 save_snapshot(psi_cpu, V_field_cpu_local, step, step * DT,
                             total_prob, inlet_prob, impurity_prob, outlet_prob,
-                            snapshots_dir)
+                            snapshots_dir, PROB_DENSITY_MAX)
     
     total_time = time.time() - start_time
     print(f"\n  Completed in {total_time:.1f} seconds")
@@ -403,23 +421,25 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
     }
 
 def save_snapshot(psi_cpu, V_field_cpu, step, time_val, total_prob, inlet_prob, 
-                  impurity_prob, outlet_prob, output_dir):
+                  impurity_prob, outlet_prob, output_dir, prob_density_max):
     """Save a snapshot of the current simulation state."""
     
     fig = plt.figure(figsize=(14, 5))
     
     # Probability density
     ax1 = plt.subplot(1, 2, 1)
-    prob_density = np.sum(np.abs(psi_cpu[:, :, 0, :])**2, axis=-1).T
-    # Use equal aspect ratio to show true circular wave packet shape
-    im1 = ax1.imshow(prob_density, origin='lower', cmap='hot', aspect='equal',
-                     extent=[0, LX*1e9, 0, LY*1e9], vmin=0, vmax=np.max(prob_density)*1.1)
+    # Probability per pixel (dimensionless): integrate |ψ|² over voxel volume
+    prob_per_pixel = np.sum(np.abs(psi_cpu[:, :, 0, :])**2, axis=-1).T * DX * DY * DZ
+    # Use fixed colormap scale to avoid rescaling when wave exits
+    vmax_fixed = prob_density_max * DX * DY * DZ
+    im1 = ax1.imshow(prob_per_pixel, origin='lower', cmap='hot', aspect='equal',
+                     extent=[0, LX*1e9, 0, LY*1e9], vmin=0, vmax=vmax_fixed)
     ax1.axvline(x=IMPURITY_START*DX*1e9, color='cyan', linestyle='--', alpha=0.5, lw=1)
     ax1.axvline(x=IMPURITY_END*DX*1e9, color='cyan', linestyle='--', alpha=0.5, lw=1)
     ax1.set_xlabel('x (nm)')
     ax1.set_ylabel('y (nm)')
     ax1.set_title(f'Probability Density | t={time_val*1e9:.2f} ns')
-    plt.colorbar(im1, ax=ax1, label='Probability')
+    plt.colorbar(im1, ax=ax1, label='Probability per Pixel')
     
     # Potential with overlay
     ax2 = plt.subplot(1, 2, 2)
@@ -429,7 +449,7 @@ def save_snapshot(psi_cpu, V_field_cpu, step, time_val, total_prob, inlet_prob,
     
     # Overlay probability density contours
     X, Y = np.meshgrid(np.linspace(0, LX*1e9, NX), np.linspace(0, LY*1e9, NY))
-    ax2.contour(X, Y, prob_density, levels=5, colors='white', alpha=0.6, linewidths=1)
+    ax2.contour(X, Y, prob_per_pixel, levels=5, colors='white', alpha=0.6, linewidths=1)
     
     ax2.set_xlabel('x (nm)')
     ax2.set_ylabel('y (nm)')
@@ -521,7 +541,7 @@ def plot_results(time_pts, total_prob, inlet_prob, impurity_prob, outlet_prob,
     
     # Final probability
     ax4 = plt.subplot(2, 3, 4)
-    prob_final = np.sum(np.abs(psi[:, :, 0, :])**2, axis=-1).T
+    prob_final = np.sum(np.abs(psi[:, :, 0, :])**2, axis=-1).T * DX * DY * DZ
     im = ax4.imshow(prob_final, origin='lower', cmap='hot', aspect='equal',
                     extent=[0, LX*1e9, 0, LY*1e9])
     ax4.axvline(x=IMPURITY_START*DX*1e9, color='cyan', linestyle='--', alpha=0.7)
