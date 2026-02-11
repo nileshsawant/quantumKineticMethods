@@ -64,9 +64,9 @@ OUTLET_END = 512      # Paper: 2048
 SIGMA_LATTICE = 12    # Paper: 48 (1/4)
 K0_LATTICE = 1.0
 
-# Impurity configuration (same as paper)
+# Impurity configuration (testing higher concentration for more visible scattering)
 IMPURITY_SIZE_CELLS = 2  # Paper: 8 (1/4)
-DEFAULT_CONCENTRATION = 0.05  # 5%
+DEFAULT_CONCENTRATION = 0.10  # 10% (higher than paper's 5% to see more scattering)
 DEFAULT_BARRIER_HEIGHT = 285e-3 * Q_ELECTRON  # 285 meV (strongest from paper)
 
 print("\n" + "="*80)
