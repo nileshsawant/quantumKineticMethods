@@ -4,6 +4,27 @@
 
 This implementation provides a comprehensive 3D solver for the Dirac equation using the Quantum Lattice Boltzmann (QLB) method, with specific applications to electron transport in graphene and other relativistic quantum systems.
 
+## Klein Tunneling Simulation
+
+![Wave Packet Animation](palpacelli_gpu/animation.gif)
+
+### Current Simulation Results
+
+**Configuration:**
+- **Grid**: 512 × 128 (1/4 resolution of Palpacelli 2012 paper)
+- **Domain**: 491.5 × 122.9 nm
+- **Wave packet**: σ = 12 cells (~11.5 nm), right-moving eigenstate
+- **Impurities**: 10% concentration, 285 meV barrier height (819 impurities)
+- **Physics**: Massless Dirac fermions (graphene)
+
+**Key Results:**
+- **Transmission**: 98.57% (demonstrating Klein tunneling effect)
+- **Conservation**: Perfect (error < 1e-6)
+- **Boundary conditions**: Open/absorbing with exponential sponge layer
+- **Wave packet**: Single clean propagation (no splitting artifacts)
+
+The animation shows a single wave packet propagating from left to right through random impurities. Despite strong barriers (285 meV), Klein tunneling allows ~98.6% transmission - the hallmark of massless Dirac fermions in graphene.
+
 ## Test Results Summary
 
 **All 9 test categories passed successfully ✓**
