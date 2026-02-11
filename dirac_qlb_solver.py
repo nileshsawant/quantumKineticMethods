@@ -110,9 +110,9 @@ Z_INV_MATRIX = Z_MATRIX.conj().T  # For unitary matrices, inverse is Hermitian c
 
 # X_MATRIX: For diagonalizing -ALPHA_X (from Dellar et al., Eq. 15)
 X_MATRIX = (1.0 / np.sqrt(2)) * np.array([[-1, 0, 1, 0],
-                                           [0, 1, 0, 1],
+                                           [0, 1, 0, -1],
                                            [1, 0, 1, 0],
-                                           [0, 1, 0, -1]], dtype=np.complex128)
+                                           [0, 1, 0, 1]], dtype=np.complex128)
 X_INV_MATRIX = X_MATRIX.conj().T
 
 # Y_MATRIX: For the Majorana form, the y-streaming matrix is already diagonal
