@@ -67,7 +67,7 @@ K0_LATTICE = 1.0
 # Impurity configuration (same as paper)
 IMPURITY_SIZE_CELLS = 2  # Paper: 8 (1/4)
 DEFAULT_CONCENTRATION = 0.05  # 5%
-DEFAULT_BARRIER_HEIGHT = 100e-3 * Q_ELECTRON  # 100 meV
+DEFAULT_BARRIER_HEIGHT = 285e-3 * Q_ELECTRON  # 285 meV (strongest from paper)
 
 print("\n" + "="*80)
 print("GPU-ACCELERATED PALPACELLI 2012 (1/4 RESOLUTION)")
@@ -462,10 +462,10 @@ def save_snapshot(psi_cpu, V_field_cpu, step, time_val, total_prob, inlet_prob,
     ax2.set_title('Potential + Wave Packet')
     plt.colorbar(im2, ax=ax2, label='Potential (meV)')
     
-    # Add text overlay with statistics
+    # Add text overlay with statistics (upper right to avoid blocking wave packet)
     stats_text = f'Step: {step}\nP_total: {total_prob:.4f}\nInlet: {inlet_prob:.3f}\nImpurity: {impurity_prob:.3f}\nOutlet: {outlet_prob:.3f}'
-    ax2.text(0.02, 0.98, stats_text, transform=ax2.transAxes,
-             fontsize=9, verticalalignment='top',
+    ax2.text(0.98, 0.98, stats_text, transform=ax2.transAxes,
+             fontsize=9, verticalalignment='top', horizontalalignment='right',
              bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
     
     plt.tight_layout()
