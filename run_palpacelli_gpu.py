@@ -137,7 +137,8 @@ def initialize_wave_packet_gpu():
     else:
         psi = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
     
-    x0 = INLET_END // 2
+    # Initialize well inside inlet region, away from absorbing boundary
+    x0 = INLET_START + 3 * SIGMA_LATTICE  # Start 3σ from left boundary
     y0 = NY // 2
     z0 = 0
     
@@ -156,9 +157,14 @@ def initialize_wave_packet_gpu():
     gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_initial**2))
     phase_factor = np.exp(1j * initial_momentum_x * rx / HBAR)
     
-    # Initialize first component
+    # Initialize as positive-energy, right-moving eigenstate
+    # For massless Dirac with momentum in +x: eigenstate is (1, 0, 1, 0)^T / sqrt(2)
     psi_cpu = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
-    psi_cpu[:, :, :, 0] = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
+    base_amplitude = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
+    
+    # Right-moving wave packet (components 0 and 3 for +x momentum)
+    psi_cpu[:, :, :, 0] = base_amplitude / np.sqrt(2)  # Upper component
+    psi_cpu[:, :, :, 3] = base_amplitude / np.sqrt(2)  # Lower component (right-moving)
     
     # Normalize
     norm_factor = np.sum(np.abs(psi_cpu)**2) * DX * DY * DZ
@@ -588,7 +594,7 @@ def plot_results(time_pts, total_prob, inlet_prob, impurity_prob, outlet_prob,
 
 if __name__ == "__main__":
     # Run for ~1.5× wave transit time (448 cells at c → 700 steps)
-    results = run_simulation_gpu(n_steps=700, output_freq=100)
+    results = run_simulation_gpu(n_steps=700, output_freq=10)
     
     print(f"\nFinal Results:")
     print(f"  Transmission: {results['outlet_prob'][-1]/(results['outlet_prob'][-1] + results['inlet_prob'][-1] + 1e-10):.4f}")
