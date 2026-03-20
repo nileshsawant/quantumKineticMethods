@@ -161,7 +161,12 @@ $$\tilde{m} = \omega_c\Delta t = \frac{mc^2\Delta t}{\hbar}, \qquad
 Unitarity $|a|^2 + |b|^2 = 1$ holds exactly.
 In matrix form (Dellar 2011, Eq. 19) this is the collision matrix $Q$:
 
-$$Q = \begin{pmatrix} a & 0 & 0 & b \\ 0 & a & b & 0 \\ 0 & -b & a & 0 \\ -b & 0 & 0 & a \end{pmatrix}.$$
+$$Q = \begin{pmatrix}
+a & 0 & 0 & b \\
+0 & a & b & 0 \\
+0 & -b & a & 0 \\
+-b & 0 & 0 & a
+\end{pmatrix}.$$
 
 The full 1D step is therefore:
 1. **Rotate** $\psi$ into the characteristic frame: $\tilde\psi = Z^{-1}\psi$
@@ -203,10 +208,18 @@ Z-sweep still applies one-third of the collision operator — omitting it would
 reduce the effective barrier coupling to 2/3 of its specified value.  The rotation matrices are
 (Dellar 2011, Eqs. 10 and 22):
 
-$$X = \frac{1}{\sqrt{2}}\begin{pmatrix} -1 & 0 & 1 & 0 \\ 0 & 1 & 0 & -1 \\
-  1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1\end{pmatrix}, \qquad
-  Z = \frac{1}{\sqrt{2}}\begin{pmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & -1 & 0 \\
-  0 & 1 & 0 & 1 \\ 1 & 0 & 1 & 0\end{pmatrix}, \qquad Y = I.$$
+$$X = \frac{1}{\sqrt{2}}\begin{pmatrix}
+-1 & 0 & 1 & 0 \\
+0 & 1 & 0 & -1 \\
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1
+\end{pmatrix}, \qquad
+Z = \frac{1}{\sqrt{2}}\begin{pmatrix}
+0 & -1 & 0 & 1 \\
+1 & 0 & -1 & 0 \\
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0
+\end{pmatrix}, \qquad Y = I.$$
 
 $X$ diagonalises $-\alpha_x$ to $\mathrm{diag}(+1,+1,-1,-1)$, so after
 rotating with $X^{-1}$ the first two components travel in $+x$ and the last two
@@ -223,8 +236,12 @@ In 3D the collision term is split equally among the three sweeps, each using
 one-third of the time step.  The resulting 3D collision matrix $\hat{Q}$ has
 the sign pattern of $\alpha_y$ (Palpacelli 2012, Eq. 10):
 
-$$\hat{Q} = \begin{pmatrix} \hat{a} & 0 & 0 & -\hat{b} \\ 0 & \hat{a} & \hat{b} & 0 \\
-  0 & -\hat{b} & \hat{a} & 0 \\ \hat{b} & 0 & 0 & \hat{a} \end{pmatrix},$$
+$$\hat{Q} = \begin{pmatrix}
+\hat{a} & 0 & 0 & -\hat{b} \\
+0 & \hat{a} & \hat{b} & 0 \\
+0 & -\hat{b} & \hat{a} & 0 \\
+\hat{b} & 0 & 0 & \hat{a}
+\end{pmatrix},$$
 
 where $\hat{a}, \hat{b}$ use rescaled coefficients with $\Delta t/3$
 instead of $\Delta t$.
