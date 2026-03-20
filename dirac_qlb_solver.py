@@ -149,33 +149,27 @@ psi = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
 V_field = np.zeros((NX, NY, NZ), dtype=np.float64)
 
 # 3.1 Initial Condition: 3D Gaussian Wave Packet
-# Parameters for Gaussian wave packet
+# Pure right-moving eigenstate (0, 1, 0, 1)/sqrt(2) — verified by characteristic decomposition
 D0_initial = 8 * DX  # Initial spread of the wave packet
 x0, y0, z0 = NX // 4, NY // 2, NZ // 2  # Center of the wave packet
 
-# Initial momentum (px, py, pz). For propagating packet in x-direction:
+# Initial momentum (x-direction)
 initial_momentum_x = 0.5 * HBAR / D0_initial
-initial_momentum_y = 0.0
-initial_momentum_z = 0.0
 
-for i in range(NX):
-    for j in range(NY):
-        for k in range(NZ):
-            # Coordinates relative to center
-            rx = (i - x0) * DX
-            ry = (j - y0) * DY
-            rz = (k - z0) * DZ
+i_grid, j_grid, k_grid = np.meshgrid(
+    np.arange(NX), np.arange(NY), np.arange(NZ), indexing='ij'
+)
+rx = (i_grid - x0) * DX
+ry = (j_grid - y0) * DY
+rz = (k_grid - z0) * DZ
 
-            # Gaussian envelope
-            gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_initial**2))
+gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_initial**2))
+phase_factor = np.exp(1j * initial_momentum_x * rx / HBAR)
+base_amp = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
 
-            # Phase factor for initial momentum
-            phase_factor = np.exp(1j * (initial_momentum_x * rx +
-                                        initial_momentum_y * ry +
-                                        initial_momentum_z * rz) / HBAR)
-
-            # Initialize first component of psi (phi_plus_1)
-            psi[i, j, k, 0] = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
+# Eigenstate (0, 1, 0, 1)/sqrt(2): pure right-mover (100% u-characteristics)
+psi[:, :, :, 1] = base_amp / np.sqrt(2)  # component 1
+psi[:, :, :, 3] = base_amp / np.sqrt(2)  # component 3
 
 # Normalize the wave function: Integral(|psi|^2) = 1
 norm_factor = np.sum(np.abs(psi)**2) * DX * DY * DZ
@@ -247,36 +241,40 @@ def perform_qlb_sub_step(psi_line_in, V_line_in, current_axis, matrices_dict,
     b_hat = m_tilde_3 / denominator
 
     # 4.2 Perform Rotate -> Collide -> Stream -> Rotate Back
-    # Create a buffer for the rotated wave function
+    # Collision matrices (Dellar 2011 Eq.19,23):
+    #   X/Z sweeps: X⁻¹Q̂X = Z⁻¹Q̂Z have Q sign pattern → apply Q in characteristic frame
+    #   Y sweep (Y=I): apply Q̂ directly
+    #   For massless particles (b_hat=0) Q and Q̂ are identical.
     psi_rotated = np.zeros_like(psi_line_in, dtype=np.complex128)
-    
-    # Rotate all points
     for k in range(N_points):
         psi_rotated[k, :] = R_inv @ psi_line_in[k, :]
 
-    # Collide and Stream in the rotated basis
-    # In the rotated basis: (u1, u2) propagate forward, (d1, d2) propagate backward
     psi_collided_rotated = np.zeros_like(psi_rotated, dtype=np.complex128)
-    
+
     for k in range(N_points):
         u1, u2, d1, d2 = psi_rotated[k, 0], psi_rotated[k, 1], psi_rotated[k, 2], psi_rotated[k, 3]
-        
-        # Apply collision (mixing of components)
-        collided_u1 = a_hat[k] * u1 + b_hat[k] * d2
-        collided_u2 = a_hat[k] * u2 + b_hat[k] * d1
-        collided_d1 = a_hat[k] * d1 - b_hat[k] * u2
-        collided_d2 = a_hat[k] * d2 - b_hat[k] * u1
+
+        if current_axis == 'y':
+            # Q̂: u1'= a*u1 - b*d2,  d2'= a*d2 + b*u1
+            collided_u1 = a_hat[k] * u1 - b_hat[k] * d2
+            collided_u2 = a_hat[k] * u2 + b_hat[k] * d1
+            collided_d1 = a_hat[k] * d1 - b_hat[k] * u2
+            collided_d2 = a_hat[k] * d2 + b_hat[k] * u1
+        else:
+            # Q (X/Z sweeps): u1'= a*u1 + b*d2,  d2'= a*d2 - b*u1
+            collided_u1 = a_hat[k] * u1 + b_hat[k] * d2
+            collided_u2 = a_hat[k] * u2 + b_hat[k] * d1
+            collided_d1 = a_hat[k] * d1 - b_hat[k] * u2
+            collided_d2 = a_hat[k] * d2 - b_hat[k] * u1
         
         # Stream: u components go forward (to k+1), d components go backward (to k-1)
-        # Forward propagation (u1, u2)
-        k_next = (k + 1) % N_points  # Periodic boundary conditions
-        psi_collided_rotated[k_next, 0] += collided_u1
-        psi_collided_rotated[k_next, 1] += collided_u2
-        
-        # Backward propagation (d1, d2)
-        k_prev = (k - 1) % N_points  # Periodic boundary conditions
-        psi_collided_rotated[k_prev, 2] += collided_d1
-        psi_collided_rotated[k_prev, 3] += collided_d2
+        # Open/absorbing boundaries: no wrap-around (outflow at edges)
+        if k + 1 < N_points:
+            psi_collided_rotated[k + 1, 0] += collided_u1
+            psi_collided_rotated[k + 1, 1] += collided_u2
+        if k - 1 >= 0:
+            psi_collided_rotated[k - 1, 2] += collided_d1
+            psi_collided_rotated[k - 1, 3] += collided_d2
 
     # Rotate back to standard basis
     for k in range(N_points):
@@ -425,127 +423,13 @@ def run_simulation(psi_initial, V_field_input, output_dir_name="qlb_simulation_o
 
 
 # =============================================================================
-# Part 6: Adapting for Electrons in Graphene (2D Tunneling Example)
-# =============================================================================
-
-def setup_graphene_simulation():
-    """
-    Configure parameters and initial conditions for graphene electron transport.
-    """
-    global M_PARTICLE, OMEGA_C, psi, V_field, NZ, DZ
-    
-    print("\n" + "=" * 70)
-    print("Configuring for Graphene Simulation")
-    print("=" * 70)
-    
-    # 6.1 Set to 2D
-    NZ = 1
-    DZ = DX
-    
-    # 6.2 Massless Dirac fermions in graphene
-    M_PARTICLE = 0.0  # Massless for ideal graphene
-    OMEGA_C = 0.0
-    
-    print(f"Particle Mass set to: {M_PARTICLE} kg (massless Dirac fermions)")
-    
-    # 6.3 Potential Field: Random Impurities
-    impurity_concentration = 0.05  # 5% impurities
-    impurity_potential_strength = 0.1 * Q_ELECTRON  # 0.1 eV barrier
-    
-    # Define impurity region
-    impurity_region_start_x = NX // 3
-    impurity_region_end_x = 2 * NX // 3
-    
-    # Reset V_field
-    V_field = np.zeros((NX, NY, NZ), dtype=np.float64)
-    
-    np.random.seed(42)  # For reproducibility
-    for i in range(impurity_region_start_x, impurity_region_end_x):
-        for j in range(NY):
-            for k in range(NZ):
-                if np.random.rand() < impurity_concentration:
-                    V_field[i, j, k] = impurity_potential_strength
-    
-    print(f"\nImpurity region: x ∈ [{impurity_region_start_x}, {impurity_region_end_x}]")
-    print(f"Impurity concentration: {impurity_concentration * 100}%")
-    print(f"Impurity potential: {impurity_potential_strength / Q_ELECTRON:.2f} eV")
-    
-    # 6.4 Initial Condition: Wave Packet for Graphene
-    D0_graphene = 8 * DX
-    initial_momentum_x_graphene = 1.0 * HBAR / D0_graphene
-    initial_momentum_y_graphene = 0.0
-    initial_momentum_z_graphene = 0.0
-    
-    # Reset psi
-    psi = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
-    
-    # Position wave packet at left edge
-    x0_graphene, y0_graphene, z0_graphene = NX // 8, NY // 2, NZ // 2
-    
-    for i in range(NX):
-        for j in range(NY):
-            for k in range(NZ):
-                rx = (i - x0_graphene) * DX
-                ry = (j - y0_graphene) * DY
-                rz = (k - z0_graphene) * DZ
-                
-                gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_graphene**2))
-                phase_factor = np.exp(1j * (initial_momentum_x_graphene * rx +
-                                            initial_momentum_y_graphene * ry +
-                                            initial_momentum_z_graphene * rz) / HBAR)
-                
-                # Initialize wave packet (primarily in first component)
-                psi[i, j, k, 0] = (1 / (np.sqrt(2 * np.pi) * D0_graphene)**(3/2)) * gaussian_envelope * phase_factor
-    
-    # Normalize
-    norm_factor = np.sum(np.abs(psi)**2) * DX * DY * DZ
-    if norm_factor > 0:
-        psi /= np.sqrt(norm_factor)
-    
-    print(f"\nGraphene wave packet initialized:")
-    print(f"  Initial position: ({x0_graphene}, {y0_graphene})")
-    print(f"  Initial spread: {D0_graphene:.2e} m")
-    print(f"  Initial momentum: {initial_momentum_x_graphene:.2e} kg·m/s")
-    print("=" * 70)
-    
-    return psi, V_field
-
-
-# =============================================================================
 # Main Execution
 # =============================================================================
 
 if __name__ == "__main__":
-    print("\n\n")
-    print("╔" + "═" * 68 + "╗")
-    print("║" + " " * 15 + "3D DIRAC QLB SOLVER" + " " * 34 + "║")
-    print("║" + " " * 10 + "Quantum Lattice Boltzmann Method" + " " * 26 + "║")
-    print("╚" + "═" * 68 + "╝")
-    
-    # Choose simulation type
-    print("\nSimulation Options:")
-    print("  1. Standard 3D Dirac equation (massive particle)")
-    print("  2. Graphene electron transport (massless, 2D with impurities)")
-    
-    # For automated execution, default to graphene simulation
-    simulation_choice = 2
-    
-    if simulation_choice == 2:
-        # Setup and run graphene simulation
-        psi_graphene, V_graphene = setup_graphene_simulation()
-        psi_final, densities, transmission = run_simulation(
-            psi_graphene, V_graphene, 
-            output_dir_name="qlb_graphene_output"
-        )
-        print(f"\nGraphene simulation results saved to: qlb_graphene_output/")
-    else:
-        # Run standard simulation with initialized parameters
-        psi_final, densities, transmission = run_simulation(
-            psi, V_field,
-            output_dir_name="qlb_simulation_output"
-        )
-        print(f"\nSimulation results saved to: qlb_simulation_output/")
-    
-    print("\n" + "=" * 70)
-    print("All simulations complete!")
-    print("=" * 70)
+    print("\nRunning test simulation with default parameters...")
+    psi_final, densities, transmission = run_simulation(
+        psi, V_field,
+        output_dir_name="qlb_simulation_output"
+    )
+    print(f"\nResults saved to: qlb_simulation_output/")
