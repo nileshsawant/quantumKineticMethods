@@ -93,7 +93,7 @@ $$\left[\partial_t + c\!\left(-\alpha_x\partial_x + \beta\partial_y - \alpha_z\p
 
 In this form the streaming matrix along $y$ is **$\beta$**, which is already diagonal:
 
-$$\beta = \operatorname{diag}(1, 1, -1, -1).$$
+$$\beta = \mathrm{diag}(1, 1, -1, -1).$$
 
 This property is what makes a clean operator splitting possible (see §4).
 
@@ -208,7 +208,7 @@ $$X = \frac{1}{\sqrt{2}}\begin{pmatrix} -1 & 0 & 1 & 0 \\ 0 & 1 & 0 & -1 \\
   Z = \frac{1}{\sqrt{2}}\begin{pmatrix} 0 & -1 & 0 & 1 \\ 1 & 0 & -1 & 0 \\
   0 & 1 & 0 & 1 \\ 1 & 0 & 1 & 0\end{pmatrix}, \qquad Y = I.$$
 
-$X$ diagonalises $-\alpha_x$ to $\operatorname{diag}(+1,+1,-1,-1)$, so after
+$X$ diagonalises $-\alpha_x$ to $\mathrm{diag}(+1,+1,-1,-1)$, so after
 rotating with $X^{-1}$ the first two components travel in $+x$ and the last two
 in $-x$.  Since $\beta$ is already diagonal, $Y = I$ needs no rotation.
 
