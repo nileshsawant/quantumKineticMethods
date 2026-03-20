@@ -463,7 +463,7 @@ SIGMA_LATTICE = 48               # wave-packet width in lattice cells
 | File | Purpose |
 |------|---------|
 | `run_palpacelli_gpu.py` | Main simulation: impurity generation, wave-packet IC, time loop, BCs, plotting |
-| `dirac_qlb_solver.py` | Rotation matrices $X$, $Y$, $Z$; Dirac $\alpha$/$\beta$ matrices; standalone 1D QLB solver |
+| `dirac_qlb_solver.py` | Rotation matrices $X$, $Y$, $Z$; Dirac $\alpha$, $\beta$ matrices; standalone 1D QLB solver |
 | `test_dirac_qlb_solver.py` | Unit tests for the solver |
 | `palpacelli2012.md` | Paper converted to Markdown (reference) |
 | `dellar2011.md` | Paper converted to Markdown (reference) |
