@@ -15,6 +15,7 @@ Run from the repository root:
 import os
 import sys
 import numpy as np
+from qiskit import QuantumCircuit
 
 # Allow running as a bare script (python qlb_port/test_port.py) as well as -m.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -22,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from qlb_port import operators as ops
 from qlb_port import backend as bk
 from qlb_port import port
+from qlb_port import streaming
 
 _failures = []
 
@@ -104,6 +106,51 @@ def test_composed_sweep_spinor():
         check(f"{ax}: composed circuit fidelity", r["ok"], f"fid {r['fidelity']:.12f}")
 
 
+def test_increment():
+    print("Test F: increment circuit adds 1 (mod 2^n)")
+    for n in (2, 3, 4):
+        qc = QuantumCircuit(n)
+        qc.append(streaming.increment_gate(n), list(range(n)))
+        U = bk.circuit_unitary(qc)
+        N = 2 ** n
+        P = np.zeros((N, N), dtype=complex)
+        for x in range(N):
+            P[(x + 1) % N, x] = 1.0
+        check(f"increment n={n}", np.allclose(U, P))
+
+
+def test_streaming():
+    print("Test G: streaming circuits reproduce the +/-1 shift permutation (fidelity = 1)")
+    for axis in ("x", "y", "z"):
+        for n_pos in (2, 3):
+            qc = streaming.streaming_circuit(axis, n_pos)
+            U = bk.circuit_unitary(qc)
+            P = ops.streaming_reference(axis, n_pos)
+            fid = bk.gate_fidelity(P, U)
+            check(f"streaming {axis} n_pos={n_pos}", np.allclose(U, P),
+                  f"fid {fid:.12f}")
+
+
+def test_streaming_statevector():
+    print("Test H: streaming applied to a localized packet moves it by one site (GPU)")
+    axis, n_pos = "x", 4
+    N = 2 ** n_pos
+    qc = streaming.streaming_circuit(axis, n_pos)
+    # +x mover (spinor component 2, qubit1=1) localized at site x0 -> should move to x0+1
+    x0, c = 5, 2
+    psi = np.zeros(4 * N, dtype=complex)
+    psi[x0 * 4 + c] = 1.0
+    out = bk.apply_to_statevector(qc, psi)
+    expect = np.zeros_like(psi); expect[((x0 + 1) % N) * 4 + c] = 1.0
+    check("+x component moves +1 site", bk.state_fidelity(out, expect) > 1 - 1e-9)
+    # -x mover (component 0, qubit1=0) should move to x0-1
+    c = 0
+    psi = np.zeros(4 * N, dtype=complex); psi[x0 * 4 + c] = 1.0
+    out = bk.apply_to_statevector(qc, psi)
+    expect = np.zeros_like(psi); expect[((x0 - 1) % N) * 4 + c] = 1.0
+    check("-x component moves -1 site", bk.state_fidelity(out, expect) > 1 - 1e-9)
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -113,6 +160,9 @@ if __name__ == "__main__":
     test_collision()
     test_statevector_application()
     test_composed_sweep_spinor()
+    test_increment()
+    test_streaming()
+    test_streaming_statevector()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
