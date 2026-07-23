@@ -106,6 +106,32 @@ def collision_operator_char(axis, m_tilde, g_tilde=0.0):
     return R.conj().T @ collision_operator(m_tilde, g_tilde) @ R
 
 
+# --- Streaming ------------------------------------------------------------------
+# Qubit/index convention for the combined spinor(x)position state:
+#   * spinor  = qubits 0,1  (qubit 0 = least significant); component c = index & 3
+#   * position = qubits 2..(1+n_pos); position x = index >> 2
+# so the full basis index is  i = x*4 + c  on a lattice of N = 2**n_pos sites.
+# Streaming shifts each component c by streaming_signs(axis)[c] sites (periodic /
+# modular wrap-around), which matches the periodic y- and z-sweeps and the bulk of
+# the x-sweep; the open / bounce-back x boundary is a separate boundary operator.
+def streaming_reference(axis, n_pos):
+    """
+    Classical streaming permutation on the (spinor x position) space for `axis`.
+
+    Returns a (4*N, 4*N) permutation matrix, N = 2**n_pos, with i = x*4 + c layout.
+    """
+    signs = streaming_signs(axis)
+    N = 2 ** n_pos
+    dim = 4 * N
+    P = np.zeros((dim, dim), dtype=np.complex128)
+    for c in range(4):
+        s = int(signs[c])
+        for x in range(N):
+            P[((x + s) % N) * 4 + c, x * 4 + c] = 1.0
+    return P
+
+
 # Convenient aliases used by the porting harness / tests
 X_ROT = X_ROTATION
 Z_ROT = Z_ROTATION
+

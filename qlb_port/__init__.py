@@ -14,6 +14,8 @@ Layout
                  fidelity metrics.
   port.py      : the general "unitary -> verified circuit" harness plus convenience
                  builders for the QLB rotation and collision operators.
+  streaming.py : the QLB +/-1 lattice shift as a controlled increment/decrement on a
+                 position register.
   test_port.py : validation — every ported operator must match its target to ~1e-9.
 
 Environment
@@ -31,6 +33,6 @@ Quick start
     print(r["fidelity"], r["cx"], r["depth"])
 """
 
-from . import operators, backend, port
+from . import operators, backend, port, streaming
 
-__all__ = ["operators", "backend", "port"]
+__all__ = ["operators", "backend", "port", "streaming"]
