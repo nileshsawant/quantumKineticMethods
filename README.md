@@ -205,25 +205,36 @@ Each sweep is self-contained — it starts from and returns to the physical spin
 All three sweeps are always executed.  For the 2D Palpacelli test case NZ = 1
 so the Z-streaming is the identity (one cell wraps back to itself), but the
 Z-sweep still applies one-third of the collision operator — omitting it would
-reduce the effective barrier coupling to 2/3 of its specified value.  The rotation matrices are
-(Dellar 2011, Eqs. 10 and 22):
+reduce the effective barrier coupling to 2/3 of its specified value.
 
-$$X = \frac{1}{\sqrt{2}}\begin{pmatrix}
--1 & 0 & 1 & 0 \\
-0 & 1 & 0 & -1 \\
-1 & 0 & 1 & 0 \\
-0 & 1 & 0 & 1
-\end{pmatrix}, \qquad
-Z = \frac{1}{\sqrt{2}}\begin{pmatrix}
+The $z$-rotation is the reference rotation (Dellar 2011, Eq. 10):
+
+$$Z = \frac{1}{\sqrt{2}}\begin{pmatrix}
 0 & -1 & 0 & 1 \\
 1 & 0 & -1 & 0 \\
 0 & 1 & 0 & 1 \\
 1 & 0 & 1 & 0
 \end{pmatrix}, \qquad Y = I.$$
 
-$X$ diagonalises $-\alpha_x$ to $\mathrm{diag}(+1,+1,-1,-1)$, so after
-rotating with $X^{-1}$ the first two components travel in $+x$ and the last two
-in $-x$.  Since $\beta$ is already diagonal, $Y = I$ needs no rotation.
+The $x$-rotation is obtained from $Z$ by the spinor rotation that maps the
+$z$ streaming axis onto the $x$ axis (a rotation about $y$):
+
+$$X = S\,Z, \qquad S = \exp\!\left(-i\tfrac{\pi}{4}\,\Sigma_y\right),
+\qquad \Sigma_y = \mathrm{blockdiag}(\sigma_y,\sigma_y).$$
+
+Because $S$ is a rotation about $y$ it leaves the collision generator $\alpha_y$
+invariant, so this $X$ simultaneously (i) diagonalises $\alpha_x$ to
+$\mathrm{diag}(-1,-1,+1,+1)$ and (ii) preserves the collision structure
+($X^{-1}\hat{Q}X = Q$).  With this convention the **last two** characteristic
+components travel in $+x$ and the first two in $-x$.  Since $\beta$ is already
+diagonal, $Y = I$ needs no rotation.
+
+> Note: the streaming matrices used per axis are $\{\alpha_x, \beta, \alpha_z\}$
+> (Dellar representation), with the mass/collision term along $\alpha_y$.  These
+> four $4\times4$ matrices form a mutually anticommuting Dirac set.  An earlier
+> version of this code used an $X$ that diagonalised $\alpha_z$ (a duplicate
+> $z$-rotation) rather than $\alpha_x$; it was only self-consistent for a single
+> massless mode and is fixed here.
 
 **The isotropy fix (Dellar 2011):** each sweep must end by rotating **back** to
 the physical basis before the next sweep begins.  Earlier QLB formulations omitted
@@ -349,16 +360,22 @@ with $A_1 = A_2 = 1/\sqrt{2}$ for head-on incidence.
 
 In the 4-component Dirac spinor this is set as:
 
+In the 4-component Dirac spinor this is built as a physical $+x$ right-mover:
+we take the pure right-mover in the $x$-characteristic frame (the components
+whose $\alpha_x$ streaming eigenvalue is $+1$, i.e. indices 2 and 3) and rotate
+it to the standard basis with $X$:
+
 ```python
-psi[:,:,:,1] = amplitude / sqrt(2)   # spinor component index 1
-psi[:,:,:,3] = amplitude / sqrt(2)   # spinor component index 3
+char_right = np.array([0, 0, 1, 1]) / sqrt(2)   # +x movers in char. frame
+spinor     = X_MATRIX @ char_right              # standard-basis spinor
+psi[:, :, :, c] = amplitude * spinor[c]         # c = 0..3
 ```
 
-One can verify via $X^{-1}\psi = (u_1, u_2, d_1, d_2)^T$ that this choice maps
-to $(0, 1, 0, 0)$ in the $X$-characteristic frame — a **pure right-mover** with
-zero left-moving content.  Initialising with any left-moving component causes the
-wave packet to immediately split: one half propagates forwards and one backwards.
-This is an initialisation artefact and is absent from this choice.
+This spinor satisfies $\langle\alpha_x\rangle = +1$ (a genuine $+x$ mover) and has
+zero left-moving content, so the packet does not split at $t=0$.  Initialising
+with any left-moving component would cause the wave packet to immediately split
+into forward- and backward-travelling halves — an initialisation artefact absent
+from this choice.
 
 The wave packet centre is placed at $x_0 = 3\sigma$ from the inlet so that the
 Gaussian tail is negligible at the left boundary from the start.

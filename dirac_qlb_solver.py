@@ -101,19 +101,44 @@ IDENTITY_4x4 = np.eye(4, dtype=np.complex128)
 # These matrices transform the wave function into a basis where the streaming
 # operator for a given direction is diagonal
 
-# Z_MATRIX: For diagonalizing -ALPHA_Z (from Dellar et al., Eq. 10)
+# Representation note (Dellar 2011):
+# The three SPATIAL streaming matrices are {ALPHA_X, BETA, ALPHA_Z} (not ALPHA_Y),
+# and the mass/collision term acts along ALPHA_Y.  These four 4x4 matrices are a
+# valid mutually-anticommuting Dirac set.  Consequently:
+#   - the y-sweep streams along BETA, which is already diagonal -> Y rotation = I;
+#   - the x- and z-sweeps need rotations that diagonalize ALPHA_X and ALPHA_Z.
+
+# Z_MATRIX: diagonalizes ALPHA_Z (Dellar et al., Eq. 10).  Z^-1 ALPHA_Z Z = diag(-1,-1,1,1)
 Z_MATRIX = (1.0 / np.sqrt(2)) * np.array([[0, -1, 0, 1],
                                            [1, 0, -1, 0],
                                            [0, 1, 0, 1],
                                            [1, 0, 1, 0]], dtype=np.complex128)
 Z_INV_MATRIX = Z_MATRIX.conj().T  # For unitary matrices, inverse is Hermitian conjugate
 
-# X_MATRIX: For diagonalizing -ALPHA_X (from Dellar et al., Eq. 15)
-X_MATRIX = (1.0 / np.sqrt(2)) * np.array([[-1, 0, 1, 0],
-                                           [0, 1, 0, -1],
-                                           [1, 0, 1, 0],
-                                           [0, 1, 0, 1]], dtype=np.complex128)
+# X_MATRIX: diagonalizes ALPHA_X.  Constructed as X = S @ Z, where S is the spinor
+# rotation exp(-i (pi/4) Sigma_y) that maps the z-streaming axis onto the x-axis
+# (a rotation about y).  Because S is a rotation about y it leaves the collision
+# generator ALPHA_Y invariant, so this X simultaneously satisfies BOTH required
+# properties:
+#     (1)  X^-1 ALPHA_X X = diag(-1, -1, +1, +1)      (streaming decouples along x)
+#     (2)  X^-1 Qhat  X   = Q                          (collision structure preserved)
+# The previous hand-transcribed X diagonalized ALPHA_Z (a duplicate z-rotation),
+# not ALPHA_X, and was only self-consistent for a single massless mode.
+_SIGMA_Y_BLOCK = np.block([[SIGMA_Y_2x2, np.zeros((2, 2), dtype=np.complex128)],
+                           [np.zeros((2, 2), dtype=np.complex128), SIGMA_Y_2x2]])
+_S_ZTOX = (np.cos(np.pi / 4) * IDENTITY_4x4
+           - 1j * np.sin(np.pi / 4) * _SIGMA_Y_BLOCK)   # exp(-i (pi/4) Sigma_y)
+X_MATRIX = _S_ZTOX @ Z_MATRIX
 X_INV_MATRIX = X_MATRIX.conj().T
+
+# Sanity checks (cheap, run once at import): guarantee the rotations are correct.
+assert np.allclose(X_INV_MATRIX @ X_MATRIX, IDENTITY_4x4), "X not unitary"
+assert np.allclose(X_INV_MATRIX @ ALPHA_X @ X_MATRIX,
+                   np.diag([-1, -1, 1, 1]).astype(np.complex128)), \
+    "X must diagonalize ALPHA_X to diag(-1,-1,1,1)"
+assert np.allclose(Z_INV_MATRIX @ ALPHA_Z @ Z_MATRIX,
+                   np.diag([-1, -1, 1, 1]).astype(np.complex128)), \
+    "Z must diagonalize ALPHA_Z to diag(-1,-1,1,1)"
 
 # Y_MATRIX: For the Majorana form, the y-streaming matrix is already diagonal
 # We use Identity for Y
@@ -135,6 +160,47 @@ MATRICES = {
     'Z_inv': Z_INV_MATRIX
 }
 
+# -----------------------------------------------------------------------------
+# Per-axis sweep configuration (single source of truth for the QLB time step).
+#
+# For each spatial axis we record:
+#   'R', 'R_inv' : rotation into/out of the streaming-diagonal (characteristic) frame
+#   'stream'     : per-spinor-component lattice shift (the sign of the streaming
+#                  matrix eigenvalue for that component); +1 shifts to higher index,
+#                  -1 to lower index.  Derived directly from the streaming matrix so
+#                  it can never fall out of sync with the rotation.
+#   'coll_gen'   : the mass/collision generator ALPHA_Y expressed in the characteristic
+#                  frame, R_inv @ ALPHA_Y @ R.  The collision applied each sub-step is
+#                      Q_char = a_hat * I  -  1j * b_hat * coll_gen
+#                  which equals R_inv @ Qhat @ R with Qhat = a_hat*I - 1j*b_hat*ALPHA_Y.
+#
+# Streaming matrices per axis (Dellar representation): x->ALPHA_X, y->BETA, z->ALPHA_Z.
+# These 4x4 operators (R, coll_gen, and the streaming permutation) are exactly the
+# objects that will later be compiled to quantum gates.
+# -----------------------------------------------------------------------------
+def _stream_signs(stream_matrix, R, R_inv):
+    """Return integer shift (+/-1) per component from diag(R_inv @ stream_matrix @ R)."""
+    diag = np.diag(R_inv @ stream_matrix @ R).real
+    return np.rint(diag).astype(int)
+
+SWEEP_CONFIG = {
+    'x': {
+        'R': X_MATRIX, 'R_inv': X_INV_MATRIX,
+        'stream': _stream_signs(ALPHA_X, X_MATRIX, X_INV_MATRIX),      # (-1,-1, 1, 1)
+        'coll_gen': X_INV_MATRIX @ ALPHA_Y @ X_MATRIX,
+    },
+    'y': {
+        'R': Y_MATRIX, 'R_inv': Y_INV_MATRIX,
+        'stream': _stream_signs(BETA, Y_MATRIX, Y_INV_MATRIX),         # ( 1, 1,-1,-1)
+        'coll_gen': ALPHA_Y.copy(),                                    # Y = I
+    },
+    'z': {
+        'R': Z_MATRIX, 'R_inv': Z_INV_MATRIX,
+        'stream': _stream_signs(ALPHA_Z, Z_MATRIX, Z_INV_MATRIX),      # (-1,-1, 1, 1)
+        'coll_gen': Z_INV_MATRIX @ ALPHA_Y @ Z_MATRIX,
+    },
+}
+
 print("\nDirac matrices and rotation matrices initialized.")
 
 # =============================================================================
@@ -149,7 +215,10 @@ psi = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
 V_field = np.zeros((NX, NY, NZ), dtype=np.float64)
 
 # 3.1 Initial Condition: 3D Gaussian Wave Packet
-# Pure right-moving eigenstate (0, 1, 0, 1)/sqrt(2) — verified by characteristic decomposition
+# Physical +x right-mover.  In the x-characteristic frame the +x-moving components
+# are the ones whose ALPHA_X streaming eigenvalue is +1 (components 2,3, which stream
+# to higher x).  We build the state there and rotate to the standard basis with X, so
+# it is a genuine +x mover with <ALPHA_X> = +1 (verified below).
 D0_initial = 8 * DX  # Initial spread of the wave packet
 x0, y0, z0 = NX // 4, NY // 2, NZ // 2  # Center of the wave packet
 
@@ -167,9 +236,12 @@ gaussian_envelope = np.exp(-(rx**2 + ry**2 + rz**2) / (4 * D0_initial**2))
 phase_factor = np.exp(1j * initial_momentum_x * rx / HBAR)
 base_amp = (1 / (np.sqrt(2 * np.pi) * D0_initial)**(3/2)) * gaussian_envelope * phase_factor
 
-# Eigenstate (0, 1, 0, 1)/sqrt(2): pure right-mover (100% u-characteristics)
-psi[:, :, :, 1] = base_amp / np.sqrt(2)  # component 1
-psi[:, :, :, 3] = base_amp / np.sqrt(2)  # component 3
+# Characteristic-frame right-mover (0, 0, 1, 1)/sqrt(2) -> standard basis via X.
+# (A1 = A2 = 1/sqrt(2) for head-on incidence, Palpacelli 2012 Eq. 11.)
+_char_right = np.array([0, 0, 1, 1], dtype=np.complex128) / np.sqrt(2)
+_spinor_right = X_MATRIX @ _char_right          # physical +x spinor direction
+for _c in range(4):
+    psi[:, :, :, _c] = base_amp * _spinor_right[_c]
 
 # Normalize the wave function: Integral(|psi|^2) = 1
 norm_factor = np.sum(np.abs(psi)**2) * DX * DY * DZ
@@ -211,18 +283,11 @@ def perform_qlb_sub_step(psi_line_in, V_line_in, current_axis, matrices_dict,
     N_points = psi_line_in.shape[0]
     psi_line_out = np.zeros_like(psi_line_in, dtype=np.complex128)
 
-    # Determine rotation matrices for the current axis
-    if current_axis == 'x':
-        R_inv = matrices_dict['X_inv']
-        R_op = matrices_dict['X']
-    elif current_axis == 'y':
-        R_inv = matrices_dict['Y_inv']  # Y is Identity
-        R_op = matrices_dict['Y']
-    elif current_axis == 'z':
-        R_inv = matrices_dict['Z_inv']
-        R_op = matrices_dict['Z']
-    else:
-        raise ValueError("Invalid axis. Must be 'x', 'y', or 'z'.")
+    # Per-axis rotation, streaming signs, and characteristic-frame collision generator.
+    cfg = SWEEP_CONFIG[current_axis]
+    R_inv, R_op = cfg['R_inv'], cfg['R']
+    stream_signs = cfg['stream']       # per-component lattice shift (+/-1)
+    coll_gen = cfg['coll_gen']         # ALPHA_Y in the characteristic frame
 
     # 4.1 Calculate Collision Coefficients (a_hat, b_hat) for each point
     # These depend on local potential and effective Compton frequency
@@ -241,44 +306,32 @@ def perform_qlb_sub_step(psi_line_in, V_line_in, current_axis, matrices_dict,
     b_hat = m_tilde_3 / denominator
 
     # 4.2 Perform Rotate -> Collide -> Stream -> Rotate Back
-    # Collision matrices (Dellar 2011 Eq.19,23):
-    #   X/Z sweeps: X⁻¹Q̂X = Z⁻¹Q̂Z have Q sign pattern → apply Q in characteristic frame
-    #   Y sweep (Y=I): apply Q̂ directly
-    #   For massless particles (b_hat=0) Q and Q̂ are identical.
-    psi_rotated = np.zeros_like(psi_line_in, dtype=np.complex128)
-    for k in range(N_points):
-        psi_rotated[k, :] = R_inv @ psi_line_in[k, :]
+    # Rotate into the characteristic frame for this axis: psi_tilde = R_inv @ psi
+    psi_rotated = psi_line_in @ R_inv.T
 
-    psi_collided_rotated = np.zeros_like(psi_rotated, dtype=np.complex128)
+    # Collide in the characteristic frame:
+    #   Q_char = a_hat * I - 1j * b_hat * coll_gen        (coll_gen = R_inv ALPHA_Y R)
+    # This equals R_inv @ Qhat @ R with Qhat = a_hat*I - 1j*b_hat*ALPHA_Y, and it
+    # is unitary because |a_hat|^2 + |b_hat|^2 = 1.  For massless particles b_hat=0
+    # and the collision is a pure local phase a_hat.
+    a_col = a_hat[:, None] if np.ndim(a_hat) else a_hat
+    b_col = b_hat[:, None] if np.ndim(b_hat) else b_hat
+    psi_collided = a_col * psi_rotated - 1j * b_col * (psi_rotated @ coll_gen.T)
 
-    for k in range(N_points):
-        u1, u2, d1, d2 = psi_rotated[k, 0], psi_rotated[k, 1], psi_rotated[k, 2], psi_rotated[k, 3]
-
-        if current_axis == 'y':
-            # Q̂: u1'= a*u1 - b*d2,  d2'= a*d2 + b*u1
-            collided_u1 = a_hat[k] * u1 - b_hat[k] * d2
-            collided_u2 = a_hat[k] * u2 + b_hat[k] * d1
-            collided_d1 = a_hat[k] * d1 - b_hat[k] * u2
-            collided_d2 = a_hat[k] * d2 + b_hat[k] * u1
+    # Stream: shift each characteristic component by its streaming sign.
+    # Open/absorbing boundaries: contributions leaving the line are dropped.
+    psi_streamed = np.zeros_like(psi_collided)
+    for c in range(4):
+        s = stream_signs[c]
+        if s > 0:
+            psi_streamed[s:, c] = psi_collided[:-s, c]
+        elif s < 0:
+            psi_streamed[:s, c] = psi_collided[-s:, c]
         else:
-            # Q (X/Z sweeps): u1'= a*u1 + b*d2,  d2'= a*d2 - b*u1
-            collided_u1 = a_hat[k] * u1 + b_hat[k] * d2
-            collided_u2 = a_hat[k] * u2 + b_hat[k] * d1
-            collided_d1 = a_hat[k] * d1 - b_hat[k] * u2
-            collided_d2 = a_hat[k] * d2 - b_hat[k] * u1
-        
-        # Stream: u components go forward (to k+1), d components go backward (to k-1)
-        # Open/absorbing boundaries: no wrap-around (outflow at edges)
-        if k + 1 < N_points:
-            psi_collided_rotated[k + 1, 0] += collided_u1
-            psi_collided_rotated[k + 1, 1] += collided_u2
-        if k - 1 >= 0:
-            psi_collided_rotated[k - 1, 2] += collided_d1
-            psi_collided_rotated[k - 1, 3] += collided_d2
+            psi_streamed[:, c] = psi_collided[:, c]
 
-    # Rotate back to standard basis
-    for k in range(N_points):
-        psi_line_out[k, :] = R_op @ psi_collided_rotated[k, :]
+    # Rotate back to the standard spinor basis: psi = R @ psi_tilde
+    psi_line_out = psi_streamed @ R_op.T
 
     return psi_line_out
 

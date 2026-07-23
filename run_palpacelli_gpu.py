@@ -94,6 +94,7 @@ from dirac_qlb_solver import (
     ALPHA_X, ALPHA_Y, ALPHA_Z, BETA, IDENTITY_4x4,
     X_MATRIX, Y_MATRIX, Z_MATRIX,
     X_INV_MATRIX, Y_INV_MATRIX, Z_INV_MATRIX,
+    SWEEP_CONFIG,
     HBAR, C, Q_ELECTRON
 )
 
@@ -213,7 +214,8 @@ K0_LATTICE = 0.117    # k₀·Δx (dimensionless lattice momentum; paper: 0.117 
 # quantum tunnelling (Klein tunneling) still allows significant transmission.
 #
 # DEFAULT_BARRIER_HEIGHT is stored as potential ENERGY in Joules = q·V_volts.
-# Inside perform_qlb_line_gpu the coupling is g̃₃ = V_energy·DT / (3·ℏ) ≈ 0.024.
+# DEPRECATED / UNUSED: the collision sign-pattern coupling is g̃₃ = V_energy·DT/(3·ℏ) ≈ 0.024.
+# The live code path is perform_qlb_sweep_gpu (see below).
 # ---------------------------------------------------------------------------
 IMPURITY_SIZE_CELLS = 8          # square-barrier side d in cells (paper: 8)
 DEFAULT_CONCENTRATION = 0.005    # 0.5% area coverage (paper Fig. 8)
@@ -263,6 +265,26 @@ else:
     Y_INV_MATRIX_GPU = Y_INV_MATRIX
     Z_INV_MATRIX_GPU = Z_INV_MATRIX
     BETA_GPU         = BETA
+
+# ---------------------------------------------------------------------------
+# Per-axis sweep configuration on the compute device.
+# For each axis we hold the rotation R and R_inv, the characteristic-frame
+# collision generator (ALPHA_Y rotated into that frame), and the per-component
+# streaming shifts.  Derived once from dirac_qlb_solver.SWEEP_CONFIG so the GPU
+# path uses exactly the same validated operators as the reference module.
+# ---------------------------------------------------------------------------
+def _to_device(a):
+    return cp.asarray(a) if GPU_AVAILABLE else a
+
+SWEEP_CFG_GPU = {
+    ax: {
+        'R':        _to_device(SWEEP_CONFIG[ax]['R']),
+        'R_inv':    _to_device(SWEEP_CONFIG[ax]['R_inv']),
+        'coll_gen': _to_device(SWEEP_CONFIG[ax]['coll_gen']),
+        'stream':   tuple(int(s) for s in SWEEP_CONFIG[ax]['stream']),
+    }
+    for ax in ('x', 'y', 'z')
+}
 
 def generate_random_impurities_gpu(concentration, barrier_height, seed=42):
     """
@@ -337,12 +359,12 @@ def initialize_wave_packet_gpu():
         ψ₁ = ψ₃ = amplitude / √2
 
     WHY THIS CHOICE?
-    The X-rotation X⁻¹ maps the physical spinor to the characteristic frame
-    (u₁, u₂, d₁, d₂).  For ψ = (0, A, 0, A)/√2 one can verify analytically:
-        u₁ = 0,  u₂ = A,  d₁ = 0,  d₂ = 0
-    — a PURE RIGHT-MOVER.  Any left-moving content (non-zero d₁ or d₂) would
-    cause the wave packet to immediately split into a forward- and a backward-
-    travelling pulse at t=0, which is an initialisation artefact.
+    The corrected X-rotation diagonalizes ALPHA_X to diag(-1,-1,+1,+1), so in the
+    characteristic frame (X^-1 psi) the +x right-movers are components 2 and 3.
+    We build a pure right-mover there, (u = 0, d = (1,1)/sqrt(2)), and rotate to
+    the physical basis with X.  The resulting spinor has <ALPHA_X> = +1 (a genuine
+    +x mover).  Any left-moving content would split the packet into forward- and
+    backward-travelling pulses at t=0, an initialisation artefact.
 
     The centre is placed at x₀ = 3σ from the inlet boundary so that the
     Gaussian tail is negligible at x=0 and the inlet bounce-back BC does not
@@ -385,10 +407,14 @@ def initialize_wave_packet_gpu():
         * phase_factor
     )
 
-    # Assemble 4-component spinor: only components 1 and 3 are non-zero
+    # Assemble the 4-component spinor as a physical +x right-mover:
+    # characteristic-frame right-mover (0,0,1,1)/sqrt(2) rotated to the standard
+    # basis via X.  (A1 = A2 = 1/sqrt(2) for head-on incidence, Palpacelli Eq. 11.)
+    char_right = np.array([0, 0, 1, 1], dtype=np.complex128) / np.sqrt(2)
+    spinor_right = X_MATRIX @ char_right
     psi_cpu = np.zeros((NX, NY, NZ, 4), dtype=np.complex128)
-    psi_cpu[:, :, :, 1] = base_amplitude / np.sqrt(2)  # up-spin right-mover
-    psi_cpu[:, :, :, 3] = base_amplitude / np.sqrt(2)  # down-spin right-mover
+    for _c in range(4):
+        psi_cpu[:, :, :, _c] = base_amplitude * spinor_right[_c]
 
     # Normalise so that ∫|ψ|² dV = 1 (total probability = 1)
     norm_factor = np.sum(np.abs(psi_cpu)**2) * DX * DY * DZ
@@ -412,6 +438,15 @@ def initialize_wave_packet_gpu():
 
 def perform_qlb_line_gpu(psi_line, V_line, axis, R_inv, R_op, periodic=False):
     """
+    DEPRECATED, UNUSED single-line variant kept only for reference.
+
+    WARNING: this function predates the x-rotation fix and documents the OLD
+    collision sign-pattern / streaming convention (u = components 0,1 as
+    right-movers).  That convention is INCORRECT for the x-sweep.  Do NOT use it
+    or its comments as a reference for the gate-porting work.  The correct,
+    validated implementation is perform_qlb_sweep_gpu, which derives streaming
+    signs and the collision generator from dirac_qlb_solver.SWEEP_CONFIG.
+
     Perform one QLB sub-step along a single 1D line.
 
     This implements the four-stage QLB update (Dellar 2011, Palpacelli 2012):
@@ -573,28 +608,24 @@ def perform_qlb_line_gpu(psi_line, V_line, axis, R_inv, R_op, periodic=False):
 
     return psi_out
 
-def perform_qlb_sweep_gpu(psi, V_field, axis, R_inv, R_op, periodic=False):
+def perform_qlb_sweep_gpu(psi, V_field, axis, cfg, periodic=False):
     """
     Perform one QLB sub-step over the FULL (NX, NY, NZ, 4) field for a given axis.
 
-    This is the vectorized version of perform_qlb_line_gpu.  It replaces all
-    Python loops over grid lines with a single set of array operations, making
-    it efficient both on GPU (CuPy) and CPU (NumPy).
-
-    The algorithm is identical to perform_qlb_line_gpu but operates on the
-    entire field array at once:
-        1. Rotate   psi → psi_rot = einsum('ij,...j->...i', R_inv, psi)
-        2. Collide  psi_rot → Q psi_rot  (axis-dependent sign pattern)
-        3. Stream   shift along the sweep axis
-        4. Rotate back  psi_out = einsum('ij,...j->...i', R_op, psi_str)
+    Vectorized over the whole field (efficient on GPU via CuPy and CPU via NumPy).
+    Rotate → collide (in the characteristic frame) → stream → rotate back:
+        1. Rotate   psi → psi_rot = R_inv @ psi
+        2. Collide  psi_rot → (a_hat I - i b_hat coll_gen) psi_rot
+        3. Stream   shift each spinor component by its streaming sign (+/-1)
+        4. Rotate back  psi_out = R @ psi_str
 
     Parameters
     ----------
     psi      : array (NX, NY, NZ, 4) – full spinor field on GPU/CPU
     V_field  : array (NX, NY, NZ)    – potential energy [J] at every cell
     axis     : str  – 'x' (open BCs), 'y' (periodic), or 'z' (periodic)
-    R_inv    : array (4,4) – R⁻¹ rotation matrix for this axis
-    R_op     : array (4,4) – R  rotation matrix for this axis
+    cfg      : dict – per-axis config with 'R', 'R_inv', 'coll_gen', 'stream'
+                      (from SWEEP_CFG_GPU; already on the compute device)
     periodic : bool – True → periodic wrap; False → absorbing open edges
 
     Returns
@@ -602,6 +633,9 @@ def perform_qlb_sweep_gpu(psi, V_field, axis, R_inv, R_op, periodic=False):
     psi_out : array (NX, NY, NZ, 4) – updated field (same device as input)
     """
     xp = cp if GPU_AVAILABLE else np
+    R_inv, R_op = cfg['R_inv'], cfg['R']
+    coll_gen, stream = cfg['coll_gen'], cfg['stream']
+    dim = {'x': 0, 'y': 1, 'z': 2}[axis]
 
     # ------------------------------------------------------------------
     # STEP 1: collision coefficients at every cell  (NX, NY, NZ) arrays
@@ -614,80 +648,47 @@ def perform_qlb_sweep_gpu(psi, V_field, axis, R_inv, R_op, periodic=False):
     denom     = 1 + Omega_3 / 4 - 1j * g_tilde_3
     denom     = xp.where(xp.abs(denom) < 1e-15, 1e-15, denom)
     a_hat     = (1 - Omega_3 / 4) / denom   # (NX,NY,NZ) – diagonal factor
-    b_hat     = m_tilde_3 / denom            # scalar/array – mass coupling (0 if massless)
+    b_hat     = m_tilde_3 / denom            # (NX,NY,NZ) – mass coupling (0 if massless)
 
     # ------------------------------------------------------------------
-    # STEP 2: rotate entire field to characteristic frame
-    # einsum 'ij,...j->...i' applies the (4,4) matrix to the last axis of
-    # psi at every (i,j,k) cell simultaneously.
+    # STEP 2: rotate entire field to the characteristic frame
     # ------------------------------------------------------------------
     psi_rot = xp.einsum('ij,...j->...i', R_inv, psi)   # (NX, NY, NZ, 4)
 
-    u1 = psi_rot[..., 0]   # (NX, NY, NZ)
-    u2 = psi_rot[..., 1]
-    d1 = psi_rot[..., 2]
-    d2 = psi_rot[..., 3]
+    # ------------------------------------------------------------------
+    # STEP 3: collide in the characteristic frame.
+    #   Q_char = a_hat I - i b_hat coll_gen,   coll_gen = R_inv @ ALPHA_Y @ R
+    # This is unitary (|a_hat|^2+|b_hat|^2=1) and equals the mass term of the
+    # Dirac equation projected into this axis' frame.  For massless particles
+    # b_hat = 0 and the collision is a pure local phase.
+    # ------------------------------------------------------------------
+    psi_col = (a_hat[..., None] * psi_rot
+               - 1j * b_hat[..., None] * xp.einsum('ij,...j->...i', coll_gen, psi_rot))
 
     # ------------------------------------------------------------------
-    # STEP 3: collision — sign pattern depends on axis
-    #   Y-sweep: Y=I → apply Q̂ directly (minus on u1–d2 coupling)
-    #   X/Z-sweep: rotated frame → X⁻¹Q̂X = Z⁻¹Q̂Z = Q (plus on u1–d2 coupling)
-    # ------------------------------------------------------------------
-    if axis == 'y':
-        cu1 = a_hat * u1 - b_hat * d2
-        cu2 = a_hat * u2 + b_hat * d1
-        cd1 = a_hat * d1 - b_hat * u2
-        cd2 = a_hat * d2 + b_hat * u1
-    else:  # 'x' or 'z'
-        cu1 = a_hat * u1 + b_hat * d2
-        cu2 = a_hat * u2 + b_hat * d1
-        cd1 = a_hat * d1 - b_hat * u2
-        cd2 = a_hat * d2 - b_hat * u1
-
-    # ------------------------------------------------------------------
-    # STEP 4: stream along the sweep axis (array slices, no Python loop)
-    #   u components shift +1 along the axis  (right-movers)
-    #   d components shift -1 along the axis  (left-movers)
+    # STEP 4: stream — shift each spinor component by its streaming sign.
+    # stream[c] = +1 shifts component c to higher index along `dim`, -1 to lower.
+    # Exact one-cell transport (DT = DX/v_F).  Periodic wrap or open (drop) edges.
     # ------------------------------------------------------------------
     psi_str = xp.zeros_like(psi_rot)
-
-    if axis == 'x':   # stream along dimension 0
-        psi_str[1:,  :, :, 0] = cu1[:-1, :, :]   # u1 at k → k+1
-        psi_str[1:,  :, :, 1] = cu2[:-1, :, :]
-        psi_str[:-1, :, :, 2] = cd1[1:,  :, :]   # d1 at k → k-1
-        psi_str[:-1, :, :, 3] = cd2[1:,  :, :]
-        if periodic:
-            psi_str[0,  :, :, 0] = cu1[-1, :, :]
-            psi_str[0,  :, :, 1] = cu2[-1, :, :]
-            psi_str[-1, :, :, 2] = cd1[0,  :, :]
-            psi_str[-1, :, :, 3] = cd2[0,  :, :]
-        # else open: edge cells left as 0 (inlet bounce-back/outlet absorbing
-        # are applied externally after this function returns)
-
-    elif axis == 'y':   # stream along dimension 1
-        psi_str[:, 1:,  :, 0] = cu1[:, :-1, :]
-        psi_str[:, 1:,  :, 1] = cu2[:, :-1, :]
-        psi_str[:, :-1, :, 2] = cd1[:, 1:,  :]
-        psi_str[:, :-1, :, 3] = cd2[:, 1:,  :]
-        if periodic:
-            psi_str[:, 0,  :, 0] = cu1[:, -1, :]
-            psi_str[:, 0,  :, 1] = cu2[:, -1, :]
-            psi_str[:, -1, :, 2] = cd1[:, 0,  :]
-            psi_str[:, -1, :, 3] = cd2[:, 0,  :]
-
-    else:  # 'z' — stream along dimension 2
-        psi_str[:, :, 1:,  0] = cu1[:, :, :-1]
-        psi_str[:, :, 1:,  1] = cu2[:, :, :-1]
-        psi_str[:, :, :-1, 2] = cd1[:, :, 1: ]
-        psi_str[:, :, :-1, 3] = cd2[:, :, 1: ]
-        if periodic:
-            psi_str[:, :, 0,  0] = cu1[:, :, -1]
-            psi_str[:, :, 0,  1] = cu2[:, :, -1]
-            psi_str[:, :, -1, 2] = cd1[:, :, 0 ]
-            psi_str[:, :, -1, 3] = cd2[:, :, 0 ]
+    for c in range(4):
+        s = stream[c]
+        comp = psi_col[..., c]
+        if s == 0:
+            psi_str[..., c] = comp
+        elif periodic:
+            psi_str[..., c] = xp.roll(comp, s, axis=dim)
+        else:
+            src = [slice(None)] * comp.ndim
+            dst = [slice(None)] * comp.ndim
+            if s > 0:
+                dst[dim] = slice(s, None);  src[dim] = slice(None, -s)
+            else:
+                dst[dim] = slice(None, s);  src[dim] = slice(-s, None)
+            psi_str[(*dst, c)] = comp[tuple(src)]
 
     # ------------------------------------------------------------------
-    # STEP 5: rotate back to physical spinor basis
+    # STEP 5: rotate back to the physical spinor basis
     # ------------------------------------------------------------------
     psi_out = xp.einsum('ij,...j->...i', R_op, psi_str)
 
@@ -793,31 +794,32 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
         # inlet bounce-back and outlet absorbing conditions follow in stage (B).
         # ==============================================================
         psi = perform_qlb_sweep_gpu(psi, V_field, 'x',
-                                     X_INV_MATRIX_GPU, X_MATRIX_GPU,
-                                     periodic=False)
+                                     SWEEP_CFG_GPU['x'], periodic=False)
 
         # ==============================================================
         # STAGE (B): X-DIRECTION BOUNDARY CONDITIONS  (vectorized over NY×NZ)
         #
         # Inlet   (x = 0):  bounce-back — left-movers reflect as right-movers
-        #   In characteristic frame: u ← d,  d = 0
         # Outlet  (x = NX-1):  open/absorbing — zero incoming left-movers
-        #   In characteristic frame: d = 0
+        #
+        # In the corrected x-characteristic frame (X diagonalizes ALPHA_X to
+        # diag(-1,-1,+1,+1)), components 2,3 are the +x right-movers and
+        # components 0,1 are the -x left-movers.
         # ==============================================================
         # Rotate both boundary slices to characteristic frame simultaneously
         # einsum 'ij,...j->...i' broadcasts over all (NY, NZ) transverse cells
         psi_rot_inlet  = xp.einsum('ij,...j->...i', X_INV_MATRIX_GPU, psi[0,  :, :, :])
         psi_rot_outlet = xp.einsum('ij,...j->...i', X_INV_MATRIX_GPU, psi[-1, :, :, :])
 
-        # Inlet: bounce-back — copy d into u, then zero d
-        psi_rot_inlet[..., 0] = psi_rot_inlet[..., 2].copy()  # u₁ ← d₁
-        psi_rot_inlet[..., 1] = psi_rot_inlet[..., 3].copy()  # u₂ ← d₂
-        psi_rot_inlet[..., 2] = 0.0
-        psi_rot_inlet[..., 3] = 0.0
+        # Inlet: bounce-back — reflect left-movers (0,1) into right-movers (2,3), then zero left
+        psi_rot_inlet[..., 2] = psi_rot_inlet[..., 0].copy()  # right₁ ← left₁
+        psi_rot_inlet[..., 3] = psi_rot_inlet[..., 1].copy()  # right₂ ← left₂
+        psi_rot_inlet[..., 0] = 0.0
+        psi_rot_inlet[..., 1] = 0.0
 
-        # Outlet: absorbing — zero incoming left-movers
-        psi_rot_outlet[..., 2] = 0.0
-        psi_rot_outlet[..., 3] = 0.0
+        # Outlet: absorbing — zero incoming left-movers (0,1)
+        psi_rot_outlet[..., 0] = 0.0
+        psi_rot_outlet[..., 1] = 0.0
 
         # Rotate back to physical basis
         psi[0,  :, :, :] = xp.einsum('ij,...j->...i', X_MATRIX_GPU, psi_rot_inlet)
@@ -828,8 +830,7 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
         # Y = I so R_inv = R = identity; periodic BCs.
         # ==============================================================
         psi = perform_qlb_sweep_gpu(psi, V_field, 'y',
-                                     Y_INV_MATRIX_GPU, Y_MATRIX_GPU,
-                                     periodic=True)
+                                     SWEEP_CFG_GPU['y'], periodic=True)
 
         # ==============================================================
         # STAGE (D): Z-SWEEP  (vectorized over all NX×NY lines at once)
@@ -838,8 +839,7 @@ def run_simulation_gpu(n_steps=1000, output_freq=100, output_dir="palpacelli_gpu
         # 1/3 of the barrier coupling not covered by X and Y sweeps.
         # ==============================================================
         psi = perform_qlb_sweep_gpu(psi, V_field, 'z',
-                                     Z_INV_MATRIX_GPU, Z_MATRIX_GPU,
-                                     periodic=True)
+                                     SWEEP_CFG_GPU['z'], periodic=True)
 
         # ==============================================================
         # STAGE (E): SPONGE LAYER  (vectorized, no Python loops)
