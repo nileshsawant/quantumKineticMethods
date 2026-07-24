@@ -66,12 +66,12 @@ def main():
     print("Device:", bk.device_report())
     psi0 = initial_packet()
 
-    # classical at t=0 and t=T
+    # classical densities at t=0 and t=T
     pc = psi0.copy()
     for _ in range(T):
         pc = threed.classical_step_3d(pc, NX, NY, NZ, 0.0)
     d_c0, d_cT = dens(psi0), dens(pc)
-    # circuit at t=0 and t=T (one transpile, one run)
+    # circuit densities at t=0 and t=T (one transpile, one run)
     svs = bk.evolve_snapshots(threed.sweep3d_circuit(NX, NY, NZ), psi0, [0, T])
     d_q0, d_qT = dens(svs[0]), dens(svs[T])
 
@@ -80,30 +80,52 @@ def main():
     print(f"COM start {tuple(f'{v:.2f}' for v in c0)} -> end {tuple(f'{v:.2f}' for v in cT)}"
           f"   max|Δ|={maxdev:.2e}")
 
-    # three orthogonal projections at start (row 0) and end (row 1), circuit density
-    def proj(d):
-        return [d.sum(0), d.sum(1), d.sum(2)]   # xy (Ny,Nx), xz (Nz,Nx), yz (Nz,Ny)
-    labels = [("x", "y"), ("x", "z"), ("y", "z")]
-    rows = [("t = 0", d_q0, c0), (f"t = {T}", d_qT, cT)]
-    vmax = max(proj(d_q0)[0].max(), proj(d_qT)[0].max())
+    fig, axes = plt.subplots(2, 3, figsize=(13, 8.5))
 
-    fig, axes = plt.subplots(2, 3, figsize=(12, 8))
-    for r, (tlab, d, c) in enumerate(rows):
-        pr = proj(d)
-        cc = [(c[0], c[1]), (c[0], c[2]), (c[1], c[2])]   # COM in each projection
-        for j in range(3):
-            ax = axes[r, j]
-            im = ax.imshow(pr[j], origin="lower", aspect="auto", cmap="inferno",
-                           vmin=0, vmax=vmax,
-                           extent=[0, pr[j].shape[1], 0, pr[j].shape[0]])
-            ax.plot(cc[j][0], cc[j][1], "c+", ms=12, mew=2)   # mark center of mass
-            ax.set_xlabel(labels[j][0]); ax.set_ylabel(labels[j][1])
-            ax.set_title(f"{tlab}   {labels[j][0]}{labels[j][1]}-projection", fontsize=10)
-            fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    # ---- Row 1: orthogonal projections at t=T -------------------------------
+    # filled heatmap = classical, overlaid contours = quantum circuit.
+    def proj(d):
+        return [d.sum(0), d.sum(1), d.sum(2)]      # xy (Ny,Nx), xz (Nz,Nx), yz (Nz,Ny)
+    labels = [("x", "y"), ("x", "z"), ("y", "z")]
+    pc_xy, qc_xy = proj(d_cT), proj(d_qT)
+    vmax = max(p.max() for p in pc_xy)
+    for j in range(3):
+        ax = axes[0, j]
+        im = ax.imshow(pc_xy[j], origin="lower", aspect="auto", cmap="inferno",
+                       vmin=0, vmax=vmax, extent=[0, pc_xy[j].shape[1], 0, pc_xy[j].shape[0]])
+        lv = np.linspace(0.15, 0.95, 5) * vmax
+        ax.contour(np.linspace(0.5, pc_xy[j].shape[1] - 0.5, pc_xy[j].shape[1]),
+                   np.linspace(0.5, pc_xy[j].shape[0] - 0.5, pc_xy[j].shape[0]),
+                   qc_xy[j], levels=lv, colors="cyan", linewidths=1.0)
+        ax.set_xlabel(labels[j][0]); ax.set_ylabel(labels[j][1])
+        ax.set_title(f"{labels[j][0]}{labels[j][1]}-projection, t={T}\n"
+                     f"fill = classical, cyan lines = circuit", fontsize=9)
+        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+    # ---- Row 2: 1D marginals along x, y, z (classical line + circuit markers)
+    axis_len = [Nx, Ny, Nz]
+    axis_name = ["x", "y", "z"]
+    marg = lambda d, k: d.sum(axis=tuple(a for a in (0, 1, 2) if a != (2 - k)))  # k=0->x,1->y,2->z
+    col0, colT = "0.55", "C3"
+    for k in range(3):
+        ax = axes[1, k]
+        r = np.arange(axis_len[k])
+        ax.plot(r, marg(d_c0, k), "-", color=col0, lw=2, label="classical t=0")
+        ax.plot(r, marg(d_q0, k), "o", color=col0, mfc="none", ms=5, mew=1.2, label="circuit t=0")
+        ax.plot(r, marg(d_cT, k), "-", color=colT, lw=2, label=f"classical t={T}")
+        ax.plot(r, marg(d_qT, k), "o", color=colT, mfc="none", ms=5, mew=1.2, label=f"circuit t={T}")
+        ax.axvline(c0[k], color=col0, ls=":", lw=1)
+        ax.axvline(cT[k], color=colT, ls=":", lw=1)
+        ax.set_xlabel(f"{axis_name[k]}")
+        ax.set_ylabel(rf"$\sum_{{\neq {axis_name[k]}}}|\psi|^2$")
+        ax.set_title(f"{axis_name[k]}-marginal: COM {c0[k]:.1f} → {cT[k]:.1f}", fontsize=9)
+        ax.grid(alpha=0.3)
+        if k == 0:
+            ax.legend(fontsize=7, loc="upper right")
 
     fig.suptitle(
-        "3D Dirac packet sent along the (1,1,1) diagonal: classical QLB vs quantum circuit (GPU)\n"
-        f"COM {tuple(round(v, 1) for v in c0)} -> {tuple(round(v, 1) for v in cT)} "
+        "3D Dirac packet along the (1,1,1) diagonal: classical QLB vs quantum circuit (GPU)\n"
+        f"COM {tuple(round(v, 1) for v in c0)} → {tuple(round(v, 1) for v in cT)} "
         f"(equal motion in x, y, z);  classical vs circuit max |Δ| = {maxdev:.1e}",
         fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
