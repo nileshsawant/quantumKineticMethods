@@ -1,16 +1,17 @@
 """
-3D classical-vs-circuit overlay: Dirac wave packet through a planar barrier.
+3D classical-vs-circuit overlay: a wave packet sent along the body diagonal.
 ===========================================================================
 
-A massless 3D Dirac wave packet is launched (with a transverse component) toward a
-planar potential barrier and evolved with both the classical 3D QLB algorithm and
-the ported quantum circuit (qiskit-aer, GPU).  Because a full 3D density is hard to
-draw, we show two projections of |psi(x,y,z)|^2:
+A massless 3D Dirac wave packet is launched along the (1,1,1) body diagonal of a
+cubic lattice and evolved with both the classical 3D QLB algorithm and the ported
+quantum circuit (qiskit-aer, GPU).  The "diagonal mover" is the +1 eigenstate of the
+velocity operator (ALPHA_X + BETA + ALPHA_Z)/sqrt(3) (in Dellar's representation the
+per-axis velocity operators are ALPHA_X, BETA, ALPHA_Z), so it has equal group
+velocity along x, y and z and all three sweeps' streaming are genuinely exercised.
 
-  * top row: the x-profile (summed over y and z) at several times -- classical line
-    vs circuit markers -- with the barrier shaded; and
-  * bottom row: the xy-projection (summed over z) at the final time, classical vs
-    circuit vs |difference|.
+The full 3D density is shown as three orthogonal projections (xy, xz, yz) at the
+start and end times; the packet moves from one corner toward the opposite, and the
+circuit reproduces the classical result to machine precision.
 
 Run:
     module load qiskit/aer-gpu
@@ -26,82 +27,89 @@ from . import operators as ops
 from . import backend as bk
 from . import threed
 
-NX, NY, NZ = 4, 3, 3           # 16 x 8 x 8 lattice (12 qubits)
-Nx, Ny, Nz = 2 ** NX, 2 ** NY, 2 ** NZ
-XB0, XBW, G = 9, 2, 0.9        # planar barrier at x in [9, 11)
+NX = NY = NZ = 4                # 16^3 cubic lattice (14 qubits)
+Nx = Ny = Nz = 2 ** NX
+T = 8
+K0 = 0.5
 
 
-def initial_packet(x0=2, sigma=1.6, kx=0.6, ky=0.4):
-    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+def diagonal_spinor():
+    """+1 eigenstate of (ALPHA_X + BETA + ALPHA_Z)/sqrt(3): equal velocity on x,y,z."""
+    A = ops.ALPHA_X + ops.BETA + ops.ALPHA_Z
+    w, V = np.linalg.eigh(A)
+    return V[:, int(np.argmax(w))]
+
+
+def initial_packet(x0=4, sigma=2.0):
+    sp = diagonal_spinor()
     Z, Y, X = np.meshgrid(np.arange(Nz), np.arange(Ny), np.arange(Nx), indexing="ij")
-    env = np.exp(-(((X - x0) ** 2 + (Y - Ny // 2) ** 2 + (Z - Nz // 2) ** 2) / (2 * sigma ** 2)))
-    env = env * np.exp(1j * (kx * X + ky * Y))
+    env = np.exp(-(((X - x0) ** 2 + (Y - x0) ** 2 + (Z - x0) ** 2) / (2 * sigma ** 2)))
+    env = env * np.exp(1j * K0 * (X + Y + Z))
     psi = np.zeros((Nz, Ny, Nx, 4), dtype=complex)
     for c in range(4):
         psi[:, :, :, c] = env * sp[c]
     return (psi / np.linalg.norm(psi)).reshape(-1)
 
 
-def dens_xyz(sv):
+def dens(sv):
     return (np.abs(sv.reshape(Nz, Ny, Nx, 4)) ** 2).sum(axis=3)   # (Nz, Ny, Nx)
+
+
+def com(d):
+    tot = d.sum()
+    return (float((d.sum((0, 1)) * np.arange(Nx)).sum() / tot),
+            float((d.sum((0, 2)) * np.arange(Ny)).sum() / tot),
+            float((d.sum((1, 2)) * np.arange(Nz)).sum() / tot))
 
 
 def main():
     print("Device:", bk.device_report())
-    snaps = [0, 7, 14]
-    V = threed.planar_barrier_field_3d(NX, NY, NZ, range(XB0, XB0 + XBW), G)
     psi0 = initial_packet()
 
-    classical = {}
-    psi = psi0.copy(); tprev = 0
-    for t in snaps:
-        for _ in range(t - tprev):
-            psi = threed.classical_step_3d_potential(psi, NX, NY, NZ, V)
-        tprev = t
-        classical[t] = dens_xyz(psi)
-    step = threed.sweep3d_circuit_potential(NX, NY, NZ, V)
-    svs = bk.evolve_snapshots(step, psi0, snaps)
-    quantum = {t: dens_xyz(svs[t]) for t in snaps}
+    # classical at t=0 and t=T
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = threed.classical_step_3d(pc, NX, NY, NZ, 0.0)
+    d_c0, d_cT = dens(psi0), dens(pc)
+    # circuit at t=0 and t=T (one transpile, one run)
+    svs = bk.evolve_snapshots(threed.sweep3d_circuit(NX, NY, NZ), psi0, [0, T])
+    d_q0, d_qT = dens(svs[0]), dens(svs[T])
 
-    maxdev = max(np.max(np.abs(classical[t] - quantum[t])) for t in snaps)
-    x = np.arange(Nx)
-    colors = plt.cm.viridis(np.linspace(0, 0.8, len(snaps)))
-    fig = plt.figure(figsize=(13, 8))
-    gs = fig.add_gridspec(2, 3, height_ratios=[1, 1.1])
+    maxdev = max(np.max(np.abs(d_c0 - d_q0)), np.max(np.abs(d_cT - d_qT)))
+    c0, cT = com(d_q0), com(d_qT)
+    print(f"COM start {tuple(f'{v:.2f}' for v in c0)} -> end {tuple(f'{v:.2f}' for v in cT)}"
+          f"   max|Δ|={maxdev:.2e}")
 
-    # top: x-profile (sum over y,z), classical line + circuit markers
-    axp = fig.add_subplot(gs[0, :])
-    for t, col in zip(snaps, colors):
-        axp.plot(x, classical[t].sum(axis=(0, 1)), "-", color=col, lw=2, label=f"classical t={t}")
-        axp.plot(x, quantum[t].sum(axis=(0, 1)), "o", color=col, mfc="none", ms=5, mew=1.3,
-                 label=f"circuit t={t}")
-    axp.axvspan(XB0, XB0 + XBW, color="red", alpha=0.12, label="barrier")
-    axp.set_xlabel("x"); axp.set_ylabel(r"$\sum_{y,z}|\psi|^2$")
-    axp.set_title(f"3D Dirac through a planar barrier: x-profile (classical vs circuit)   "
-                  f"max |Δ| = {maxdev:.1e}", fontsize=11)
-    axp.legend(fontsize=7, ncol=3, loc="upper right"); axp.grid(alpha=0.3)
+    # three orthogonal projections at start (row 0) and end (row 1), circuit density
+    def proj(d):
+        return [d.sum(0), d.sum(1), d.sum(2)]   # xy (Ny,Nx), xz (Nz,Nx), yz (Nz,Ny)
+    labels = [("x", "y"), ("x", "z"), ("y", "z")]
+    rows = [("t = 0", d_q0, c0), (f"t = {T}", d_qT, cT)]
+    vmax = max(proj(d_q0)[0].max(), proj(d_qT)[0].max())
 
-    # bottom: xy-projection (sum over z) at final time
-    tf = snaps[-1]
-    cxy, qxy = classical[tf].sum(0), quantum[tf].sum(0)   # (Ny, Nx)
-    diff = np.abs(cxy - qxy)
-    vmax = max(cxy.max(), qxy.max())
-    for col, (dat, title, cmap, vm) in enumerate([
-            (cxy, f"classical  t={tf}", "inferno", vmax),
-            (qxy, f"circuit  t={tf}", "inferno", vmax),
-            (diff, f"|difference| (max {diff.max():.0e})", "viridis", max(diff.max(), 1e-16))]):
-        ax = fig.add_subplot(gs[1, col])
-        im = ax.imshow(dat, origin="lower", aspect="auto", cmap=cmap, vmin=0, vmax=vm,
-                       extent=[0, Nx, 0, Ny])
-        ax.axvspan(XB0, XB0 + XBW, color="cyan", alpha=0.25)
-        ax.set_xlabel("x"); ax.set_ylabel("y"); ax.set_title(title, fontsize=10)
-        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+    for r, (tlab, d, c) in enumerate(rows):
+        pr = proj(d)
+        cc = [(c[0], c[1]), (c[0], c[2]), (c[1], c[2])]   # COM in each projection
+        for j in range(3):
+            ax = axes[r, j]
+            im = ax.imshow(pr[j], origin="lower", aspect="auto", cmap="inferno",
+                           vmin=0, vmax=vmax,
+                           extent=[0, pr[j].shape[1], 0, pr[j].shape[0]])
+            ax.plot(cc[j][0], cc[j][1], "c+", ms=12, mew=2)   # mark center of mass
+            ax.set_xlabel(labels[j][0]); ax.set_ylabel(labels[j][1])
+            ax.set_title(f"{tlab}   {labels[j][0]}{labels[j][1]}-projection", fontsize=10)
+            fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
-    fig.suptitle("3D QLB: classical algorithm vs ported quantum circuit (GPU)", fontsize=13)
-    fig.tight_layout(rect=[0, 0, 1, 0.96])
+    fig.suptitle(
+        "3D Dirac packet sent along the (1,1,1) diagonal: classical QLB vs quantum circuit (GPU)\n"
+        f"COM {tuple(round(v, 1) for v in c0)} -> {tuple(round(v, 1) for v in cT)} "
+        f"(equal motion in x, y, z);  classical vs circuit max |Δ| = {maxdev:.1e}",
+        fontsize=11)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
     out = "qlb_port/validation_3d.png"
     fig.savefig(out, dpi=140)
-    print(f"Saved {out}   max|Δ|={maxdev:.2e}")
+    print(f"Saved {out}")
 
 
 if __name__ == "__main__":

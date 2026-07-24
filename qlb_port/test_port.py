@@ -350,6 +350,34 @@ def test_3d_free():
     out = bk.apply_to_statevector(threed.evolution3d_circuit(nx, ny, nz, T, m_tilde=m), psi0)
     check(f"3D {T}-step free packet vs classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
           f"fid {bk.state_fidelity(out, pc):.12f}")
+    # genuine 3D-diagonal mover: +1 eigenstate of (ALPHA_X+BETA+ALPHA_Z) propagates equally in x,y,z
+    A = ops.ALPHA_X + ops.BETA + ops.ALPHA_Z
+    wv, Vv = np.linalg.eigh(A)
+    spd = Vv[:, int(np.argmax(wv))]
+    Zc, Yc, Xc = np.meshgrid(np.arange(Nz), np.arange(Ny), np.arange(Nx), indexing="ij")
+    envd = np.exp(-(((Xc - 2) ** 2 + (Yc - 2) ** 2 + (Zc - 2) ** 2) / (2 * 1.4 ** 2))) * np.exp(1j * 0.5 * (Xc + Yc + Zc))
+    pdi = np.zeros((Nz, Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        pdi[:, :, :, c] = envd * spd[c]
+    p0 = pdi.reshape(-1); p0 /= np.linalg.norm(p0)
+    Td = 3
+    pcd = p0.copy()
+    for _ in range(Td):
+        pcd = threed.classical_step_3d(pcd, nx, ny, nz, 0.0)
+    outd = bk.apply_to_statevector(threed.evolution3d_circuit(nx, ny, nz, Td), p0)
+
+    def _com(flat):
+        d = (np.abs(flat.reshape(Nz, Ny, Nx, 4)) ** 2).sum(3)
+        return (float((d.sum((0, 1)) * np.arange(Nx)).sum() / d.sum()),
+                float((d.sum((0, 2)) * np.arange(Ny)).sum() / d.sum()),
+                float((d.sum((1, 2)) * np.arange(Nz)).sum() / d.sum()))
+    check("3D diagonal mover circuit vs classical", bk.state_fidelity(outd, pcd) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(outd, pcd):.12f}")
+    c0 = _com(p0); cT = _com(outd)
+    dxyz = [cT[i] - c0[i] for i in range(3)]
+    check("3D packet moves equally along x, y, z (diagonal)",
+          min(dxyz) > 0.2 and (max(dxyz) - min(dxyz)) < 0.1 * max(dxyz),
+          f"ΔCOM = ({dxyz[0]:.2f}, {dxyz[1]:.2f}, {dxyz[2]:.2f})")
 
 
 def test_3d_potential():
