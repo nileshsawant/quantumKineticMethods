@@ -27,6 +27,7 @@ from qlb_port import streaming
 from qlb_port import sweep
 from qlb_port import potential
 from qlb_port import twod
+from qlb_port import threed
 
 _failures = []
 
@@ -328,6 +329,60 @@ def test_2d_potential():
           f"reflected {d[:, :xb].sum():.3f}")
 
 
+def test_3d_free():
+    print("Test Q: 3D free sweep circuit == classical operator; multi-step packet (GPU)")
+    for m, g in [(0.0, 0.0), (0.3, 0.1)]:
+        U = bk.circuit_unitary(threed.sweep3d_circuit(2, 2, 2, m, g))
+        M = threed.sweep3d_operator(2, 2, 2, m, g)
+        check(f"3D sweep m={m} g={g}", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # multi-step 3D free packet vs classical (11 qubits)
+    nx = ny = nz = 3; Nx, Ny, Nz = 8, 8, 8; T = 4; m = 0.2
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    Z, Yg, X = np.meshgrid(np.arange(Nz), np.arange(Ny), np.arange(Nx), indexing="ij")
+    env = np.exp(-(((X - 2) ** 2 + (Yg - 4) ** 2 + (Z - 4) ** 2) / (2 * 1.5 ** 2))) * np.exp(1j * 0.6 * X)
+    psi0 = np.zeros((Nz, Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        psi0[:, :, :, c] = env * sp[c]
+    psi0 = psi0.reshape(-1); psi0 /= np.linalg.norm(psi0)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = threed.classical_step_3d(pc, nx, ny, nz, m)
+    out = bk.apply_to_statevector(threed.evolution3d_circuit(nx, ny, nz, T, m_tilde=m), psi0)
+    check(f"3D {T}-step free packet vs classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+
+
+def test_3d_potential():
+    print("Test R: 3D potential circuit == classical; planar-barrier oblique scattering (GPU)")
+    # exact operator check with a planar barrier (nx=ny=nz=2)
+    nx = ny = nz = 2
+    V = threed.planar_barrier_field_3d(nx, ny, nz, [2], 0.9)
+    dim = 4 * 8 * 8
+    M = np.zeros((dim, dim), dtype=complex)
+    for j in range(dim):
+        e = np.zeros(dim, dtype=complex); e[j] = 1.0
+        M[:, j] = threed.classical_step_3d_potential(e, nx, ny, nz, V)
+    U = bk.circuit_unitary(threed.sweep3d_circuit_potential(nx, ny, nz, V))
+    check("3D potential sweep == classical", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # oblique planar-barrier scattering (nx=ny=nz=3), circuit vs classical
+    nx = ny = nz = 3; Nx, Ny, Nz = 8, 8, 8; T = 10
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    Z, Yg, X = np.meshgrid(np.arange(Nz), np.arange(Ny), np.arange(Nx), indexing="ij")
+    env = np.exp(-(((X - 1) ** 2 + (Yg - 4) ** 2 + (Z - 4) ** 2) / (2 * 1.3 ** 2))) * np.exp(1j * (0.6 * X + 0.4 * Yg))
+    psi0 = np.zeros((Nz, Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        psi0[:, :, :, c] = env * sp[c]
+    psi0 = psi0.reshape(-1); psi0 /= np.linalg.norm(psi0)
+    Vb = threed.planar_barrier_field_3d(nx, ny, nz, [5], 0.9)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = threed.classical_step_3d_potential(pc, nx, ny, nz, Vb)
+    out = bk.apply_to_statevector(threed.evolution3d_circuit_potential(nx, ny, nz, T, Vb), psi0)
+    check("3D planar-barrier oblique circuit vs classical",
+          bk.state_fidelity(out, pc) > 1 - 1e-9, f"fid {bk.state_fidelity(out, pc):.12f}")
+    check("3D probability conserved", abs(np.linalg.norm(out) - 1) < 1e-9)
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -348,6 +403,8 @@ if __name__ == "__main__":
     test_massive_barrier()
     test_2d_free()
     test_2d_potential()
+    test_3d_free()
+    test_3d_potential()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

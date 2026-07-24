@@ -21,6 +21,8 @@ Layout
                  (massless) or a position-multiplexed collision (massive).
   twod.py      : compose x- and y-sweeps on two position registers (2D graphene,
                  including oblique-incidence Klein tunneling through a barrier).
+  threed.py    : compose x-, y-, z-sweeps on three position registers (3D Dirac,
+                 free propagation and planar-barrier Klein tunneling).
   test_port.py : validation — every ported operator must match its target to ~1e-9.
 
 Environment
@@ -38,6 +40,6 @@ Quick start
     print(r["fidelity"], r["cx"], r["depth"])
 """
 
-from . import operators, backend, port, streaming, sweep, potential, twod
+from . import operators, backend, port, streaming, sweep, potential, twod, threed
 
-__all__ = ["operators", "backend", "port", "streaming", "sweep", "potential", "twod"]
+__all__ = ["operators", "backend", "port", "streaming", "sweep", "potential", "twod", "threed"]
