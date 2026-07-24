@@ -118,7 +118,10 @@ def evolve_snapshots(step_circuit, psi0, snapshots):
     snaps = sorted(set(int(t) for t in snapshots))
 
     qc = QuantumCircuit(n)
-    qc.initialize(psi0 / np.linalg.norm(psi0), list(range(n)))
+    # set_statevector loads the initial state directly in the simulator (O(2^n));
+    # this avoids qc.initialize, whose isometry decomposition builds a dense
+    # 2^n x 2^n matrix and OOMs the GPU past ~15 qubits.
+    qc.set_statevector(psi0 / np.linalg.norm(psi0))
     if 0 in snaps:
         qc.save_statevector(label="t0")
     for t in range(1, max(snaps) + 1):
