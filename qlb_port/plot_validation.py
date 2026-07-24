@@ -36,22 +36,23 @@ N = 2 ** N_POS
 def classical_step(psi, m_tilde=0.0, V_tilde=None):
     """One classical QLB sub-step on a (N, 4) spinor field (periodic).
 
-    V_tilde : None for free particle, or a per-site potential coupling array (massless).
+    V_tilde : None for free particle, or a per-site potential coupling array.
     """
     R = ops.ROTATIONS[AXIS]
     R_inv = R.conj().T
     signs = ops.streaming_signs(AXIS)
-    pr = psi @ R_inv.T                      # rotate into char frame
-    if V_tilde is None:
-        Q_char = ops.collision_operator_char(AXIS, m_tilde, 0.0)
-        pr = pr @ Q_char.T                  # uniform collide
-    else:
-        a_hat = potential.collision_phases(V_tilde)   # massless position-dependent phase
-        pr = pr * a_hat[:, None]
-    out = np.empty_like(pr)                 # stream +/-1 per component (periodic)
+    pr = psi @ R_inv.T                          # rotate into char frame
+    if V_tilde is None:                         # uniform collide
+        pr = pr @ ops.collision_operator_char(AXIS, m_tilde, 0.0).T
+    elif m_tilde == 0.0:                        # massless: position-dependent phase
+        pr = pr * potential.collision_phases(V_tilde)[:, None]
+    else:                                       # massive: per-site 2-qubit collision
+        for x in range(N):
+            pr[x] = ops.collision_operator_char(AXIS, m_tilde, float(V_tilde[x])) @ pr[x]
+    out = np.empty_like(pr)                     # stream +/-1 per component (periodic)
     for c in range(4):
         out[:, c] = np.roll(pr[:, c], int(signs[c]))
-    return out @ R.T                        # rotate back
+    return out @ R.T                            # rotate back
 
 
 def initial_packet(x0=16, sigma=4.0, k0=0.5):
@@ -75,74 +76,127 @@ def statevector_to_density(sv):
 
 
 def run(m_tilde, snapshots, x0=16, sigma=4.0, k0=0.5, V_tilde=None):
+    """Evolve the packet classically and via circuit; return spinor fields (N,4) per snapshot.
+
+    Returns (x, classical_fields, circuit_fields) where each *_fields[t] is a (N,4) array.
+    """
     psi0 = initial_packet(x0=x0, sigma=sigma, k0=k0)
     sv0 = field_to_statevector(psi0)
-    x = np.arange(N)
 
-    classical, quantum = {}, {}
-    # classical loop, capturing snapshots
+    classical = {}
     psi = psi0.copy()
     tprev = 0
     for t in snapshots:
         for _ in range(t - tprev):
             psi = classical_step(psi, m_tilde, V_tilde)
         tprev = t
-        classical[t] = (np.abs(psi) ** 2).sum(axis=1)
-    # quantum circuit, one run per snapshot
-    for t in snapshots:
-        if t == 0:
-            sv = sv0
-        elif V_tilde is None:
-            sv = bk.apply_to_statevector(sweep.evolution_circuit(AXIS, N_POS, t, m_tilde=m_tilde), sv0)
-        else:
-            sv = bk.apply_to_statevector(potential.evolution_circuit_potential(AXIS, N_POS, t, V_tilde), sv0)
-        quantum[t] = statevector_to_density(sv)
-    # quantitative agreement
-    max_dev = max(np.max(np.abs(classical[t] - quantum[t])) for t in snapshots)
-    return x, classical, quantum, max_dev
+        classical[t] = psi.copy()
+
+    if V_tilde is None:
+        step = sweep.sweep_circuit(AXIS, N_POS, m_tilde=m_tilde)
+    else:
+        step = potential.sweep_circuit_potential(AXIS, N_POS, V_tilde, m_tilde=m_tilde)
+    svs = bk.evolve_snapshots(step, sv0, snapshots)
+    quantum = {t: svs[t].reshape(N, 4) for t in snapshots}
+    return np.arange(N), classical, quantum
+
+
+def density(field):
+    """|psi(x)|^2 summed over spinor components, for a (N,4) field."""
+    return (np.abs(field) ** 2).sum(axis=1)
+
+
+def phase_shift(field_bar, field_free, thresh=1e-3):
+    """
+    Amplitude-weighted local phase shift arg(sum_c psi_bar,c conj(psi_free,c)) vs x,
+    masked (NaN) where the free density is below `thresh` (phase undefined there).
+    """
+    z = np.sum(field_bar * np.conj(field_free), axis=1)
+    dphi = np.angle(z)
+    dphi[density(field_free) < thresh] = np.nan
+    return dphi
 
 
 def main():
     print("Device:", bk.device_report())
-    snapshots = [0, 12, 24, 36]
+    snaps = [0, 18, 36]
+    tf = snaps[-1]
+    colors = plt.cm.viridis(np.linspace(0, 0.8, len(snaps)))
 
-    fig, axes = plt.subplots(3, 1, figsize=(10, 11))
-    colors = plt.cm.viridis(np.linspace(0, 0.85, len(snapshots)))
+    # Massless runs: free and barrier (reused for the density and phase panels)
+    Vk = potential.impurity_field(N_POS, range(40, 44), g_value=0.9)
+    x, cf_free, qf_free = run(0.0, snaps, x0=20, sigma=4.0, k0=0.6, V_tilde=None)
+    _, cf_bar,  qf_bar = run(0.0, snaps, x0=20, sigma=4.0, k0=0.6, V_tilde=Vk)
+    # Massive runs: free (Zitterbewegung) and barrier (reflection)
+    _, cf_mfree, qf_mfree = run(0.35, snaps, x0=20, sigma=4.0, k0=0.6, V_tilde=None)
+    Vm = potential.impurity_field(N_POS, range(40, 44), g_value=2.0)
+    _, cf_mbar, qf_mbar = run(0.6, snaps, x0=20, sigma=4.0, k0=0.6, V_tilde=Vm)
 
-    # barrier field for the Klein-tunneling panel: a few high-V sites near x=40
-    V_bar = potential.impurity_field(N_POS, range(40, 44), g_value=0.9)
+    fig, axes = plt.subplots(2, 2, figsize=(13, 8.5))
+    barspan = (39.5, 43.5)
 
-    panels = [
-        ("Massless free particle (m=0)", dict(m_tilde=0.0)),
-        ("Massive free particle (m=0.35): Zitterbewegung", dict(m_tilde=0.35)),
-        ("Massless packet scattering off a potential barrier (Klein tunneling)",
-         dict(m_tilde=0.0, x0=20, sigma=4.0, k0=0.6, V_tilde=V_bar)),
-    ]
+    def dev(cf, qf):
+        return max(np.max(np.abs(density(cf[t]) - density(qf[t]))) for t in snaps)
 
-    for ax, (title, kw) in zip(axes, panels):
-        x, classical, quantum, max_dev = run(snapshots=snapshots, **kw)
-        for t, col in zip(snapshots, colors):
-            ax.plot(x, classical[t], "-", color=col, lw=2, label=f"classical  t={t}")
-            ax.plot(x, quantum[t], "o", color=col, mfc="none", ms=5, mew=1.3,
-                    label=f"circuit    t={t}")
-        if "V_tilde" in kw:   # shade the barrier region
-            bar = np.where(kw["V_tilde"] > 0)[0]
-            ax.axvspan(bar.min() - 0.5, bar.max() + 0.5, color="red", alpha=0.12,
-                       label="barrier")
-        ax.set_title(f"{title}    (max |Δ| = {max_dev:.2e})", fontsize=11)
-        ax.set_ylabel(r"$|\psi(x)|^2$")
+    # (0,0) Massless: |psi|^2 unchanged by the barrier (perfect transmission, T=1)
+    ax = axes[0, 0]
+    for t, col in zip(snaps, colors):
+        ax.plot(x, density(cf_bar[t]), "-", color=col, lw=2, label=f"barrier  t={t}")
+        ax.plot(x, density(qf_bar[t]), "o", color=col, mfc="none", ms=4, mew=1.1)
+        ax.plot(x, density(cf_free[t]), ":", color=col, lw=1.2, label=f"free      t={t}")
+    ax.axvspan(*barspan, color="red", alpha=0.12, label="barrier")
+    ax.set_title(f"Massless: $|\\psi|^2$ identical with/without barrier (Klein, T=1)\n"
+                 f"classical vs circuit max |Δ| = {dev(cf_bar, qf_bar):.1e}", fontsize=10)
+    ax.set_ylabel(r"$|\psi(x)|^2$")
+    ax.legend(fontsize=7, ncol=2, loc="upper left")
+
+    # (0,1) Massless: the phase the barrier imprints (this is what Klein tunneling affects)
+    ax = axes[0, 1]
+    dphi_c = phase_shift(cf_bar[tf], cf_free[tf], thresh=2e-2)
+    dphi_q = phase_shift(qf_bar[tf], qf_free[tf], thresh=2e-2)
+    ax.axhline(0.0, color="gray", ls=":", lw=1.2, label="free (no barrier)")
+    ax.plot(x, dphi_c, "-", color="C3", lw=2, label="barrier classical")
+    ax.plot(x, dphi_q, "o", color="C3", mfc="none", ms=5, mew=1.3, label="barrier circuit")
+    ax.axvspan(*barspan, color="red", alpha=0.12)
+    ax.ticklabel_format(axis="y", useOffset=False)
+    ax.set_ylim(-np.pi, 0.4)
+    mean_shift = float(np.nanmean(dphi_c))
+    pdev = np.nanmax(np.abs(dphi_c - dphi_q))
+    ax.set_title(f"Massless: barrier imprints a phase on the transmitted packet\n"
+                 f"mean ΔΦ ≈ {mean_shift:.2f} rad ≈ {np.degrees(mean_shift):.0f}° "
+                 f"(|ψ|² unchanged); circuit vs classical max |Δ| = {pdev:.0e}", fontsize=10)
+    ax.set_ylabel(r"$\Delta\Phi(x)$  [rad]")
+    ax.legend(fontsize=7, loc="lower left")
+
+    # (1,0) Massive free: Zitterbewegung / dispersion
+    ax = axes[1, 0]
+    for t, col in zip(snaps, colors):
+        ax.plot(x, density(cf_mfree[t]), "-", color=col, lw=2, label=f"classical t={t}")
+        ax.plot(x, density(qf_mfree[t]), "o", color=col, mfc="none", ms=4, mew=1.1)
+    ax.set_title(f"Massive free (m=0.35): Zitterbewegung / dispersion\n"
+                 f"classical vs circuit max |Δ| = {dev(cf_mfree, qf_mfree):.1e}", fontsize=10)
+    ax.set_ylabel(r"$|\psi(x)|^2$")
+
+    # (1,1) Massive barrier: visible reflection (mass gap breaks Klein protection)
+    ax = axes[1, 1]
+    for t, col in zip(snaps, colors):
+        ax.plot(x, density(cf_mbar[t]), "-", color=col, lw=2, label=f"classical t={t}")
+        ax.plot(x, density(qf_mbar[t]), "o", color=col, mfc="none", ms=4, mew=1.1)
+    ax.axvspan(*barspan, color="red", alpha=0.12)
+    refl = (np.abs(qf_mbar[tf][:38]) ** 2).sum()
+    ax.set_title(f"Massive (m=0.6): barrier reflects (Klein broken), R≈{refl:.2f}\n"
+                 f"classical vs circuit max |Δ| = {dev(cf_mbar, qf_mbar):.1e}", fontsize=10)
+    ax.set_ylabel(r"$|\psi(x)|^2$")
+
+    for ax in axes.flat:
+        ax.set_xlabel("lattice site  x")
         ax.grid(alpha=0.3)
-        print(f"{title}: max |classical - circuit| = {max_dev:.3e}")
-
-    axes[-1].set_xlabel("lattice site  x")
-    handles, labels = axes[0].get_legend_handles_labels()
-    axes[0].legend(handles, labels, ncol=2, fontsize=8, loc="upper left")
     fig.suptitle("Classical QLB algorithm vs ported quantum circuit  (1D Dirac, GPU)",
                  fontsize=13)
-    fig.tight_layout(rect=[0, 0, 1, 0.98])
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
     out = "qlb_port/validation_overlay.png"
     fig.savefig(out, dpi=150)
-    print(f"\nSaved {out}")
+    print(f"Saved {out}   massless dphi max|Δ|={pdev:.2e}   massive R≈{refl:.2f}")
 
 
 if __name__ == "__main__":

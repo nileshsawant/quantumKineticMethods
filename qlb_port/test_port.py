@@ -240,6 +240,37 @@ def test_barrier_scattering():
     check("probability conserved", abs(np.linalg.norm(out) - 1) < 1e-9)
 
 
+def test_massive_barrier():
+    print("Test N: massive (gapped) packet reflects off a barrier (circuit vs classical, GPU)")
+    axis, n_pos, T, m = "x", 5, 10, 0.5
+    N = 2 ** n_pos
+    V = potential.impurity_field(n_pos, range(N // 2, N // 2 + 3), g_value=0.8)
+    # circuit == classical operator for the massive multiplexed sweep
+    U = bk.circuit_unitary(potential.sweep_circuit_potential(axis, 3,
+                           potential.impurity_field(3, [3, 4], 0.6), m_tilde=m))
+    M = potential.sweep_operator_potential(axis, 3,
+                           potential.impurity_field(3, [3, 4], 0.6), m_tilde=m)
+    check("massive sweepV circuit == classical", np.allclose(U, M),
+          f"fid {bk.gate_fidelity(M, U):.12f}")
+    # scattering: circuit matches classical, and reflection is non-zero (barrier acts)
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    x = np.arange(N)
+    env = np.exp(-((x - N // 4) ** 2) / (2 * 3.0 ** 2)) * np.exp(1j * 0.5 * x)
+    psi0 = (env[:, None] * sp[None, :]).reshape(-1)
+    psi0 /= np.linalg.norm(psi0)
+    Op = potential.sweep_operator_potential(axis, n_pos, V, m_tilde=m)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = Op @ pc
+    out = bk.apply_to_statevector(
+        potential.evolution_circuit_potential(axis, n_pos, T, V, m_tilde=m), psi0)
+    check("massive barrier: circuit matches classical",
+          bk.state_fidelity(out, pc) > 1 - 1e-9, f"fid {bk.state_fidelity(out, pc):.12f}")
+    reflected = (np.abs(out.reshape(N, 4)[:N // 2 - 2]) ** 2).sum()
+    check("massive barrier reflects (non-zero back-flux)", reflected > 0.02,
+          f"reflected fraction {reflected:.3f}")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -257,6 +288,7 @@ if __name__ == "__main__":
     test_free_particle_propagation()
     test_potential_oracle()
     test_barrier_scattering()
+    test_massive_barrier()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

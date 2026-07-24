@@ -92,3 +92,38 @@ def state_fidelity(a, b):
     """|<a|b>| for two (unnormalized) state vectors."""
     a = np.asarray(a).reshape(-1); b = np.asarray(b).reshape(-1)
     return float(abs(np.vdot(a, b)) / (np.linalg.norm(a) * np.linalg.norm(b)))
+
+
+def evolve_snapshots(step_circuit, psi0, snapshots):
+    """
+    Apply a single-step circuit repeatedly, saving the statevector at each snapshot time.
+
+    Efficient for time evolution: the full circuit (initialize + repeated steps with
+    labelled statevector saves) is transpiled once and simulated in a single run, rather
+    than rebuilding and re-transpiling a fresh circuit per snapshot.
+
+    Parameters
+    ----------
+    step_circuit : QuantumCircuit for one time step (n qubits).
+    psi0         : initial statevector (length 2**n).
+    snapshots    : iterable of step indices at which to record the statevector.
+
+    Returns
+    -------
+    dict {t: statevector} for each t in snapshots.
+    """
+    sim = statevector_simulator()
+    n = step_circuit.num_qubits
+    psi0 = np.asarray(psi0, dtype=complex).reshape(-1)
+    snaps = sorted(set(int(t) for t in snapshots))
+
+    qc = QuantumCircuit(n)
+    qc.initialize(psi0 / np.linalg.norm(psi0), list(range(n)))
+    if 0 in snaps:
+        qc.save_statevector(label="t0")
+    for t in range(1, max(snaps) + 1):
+        qc.compose(step_circuit, inplace=True)
+        if t in snaps:
+            qc.save_statevector(label=f"t{t}")
+    data = sim.run(transpile(qc, sim)).result().data()
+    return {t: np.asarray(data[f"t{t}"]) for t in snaps}
