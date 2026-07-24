@@ -73,26 +73,47 @@ def impurity_field(n_pos, positions, g_value):
     return V
 
 
+def multiplexed_collision_circuit(axis, n_pos, V_tilde, m_tilde):
+    """
+    Position-multiplexed collision: apply Q_char(m, V(x)) to the spinor at every site.
+
+    Implemented as a uniform vacuum collision Q_char(m, 0) on the spinor qubits, plus a
+    position-controlled correction C(x) = Q_char(m, V(x)) Q_char(m, 0)^dagger at each
+    site where V(x) != 0.  For the massless case this reduces to a diagonal phase; for a
+    massive particle it is a genuine 2-qubit gate, so a potential barrier reflects.
+    """
+    V_tilde = np.asarray(V_tilde, dtype=float)
+    pos = list(range(2, 2 + n_pos))
+    base = ops.collision_operator_char(axis, m_tilde, 0.0)
+    base_inv = base.conj().T
+    qc = QuantumCircuit(2 + n_pos, name="Qmux")
+    qc.append(UnitaryGate(base, label="Q0"), [0, 1])
+    for x in range(2 ** n_pos):
+        if abs(V_tilde[x]) > 0:
+            Qx = ops.collision_operator_char(axis, m_tilde, float(V_tilde[x]))
+            C = Qx @ base_inv
+            qc.append(UnitaryGate(C).control(n_pos, ctrl_state=x), pos + [0, 1])
+    return qc
+
+
 def sweep_circuit_potential(axis, n_pos, V_tilde, m_tilde=0.0):
     """
-    Massless QLB sub-step with a position-dependent potential:
+    QLB sub-step with a position-dependent potential:
 
-        rotate R^-1  ->  potential phase oracle diag(a_hat(x))  ->  stream  ->  rotate R
+        rotate R^-1  ->  collision(m, V(x))  ->  stream  ->  rotate R
 
-    Only the massless case (m_tilde = 0) is supported here, since then the collision is
-    a diagonal phase on the position register.  (A massive potential requires a
-    position-multiplexed 2-qubit collision; see sweep_operator_potential for the exact
-    classical operator.)
+    For m_tilde = 0 the collision is a diagonal phase oracle on the position register
+    (cheap).  For m_tilde != 0 it is a position-multiplexed 2-qubit gate, so the barrier
+    can reflect the (now gapped) particle.
     """
-    if m_tilde != 0.0:
-        raise NotImplementedError(
-            "massive + potential collision needs a position-multiplexed gate; "
-            "only m_tilde=0 (graphene/Klein) is ported here.")
     R = ops.ROTATIONS[axis]
     R_inv = R.conj().T
     qc = QuantumCircuit(2 + n_pos, name=f"sweepV_{axis}")
     qc.append(UnitaryGate(R_inv, label="Rinv"), [0, 1])
-    qc.append(potential_oracle(V_tilde), list(range(2, 2 + n_pos)))
+    if m_tilde == 0.0:
+        qc.append(potential_oracle(V_tilde), list(range(2, 2 + n_pos)))
+    else:
+        qc.compose(multiplexed_collision_circuit(axis, n_pos, V_tilde, m_tilde), inplace=True)
     qc.compose(st.streaming_circuit(axis, n_pos), inplace=True)
     qc.append(UnitaryGate(R, label="R"), [0, 1])
     return qc
@@ -116,10 +137,10 @@ def sweep_operator_potential(axis, n_pos, V_tilde, m_tilde=0.0):
     return np.kron(IN, R) @ S @ Coll @ np.kron(IN, R_inv)
 
 
-def evolution_circuit_potential(axis, n_pos, n_steps, V_tilde):
-    """Circuit for `n_steps` massless sub-steps through a fixed potential landscape."""
+def evolution_circuit_potential(axis, n_pos, n_steps, V_tilde, m_tilde=0.0):
+    """Circuit for `n_steps` sub-steps through a fixed potential landscape."""
     qc = QuantumCircuit(2 + n_pos, name=f"evolveV_{axis}_{n_steps}")
-    step = sweep_circuit_potential(axis, n_pos, V_tilde)
+    step = sweep_circuit_potential(axis, n_pos, V_tilde, m_tilde=m_tilde)
     for _ in range(n_steps):
         qc.compose(step, inplace=True)
     return qc
