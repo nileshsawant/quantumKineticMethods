@@ -33,6 +33,6 @@ Quick start
     print(r["fidelity"], r["cx"], r["depth"])
 """
 
-from . import operators, backend, port, streaming
+from . import operators, backend, port, streaming, sweep
 
-__all__ = ["operators", "backend", "port", "streaming"]
+__all__ = ["operators", "backend", "port", "streaming", "sweep"]
