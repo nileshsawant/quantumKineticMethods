@@ -25,6 +25,7 @@ from qlb_port import backend as bk
 from qlb_port import port
 from qlb_port import streaming
 from qlb_port import sweep
+from qlb_port import potential
 
 _failures = []
 
@@ -205,6 +206,40 @@ def test_free_particle_propagation():
               f"fid {bk.state_fidelity(out, expect):.12f}")
 
 
+def test_potential_oracle():
+    print("Test L: massless sweep-with-potential circuit == classical operator")
+    rng = np.random.default_rng(1)
+    n_pos = 3
+    for axis in ("x", "y", "z"):
+        V = rng.uniform(0, 0.5, 2 ** n_pos)
+        qc = potential.sweep_circuit_potential(axis, n_pos, V)
+        U = bk.circuit_unitary(qc)
+        M = potential.sweep_operator_potential(axis, n_pos, V)
+        check(f"sweepV {axis}", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+
+
+def test_barrier_scattering():
+    print("Test M: massless packet scattering off a potential barrier (circuit vs classical, GPU)")
+    axis, n_pos, T = "x", 5, 8
+    N = 2 ** n_pos
+    # barrier of a few sites in the middle of the ring
+    V = potential.impurity_field(n_pos, range(N // 2, N // 2 + 3), g_value=0.8)
+    Op = potential.sweep_operator_potential(axis, n_pos, V)
+    # +x packet approaching the barrier
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    x = np.arange(N)
+    env = np.exp(-((x - N // 4) ** 2) / (2 * 3.0 ** 2)) * np.exp(1j * 0.5 * x)
+    psi0 = (env[:, None] * sp[None, :]).reshape(-1)
+    psi0 /= np.linalg.norm(psi0)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = Op @ pc
+    out = bk.apply_to_statevector(potential.evolution_circuit_potential(axis, n_pos, T, V), psi0)
+    check(f"{T}-step barrier scattering matches classical",
+          bk.state_fidelity(out, pc) > 1 - 1e-9, f"fid {bk.state_fidelity(out, pc):.12f}")
+    check("probability conserved", abs(np.linalg.norm(out) - 1) < 1e-9)
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -220,6 +255,8 @@ if __name__ == "__main__":
     test_sweep_assembly()
     test_free_particle_evolution()
     test_free_particle_propagation()
+    test_potential_oracle()
+    test_barrier_scattering()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

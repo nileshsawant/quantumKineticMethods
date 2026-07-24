@@ -26,20 +26,28 @@ import matplotlib.pyplot as plt
 from . import operators as ops
 from . import backend as bk
 from . import sweep
+from . import potential
 
 AXIS = "x"
 N_POS = 6                 # lattice N = 64
 N = 2 ** N_POS
 
 
-def classical_step(psi, m_tilde, g_tilde=0.0):
-    """One classical QLB sub-step on a (N, 4) spinor field (periodic)."""
+def classical_step(psi, m_tilde=0.0, V_tilde=None):
+    """One classical QLB sub-step on a (N, 4) spinor field (periodic).
+
+    V_tilde : None for free particle, or a per-site potential coupling array (massless).
+    """
     R = ops.ROTATIONS[AXIS]
     R_inv = R.conj().T
-    Q_char = ops.collision_operator_char(AXIS, m_tilde, g_tilde)
     signs = ops.streaming_signs(AXIS)
     pr = psi @ R_inv.T                      # rotate into char frame
-    pr = pr @ Q_char.T                      # collide
+    if V_tilde is None:
+        Q_char = ops.collision_operator_char(AXIS, m_tilde, 0.0)
+        pr = pr @ Q_char.T                  # uniform collide
+    else:
+        a_hat = potential.collision_phases(V_tilde)   # massless position-dependent phase
+        pr = pr * a_hat[:, None]
     out = np.empty_like(pr)                 # stream +/-1 per component (periodic)
     for c in range(4):
         out[:, c] = np.roll(pr[:, c], int(signs[c]))
@@ -66,8 +74,8 @@ def statevector_to_density(sv):
     return (np.abs(sv.reshape(N, 4)) ** 2).sum(axis=1)
 
 
-def run(m_tilde, snapshots):
-    psi0 = initial_packet()
+def run(m_tilde, snapshots, x0=16, sigma=4.0, k0=0.5, V_tilde=None):
+    psi0 = initial_packet(x0=x0, sigma=sigma, k0=k0)
     sv0 = field_to_statevector(psi0)
     x = np.arange(N)
 
@@ -77,15 +85,17 @@ def run(m_tilde, snapshots):
     tprev = 0
     for t in snapshots:
         for _ in range(t - tprev):
-            psi = classical_step(psi, m_tilde)
+            psi = classical_step(psi, m_tilde, V_tilde)
         tprev = t
         classical[t] = (np.abs(psi) ** 2).sum(axis=1)
     # quantum circuit, one run per snapshot
     for t in snapshots:
         if t == 0:
             sv = sv0
-        else:
+        elif V_tilde is None:
             sv = bk.apply_to_statevector(sweep.evolution_circuit(AXIS, N_POS, t, m_tilde=m_tilde), sv0)
+        else:
+            sv = bk.apply_to_statevector(potential.evolution_circuit_potential(AXIS, N_POS, t, V_tilde), sv0)
         quantum[t] = statevector_to_density(sv)
     # quantitative agreement
     max_dev = max(np.max(np.abs(classical[t] - quantum[t])) for t in snapshots)
@@ -95,31 +105,41 @@ def run(m_tilde, snapshots):
 def main():
     print("Device:", bk.device_report())
     snapshots = [0, 12, 24, 36]
-    cases = [("Massless free particle (m=0)", 0.0),
-             ("Massive free particle (m=0.35): Zitterbewegung", 0.35)]
 
-    fig, axes = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    fig, axes = plt.subplots(3, 1, figsize=(10, 11))
     colors = plt.cm.viridis(np.linspace(0, 0.85, len(snapshots)))
 
-    for ax, (title, m) in zip(axes, cases):
-        x, classical, quantum, max_dev = run(m, snapshots)
+    # barrier field for the Klein-tunneling panel: a few high-V sites near x=40
+    V_bar = potential.impurity_field(N_POS, range(40, 44), g_value=0.9)
+
+    panels = [
+        ("Massless free particle (m=0)", dict(m_tilde=0.0)),
+        ("Massive free particle (m=0.35): Zitterbewegung", dict(m_tilde=0.35)),
+        ("Massless packet scattering off a potential barrier (Klein tunneling)",
+         dict(m_tilde=0.0, x0=20, sigma=4.0, k0=0.6, V_tilde=V_bar)),
+    ]
+
+    for ax, (title, kw) in zip(axes, panels):
+        x, classical, quantum, max_dev = run(snapshots=snapshots, **kw)
         for t, col in zip(snapshots, colors):
-            ax.plot(x, classical[t], "-", color=col, lw=2,
-                    label=f"classical  t={t}")
+            ax.plot(x, classical[t], "-", color=col, lw=2, label=f"classical  t={t}")
             ax.plot(x, quantum[t], "o", color=col, mfc="none", ms=5, mew=1.3,
                     label=f"circuit    t={t}")
+        if "V_tilde" in kw:   # shade the barrier region
+            bar = np.where(kw["V_tilde"] > 0)[0]
+            ax.axvspan(bar.min() - 0.5, bar.max() + 0.5, color="red", alpha=0.12,
+                       label="barrier")
         ax.set_title(f"{title}    (max |Δ| = {max_dev:.2e})", fontsize=11)
         ax.set_ylabel(r"$|\psi(x)|^2$")
         ax.grid(alpha=0.3)
         print(f"{title}: max |classical - circuit| = {max_dev:.3e}")
 
     axes[-1].set_xlabel("lattice site  x")
-    # compact legend (classical vs circuit only, using the first two handles per axis)
     handles, labels = axes[0].get_legend_handles_labels()
     axes[0].legend(handles, labels, ncol=2, fontsize=8, loc="upper left")
     fig.suptitle("Classical QLB algorithm vs ported quantum circuit  (1D Dirac, GPU)",
                  fontsize=13)
-    fig.tight_layout(rect=[0, 0, 1, 0.97])
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
     out = "qlb_port/validation_overlay.png"
     fig.savefig(out, dpi=150)
     print(f"\nSaved {out}")
