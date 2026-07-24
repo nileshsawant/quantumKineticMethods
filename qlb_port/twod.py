@@ -56,10 +56,26 @@ def evolution2d_circuit(nx, ny, n_steps, m_tilde=0.0, g_tilde=0.0):
 # -----------------------------------------------------------------------------
 # Classical reference (array-based, mirrors the circuit exactly)
 # -----------------------------------------------------------------------------
-def _line_step(field, axis, m_tilde, g_tilde):
-    """One 1D QLB sub-step on a (N,4) line: rotate -> collide -> stream(periodic) -> rotate.
+def _reflect_shift(pr, signs):
+    """Reflecting (bounce-back) shift on a (N,4) line: movers reaching a wall reverse
+    direction (spinor direction bit flips, c -> c^2) and stay at the wall node."""
+    out = np.zeros_like(pr)
+    for c in range(4):
+        s = int(signs[c])
+        if s > 0:
+            out[1:, c] += pr[:-1, c]        # x -> x+1 for x < N-1
+            out[-1, c ^ 2] += pr[-1, c]     # reflect at the far wall
+        else:
+            out[:-1, c] += pr[1:, c]        # x -> x-1 for x > 0
+            out[0, c ^ 2] += pr[0, c]       # reflect at the near wall
+    return out
+
+
+def _line_step(field, axis, m_tilde, g_tilde, boundary="periodic"):
+    """One 1D QLB sub-step on a (N,4) line: rotate -> collide -> stream -> rotate.
 
     g_tilde may be a scalar (uniform) or a per-site array of length N.
+    boundary : 'periodic' (modular wrap) or 'reflecting' (bounce-back walls).
     """
     R = ops.ROTATIONS[axis]
     R_inv = R.conj().T
@@ -72,9 +88,12 @@ def _line_step(field, axis, m_tilde, g_tilde):
     else:                                      # massive: per-site 2-qubit collision
         for i in range(pr.shape[0]):
             pr[i] = ops.collision_operator_char(axis, m_tilde, float(g_tilde[i])) @ pr[i]
-    out = np.empty_like(pr)
-    for c in range(4):
-        out[:, c] = np.roll(pr[:, c], int(signs[c]))
+    if boundary == "reflecting":
+        out = _reflect_shift(pr, signs)
+    else:                                      # periodic
+        out = np.empty_like(pr)
+        for c in range(4):
+            out[:, c] = np.roll(pr[:, c], int(signs[c]))
     return out @ R.T
 
 

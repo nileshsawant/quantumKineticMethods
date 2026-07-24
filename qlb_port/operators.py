@@ -131,6 +131,30 @@ def streaming_reference(axis, n_pos):
     return P
 
 
+def reflecting_streaming_reference(axis, n_pos):
+    """
+    Classical reflecting (bounce-back) streaming permutation for `axis`.
+
+    Movers reaching a wall reverse direction: the spinor direction bit flips
+    (c -> c^2, spin preserved) and the amplitude stays at the wall node.  Same
+    i = x*4 + c layout as :func:`streaming_reference`.
+    """
+    signs = streaming_signs(axis)
+    N = 2 ** n_pos
+    dim = 4 * N
+    P = np.zeros((dim, dim), dtype=np.complex128)
+    for x in range(N):
+        for c in range(4):
+            s = int(signs[c])
+            i = x * 4 + c
+            if s > 0:
+                j = (x + 1) * 4 + c if x < N - 1 else x * 4 + (c ^ 2)
+            else:
+                j = (x - 1) * 4 + c if x > 0 else x * 4 + (c ^ 2)
+            P[j, i] = 1.0
+    return P
+
+
 # Convenient aliases used by the porting harness / tests
 X_ROT = X_ROTATION
 Z_ROT = Z_ROTATION

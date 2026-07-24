@@ -48,7 +48,7 @@ def sweep_operator(axis, n_pos, m_tilde=0.0, g_tilde=0.0):
     return _embed_spinor(R, n_pos) @ S @ _embed_spinor(Q_char, n_pos) @ _embed_spinor(R_inv, n_pos)
 
 
-def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0):
+def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic"):
     """
     Gate-level circuit for one QLB sub-step along `axis`.
 
@@ -58,6 +58,7 @@ def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0):
     n_pos   : number of position qubits (lattice N = 2**n_pos)
     m_tilde : (per-sweep) dimensionless mass coupling (0 => massless)
     g_tilde : (per-sweep) dimensionless potential coupling (0 => free particle)
+    boundary: 'periodic' (modular wrap) or 'reflecting' (bounce-back hard walls)
 
     Returns
     -------
@@ -66,11 +67,13 @@ def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0):
     R = ops.ROTATIONS[axis]
     R_inv = R.conj().T
     Q_char = ops.collision_operator_char(axis, m_tilde, g_tilde)
+    stream = (st.reflecting_streaming_circuit(axis, n_pos) if boundary == "reflecting"
+              else st.streaming_circuit(axis, n_pos))
 
     qc = QuantumCircuit(2 + n_pos, name=f"sweep_{axis}")
     qc.append(UnitaryGate(R_inv, label="Rinv"), [0, 1])       # rotate into char frame
     qc.append(UnitaryGate(Q_char, label="Qchar"), [0, 1])     # collide
-    qc.compose(st.streaming_circuit(axis, n_pos), inplace=True)  # stream +/-1
+    qc.compose(stream, inplace=True)                          # stream (+/-1)
     qc.append(UnitaryGate(R, label="R"), [0, 1])              # rotate back
     return qc
 

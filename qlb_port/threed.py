@@ -43,49 +43,56 @@ def _registers(nx, ny, nz):
     return q
 
 
-def sweep3d_circuit(nx, ny, nz, m_tilde=0.0, g_tilde=0.0):
-    """One 3D QLB step (x-, y-, z-sweeps) for uniform mass/potential."""
+def sweep3d_circuit(nx, ny, nz, m_tilde=0.0, g_tilde=0.0, bc=("periodic", "periodic", "periodic")):
+    """One 3D QLB step (x-, y-, z-sweeps) for uniform mass/potential.
+
+    bc : per-axis boundary conditions, each 'periodic' or 'reflecting' (hard walls).
+    """
     qc = QuantumCircuit(2 + nx + ny + nz, name="sweep3d")
     regs = _registers(nx, ny, nz)
-    for axis, n in zip(AXES, (nx, ny, nz)):
-        qc.compose(sweep.sweep_circuit(axis, n, m_tilde=m_tilde, g_tilde=g_tilde),
+    for axis, n, b in zip(AXES, (nx, ny, nz), bc):
+        qc.compose(sweep.sweep_circuit(axis, n, m_tilde=m_tilde, g_tilde=g_tilde, boundary=b),
                    qubits=regs[axis], inplace=True)
     return qc
 
 
-def evolution3d_circuit(nx, ny, nz, n_steps, m_tilde=0.0, g_tilde=0.0):
+def evolution3d_circuit(nx, ny, nz, n_steps, m_tilde=0.0, g_tilde=0.0,
+                        bc=("periodic", "periodic", "periodic")):
     """`n_steps` repeated 3D steps."""
     qc = QuantumCircuit(2 + nx + ny + nz, name=f"evolve3d_{n_steps}")
-    step = sweep3d_circuit(nx, ny, nz, m_tilde=m_tilde, g_tilde=g_tilde)
+    step = sweep3d_circuit(nx, ny, nz, m_tilde=m_tilde, g_tilde=g_tilde, bc=bc)
     for _ in range(n_steps):
         qc.compose(step, inplace=True)
     return qc
 
 
-def classical_step_3d(psi_flat, nx, ny, nz, m_tilde=0.0, g_tilde=0.0):
+def classical_step_3d(psi_flat, nx, ny, nz, m_tilde=0.0, g_tilde=0.0,
+                      bc=("periodic", "periodic", "periodic")):
     """One classical 3D QLB step on a flat statevector (i = ((z*Ny+y)*Nx+x)*4+c)."""
     Nx, Ny, Nz = 2 ** nx, 2 ** ny, 2 ** nz
+    bx, by, bz = bc
     psi = np.asarray(psi_flat, dtype=complex).reshape(Nz, Ny, Nx, 4).copy()
     for z in range(Nz):                              # x-sweep
         for y in range(Ny):
-            psi[z, y] = _line_step(psi[z, y], "x", m_tilde, g_tilde)
+            psi[z, y] = _line_step(psi[z, y], "x", m_tilde, g_tilde, boundary=bx)
     for z in range(Nz):                              # y-sweep
         for x in range(Nx):
-            psi[z, :, x, :] = _line_step(psi[z, :, x, :], "y", m_tilde, g_tilde)
+            psi[z, :, x, :] = _line_step(psi[z, :, x, :], "y", m_tilde, g_tilde, boundary=by)
     for y in range(Ny):                              # z-sweep
         for x in range(Nx):
-            psi[:, y, x, :] = _line_step(psi[:, y, x, :], "z", m_tilde, g_tilde)
+            psi[:, y, x, :] = _line_step(psi[:, y, x, :], "z", m_tilde, g_tilde, boundary=bz)
     return psi.reshape(-1)
 
 
-def sweep3d_operator(nx, ny, nz, m_tilde=0.0, g_tilde=0.0):
+def sweep3d_operator(nx, ny, nz, m_tilde=0.0, g_tilde=0.0,
+                     bc=("periodic", "periodic", "periodic")):
     """Exact 3D step operator (built column-by-column; use only for small sizes)."""
     dim = 4 * (2 ** nx) * (2 ** ny) * (2 ** nz)
     M = np.zeros((dim, dim), dtype=complex)
     for j in range(dim):
         e = np.zeros(dim, dtype=complex)
         e[j] = 1.0
-        M[:, j] = classical_step_3d(e, nx, ny, nz, m_tilde, g_tilde)
+        M[:, j] = classical_step_3d(e, nx, ny, nz, m_tilde, g_tilde, bc=bc)
     return M
 
 

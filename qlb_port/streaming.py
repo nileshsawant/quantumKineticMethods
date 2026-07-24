@@ -70,3 +70,49 @@ def streaming_circuit(axis, n_pos):
     qc.append(g_hi.control(1, ctrl_state="1"), [1] + pos)
     qc.append(g_lo.control(1, ctrl_state="0"), [1] + pos)
     return qc
+
+
+def reflecting_streaming_circuit(axis, n_pos):
+    """
+    Reflecting (bounce-back) streaming: hard walls at both ends of the axis.
+
+    A reflecting wall is a *periodic shift on the folded 2N-site ring*
+    R0 -> R1 -> ... -> R_{N-1} -> L_{N-1} -> ... -> L0 -> R0, which is a single
+    2N-cycle and therefore unitary.  We realise it by unfolding the (direction,
+    position) pair into an (n_pos+1)-bit coordinate p (p = x for +movers, p = 2N-1-x
+    for -movers) and applying a plain +1 (mod 2^{n_pos+1}) increment: every mover
+    advances by one, and a mover that reaches a wall crosses the fold and comes back
+    with reversed direction (its spinor direction bit q1 flips, spin q0 preserved).
+
+    Qubit layout: spinor = qubits 0,1 (q1 = direction); position = qubits 2..(1+n_pos).
+    """
+    signs = ops.streaming_signs(axis)
+    plus_is_q1_one = signs[2] > 0            # is q1=1 the +mover for this axis?
+    n = 2 + n_pos
+    q1 = 1
+    pos = list(range(2, n))
+    qc = QuantumCircuit(n, name=f"reflstream_{axis}")
+
+    if not plus_is_q1_one:                   # y-axis: make q1=1 the +mover
+        qc.x(q1)
+    # unfold: complement the position register for the -mover (q1=0), then set the
+    # fold flag as the MSB (flag = NOT q1)
+    qc.x(q1)
+    for q in pos:
+        qc.cx(q1, q)
+    qc.x(q1)
+    qc.x(q1)
+    # +1 (mod 2^{n_pos+1}) on the register [pos (LSB..), q1 (MSB)]
+    reg = pos + [q1]
+    for i in range(len(reg) - 1, 0, -1):
+        qc.mcx(reg[:i], reg[i])
+    qc.x(reg[0])
+    # fold back
+    qc.x(q1)
+    qc.x(q1)
+    for q in pos:
+        qc.cx(q1, q)
+    qc.x(q1)
+    if not plus_is_q1_one:
+        qc.x(q1)
+    return qc

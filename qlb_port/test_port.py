@@ -411,6 +411,45 @@ def test_3d_potential():
     check("3D probability conserved", abs(np.linalg.norm(out) - 1) < 1e-9)
 
 
+def test_reflecting_boundary():
+    print("Test S: reflecting (bounce-back) walls are unitary; 3D per-axis boundary conditions")
+    # reflecting streaming circuit == classical reflecting permutation
+    for axis in ("x", "y", "z"):
+        U = bk.circuit_unitary(streaming.reflecting_streaming_circuit(axis, 3))
+        P = ops.reflecting_streaming_reference(axis, 3)
+        check(f"reflecting {axis}-stream == permutation", np.allclose(U, P),
+              f"fid {bk.gate_fidelity(P, U):.12f}")
+    # 3D sweep with x reflecting, y & z periodic == classical operator (nx=ny=nz=2)
+    bc = ("reflecting", "periodic", "periodic")
+    U = bk.circuit_unitary(threed.sweep3d_circuit(2, 2, 2, 0.3, 0.0, bc=bc))
+    M = threed.sweep3d_operator(2, 2, 2, 0.3, 0.0, bc=bc)
+    check("3D reflecting-wall sweep == classical", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # physics: 1D-in-3D box (x reflecting; y,z thin & periodic), packet bounces off the wall
+    nx, ny, nz, Nx, T = 4, 1, 1, 16, 22
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    xg = np.arange(Nx)
+    env = np.exp(-((xg - 4.0) ** 2) / (2 * 1.5 ** 2)) * np.exp(1j * 0.7 * xg)
+    psi = np.zeros((2, 2, Nx, 4), dtype=complex)          # uniform in y,z (Ny=Nz=2)
+    for c in range(4):
+        psi[:, :, :, c] = env[None, None, :] * sp[c]
+    psi0 = psi.reshape(-1); psi0 /= np.linalg.norm(psi0)
+
+    def comx(flat):
+        d = (np.abs(flat.reshape(2, 2, Nx, 4)) ** 2).sum((0, 1, 3))
+        return float((d * xg).sum() / d.sum())
+    coms = [comx(psi0)]
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = threed.classical_step_3d(pc, nx, ny, nz, 0.0, bc=bc)
+        coms.append(comx(pc))
+    out = bk.apply_to_statevector(threed.evolution3d_circuit(nx, ny, nz, T, bc=bc), psi0)
+    check("reflecting box: circuit == classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+    check("reflecting box: probability conserved (unitary)", abs(np.linalg.norm(out) - 1) < 1e-9)
+    check("packet bounces off the wall (COM reverses)", max(coms) - coms[-1] > 1.0,
+          f"COMx {coms[0]:.1f} -> max {max(coms):.1f} -> final {coms[-1]:.1f}")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -433,6 +472,7 @@ if __name__ == "__main__":
     test_2d_potential()
     test_3d_free()
     test_3d_potential()
+    test_reflecting_boundary()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
