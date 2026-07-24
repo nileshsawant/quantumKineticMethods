@@ -16,6 +16,11 @@ Layout
                  builders for the QLB rotation and collision operators.
   streaming.py : the QLB +/-1 lattice shift as a controlled increment/decrement on a
                  position register.
+  sweep.py     : assemble rotation + collision + streaming into a full 1D sub-step.
+  potential.py : position-dependent potential (impurity scattering) as a phase oracle
+                 (massless) or a position-multiplexed collision (massive).
+  twod.py      : compose x- and y-sweeps on two position registers (2D graphene,
+                 including oblique-incidence Klein tunneling through a barrier).
   test_port.py : validation — every ported operator must match its target to ~1e-9.
 
 Environment
@@ -33,6 +38,6 @@ Quick start
     print(r["fidelity"], r["cx"], r["depth"])
 """
 
-from . import operators, backend, port, streaming, sweep, potential
+from . import operators, backend, port, streaming, sweep, potential, twod
 
-__all__ = ["operators", "backend", "port", "streaming", "sweep", "potential"]
+__all__ = ["operators", "backend", "port", "streaming", "sweep", "potential", "twod"]

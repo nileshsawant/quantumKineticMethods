@@ -26,6 +26,7 @@ from qlb_port import port
 from qlb_port import streaming
 from qlb_port import sweep
 from qlb_port import potential
+from qlb_port import twod
 
 _failures = []
 
@@ -271,6 +272,62 @@ def test_massive_barrier():
           f"reflected fraction {reflected:.3f}")
 
 
+def test_2d_free():
+    print("Test O: 2D free sweep circuit == classical operator; multi-step packet (GPU)")
+    for m, g in [(0.0, 0.0), (0.3, 0.0), (0.0, 0.2), (0.4, 0.1)]:
+        U = bk.circuit_unitary(twod.sweep2d_circuit(2, 2, m, g))
+        M = twod.sweep2d_operator(2, 2, m, g)
+        check(f"2D sweep m={m} g={g}", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # multi-step 2D free packet vs classical
+    nx = ny = 4; Nx, Ny = 2 ** nx, 2 ** ny; T = 5
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    X, Yg = np.meshgrid(np.arange(Nx), np.arange(Ny), indexing="xy")
+    env = np.exp(-(((X - 4) ** 2 + (Yg - 8) ** 2) / (2 * 2.0 ** 2))) * np.exp(1j * 0.6 * X)
+    psi0 = np.zeros((Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        psi0[:, :, c] = env * sp[c]
+    psi0 = psi0.reshape(-1); psi0 /= np.linalg.norm(psi0)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = twod.classical_step_2d(pc, nx, ny, 0.0)
+    out = bk.apply_to_statevector(twod.evolution2d_circuit(nx, ny, T), psi0)
+    check(f"2D {T}-step free packet vs classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+
+
+def test_2d_potential():
+    print("Test P: 2D potential circuit == classical; oblique Klein tunneling scatters (GPU)")
+    # exact operator check with a 2D barrier (nx=ny=2)
+    nx = ny = 2; Nx, Ny = 2 ** nx, 2 ** ny
+    V = twod.barrier_field_2d(nx, ny, [2], 0.9)
+    dim = 4 * Nx * Ny
+    M = np.zeros((dim, dim), dtype=complex)
+    for j in range(dim):
+        e = np.zeros(dim, dtype=complex); e[j] = 1.0
+        M[:, j] = twod.classical_step_2d_potential(e, nx, ny, V)
+    U = bk.circuit_unitary(twod.sweep2d_circuit_potential(nx, ny, V))
+    check("2D potential sweep == classical", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # oblique incidence: massless packet reflects off a vertical barrier
+    nx = ny = 5; Nx, Ny = 2 ** nx, 2 ** ny; T = 26; xb = 18
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    X, Yg = np.meshgrid(np.arange(Nx), np.arange(Ny), indexing="xy")
+    env = np.exp(-(((X - 6) ** 2 + (Yg - 16) ** 2) / (2 * 3.0 ** 2))) * np.exp(1j * (0.6 * X + 0.5 * Yg))
+    psi0 = np.zeros((Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        psi0[:, :, c] = env * sp[c]
+    psi0 = psi0.reshape(-1); psi0 /= np.linalg.norm(psi0)
+    Vb = twod.barrier_field_2d(nx, ny, range(xb, xb + 3), 0.9)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = twod.classical_step_2d_potential(pc, nx, ny, Vb)
+    out = bk.apply_to_statevector(twod.evolution2d_circuit_potential(nx, ny, T, Vb), psi0)
+    check("2D oblique Klein circuit vs classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+    d = (np.abs(out.reshape(Ny, Nx, 4)) ** 2).sum(2)
+    check("oblique incidence reflects (non-zero back-flux)", d[:, :xb].sum() > 0.05,
+          f"reflected {d[:, :xb].sum():.3f}")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -289,6 +346,8 @@ if __name__ == "__main__":
     test_potential_oracle()
     test_barrier_scattering()
     test_massive_barrier()
+    test_2d_free()
+    test_2d_potential()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
