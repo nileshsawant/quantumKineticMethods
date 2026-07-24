@@ -24,6 +24,7 @@ from qlb_port import operators as ops
 from qlb_port import backend as bk
 from qlb_port import port
 from qlb_port import streaming
+from qlb_port import sweep
 
 _failures = []
 
@@ -151,6 +152,59 @@ def test_streaming_statevector():
     check("-x component moves -1 site", bk.state_fidelity(out, expect) > 1 - 1e-9)
 
 
+def test_sweep_assembly():
+    print("Test I: full single-axis sweep circuit == classical sub-step operator")
+    for axis in ("x", "y", "z"):
+        for m in (0.0, 0.3):
+            qc = sweep.sweep_circuit(axis, 3, m_tilde=m)
+            U = bk.circuit_unitary(qc)
+            M = sweep.sweep_operator(axis, 3, m_tilde=m)
+            check(f"sweep {axis} m={m}", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+
+
+def test_free_particle_evolution():
+    print("Test J: multi-step free-particle circuit matches classical solver operator (GPU)")
+    axis, n_pos, T = "x", 4, 6
+    N = 2 ** n_pos
+    Op = sweep.sweep_operator(axis, n_pos, m_tilde=0.0)
+    # physical +x mover spinor, Gaussian packet on the ring
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    x = np.arange(N)
+    env = np.exp(-((x - N // 2) ** 2) / (2 * 2.0 ** 2)) * np.exp(1j * 0.6 * x)
+    psi0 = np.zeros(4 * N, dtype=complex)
+    for xi in range(N):
+        for c in range(4):
+            psi0[xi * 4 + c] = env[xi] * sp[c]
+    psi0 /= np.linalg.norm(psi0)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = Op @ pc
+    out = bk.apply_to_statevector(sweep.evolution_circuit(axis, n_pos, T), psi0)
+    check(f"{T}-step circuit vs classical", bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+
+
+def test_free_particle_propagation():
+    print("Test K: one sweep moves a localized +x / -x packet by +1 / -1 site")
+    axis, n_pos = "x", 4
+    N = 2 ** n_pos
+    x0 = 6
+    step = sweep.sweep_circuit(axis, n_pos, m_tilde=0.0)
+    for label, char, direction in (("+x", np.array([0, 0, 1, 1]), +1),
+                                   ("-x", np.array([1, 1, 0, 0]), -1)):
+        sp = ops.X_ROTATION @ (char.astype(complex) / np.sqrt(2))
+        psi = np.zeros(4 * N, dtype=complex)
+        for c in range(4):
+            psi[x0 * 4 + c] = sp[c]
+        out = bk.apply_to_statevector(step, psi)
+        expect = np.zeros(4 * N, dtype=complex)
+        for c in range(4):
+            expect[((x0 + direction) % N) * 4 + c] = sp[c]
+        check(f"{label} packet moves {direction:+d} site",
+              bk.state_fidelity(out, expect) > 1 - 1e-9,
+              f"fid {bk.state_fidelity(out, expect):.12f}")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB -> circuit porting validation   (device: %s)" % bk.device_report())
@@ -163,6 +217,9 @@ if __name__ == "__main__":
     test_increment()
     test_streaming()
     test_streaming_statevector()
+    test_sweep_assembly()
+    test_free_particle_evolution()
+    test_free_particle_propagation()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
