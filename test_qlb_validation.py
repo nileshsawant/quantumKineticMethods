@@ -186,6 +186,43 @@ def test_production_step_norm():
     check("physical +x propagation ~ +30 cells", abs((com1-com0) - 30) < 0.5, f"COM {com0:.1f}->{com1:.1f}")
 
 
+def test_uniform_potential():
+    print("Test 6: massless plane wave in a uniform potential -> phase e^{+i q V0 t/hbar}")
+    N = 128
+    x = np.arange(N)
+    sp = np.array([1, 0.4j, -0.3, 0.8]); sp = sp / np.linalg.norm(sp)
+    psi0 = np.outer(np.exp(1j * 0.2 * x), sp)          # massless state on a periodic line
+
+    # A uniform scalar potential enters every sweep through the dimensionless coupling
+    #   g = q V0 dt / hbar ,   q = |e| = Q_ELECTRON > 0 .
+    # Take V0 > 0 (so g > 0) and small enough that g << 1.
+    g = 0.05
+    T = 40
+    pv, pf = psi0.copy(), psi0.copy()
+    for _ in range(T):
+        pv = qlb_sweep_periodic(pv, 'x', 0.0, g)        # massless + uniform potential
+        pf = qlb_sweep_periodic(pf, 'x', 0.0, 0.0)       # free (identical streaming)
+
+    # (a) A uniform potential is -q V0 I in the Hamiltonian, so it must act as a pure
+    #     GLOBAL PHASE.  For the massless collision Q = a_hat I, this means exactly
+    #     psi_V = a_hat^T psi_free, to machine precision.
+    Om = -g ** 2
+    a_hat = (1 - Om / 4) / (1 + Om / 4 - 1j * g)        # massless collision coefficient
+    lam = a_hat ** T
+    err = np.linalg.norm(pv - lam * pf) / np.linalg.norm(pf)
+    check("uniform potential acts as the exact global phase a_hat^T", err < 1e-12, f"rel err {err:.1e}")
+    check("that phase has unit modulus (unitary)", abs(abs(lam) - 1) < 1e-13, f"|lam|={abs(lam):.12f}")
+
+    # (b) The sign must be +q V0/hbar: an electron (charge -|e|) in scalar potential V0 has
+    #     potential energy -|e|V0, so psi picks up e^{-i(-|e|V0)t/hbar} = e^{+i|e|V0 t/hbar}.
+    #     The per-sweep phase arg(a_hat) is thus > 0 for V0 > 0, and equals g to 2nd order.
+    phi = np.angle(a_hat)                              # scheme phase per sweep
+    check("potential phase is POSITIVE for V0>0 (electron under -|e|V)", phi > 0,
+          f"arg(a_hat)={phi:+.4f} vs g={g:+.4f}")
+    check("per-step phase matches continuum q V0 dt/hbar to 2nd order",
+          abs(phi - g) < g ** 3, f"|dphi|={abs(phi - g):.1e} < g^3={g ** 3:.1e}")
+
+
 if __name__ == "__main__":
     print("=" * 70)
     print("QLB Dirac solver — physics validation against exact references")
@@ -195,6 +232,7 @@ if __name__ == "__main__":
     test_dispersion()
     test_2d_convergence()
     test_production_step_norm()
+    test_uniform_potential()
     print("=" * 70)
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
