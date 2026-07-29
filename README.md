@@ -2,6 +2,8 @@
 
 **Exact quantum circuits for the quantum lattice Boltzmann (QLB) method for the Dirac equation.**
 
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://nileshsawant.github.io/quantumKineticMethods/)
+
 This repository ports the three-dimensional Succi–Dellar Dirac QLB scheme, operation by
 operation, to **exact quantum circuits** on qubits, and verifies on a state-vector emulator
 that the circuits reproduce the classical QLB solver to machine precision. It is the companion
