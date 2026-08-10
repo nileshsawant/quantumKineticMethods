@@ -124,8 +124,9 @@ $n$ qubits implements.
 
 ## Reference
 
-This code accompanies the paper *Exact quantum circuits for the quantum lattice Boltzmann
-method for the Dirac equation* (N. Sawant). Please cite it if you use this repository.
+This code accompanies the paper below. Please cite it if you use this repository.
+
+Sawant, N. et al. (2026) “Exact quantum circuits for lattice Boltzmann realization of the Dirac equation.” arXiv. Available at: https://doi.org/10.48550/ARXIV.2608.06570.
 
 ## License
 
