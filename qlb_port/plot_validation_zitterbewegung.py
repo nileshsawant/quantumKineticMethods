@@ -64,10 +64,24 @@ def bloch_symbol(k, m):
 
 
 def energy_eigenmodes(k0, m):
-    """Return (u_plus, u_minus, E): the +E and -E spinor eigenmodes at k0 and E=E(k0)."""
+    """Return (u_plus, u_minus, E): the +E and -E eigenmodes of U(k0) that are partners in the
+    same collision block. Each of the eigenvalues e^{-+iE} is doubly degenerate (one pair per
+    (0,3)/(1,2) block), so np.linalg.eig returns an arbitrary combination within each eigenspace;
+    we pick the +E/-E pair with the largest velocity coupling |<+|alpha_x|->|, which is the
+    same-block pair whose equal superposition is the Zitterbewegung state (the other pairing has
+    zero coupling and does not tremble)."""
     w, V = np.linalg.eig(bloch_symbol(k0, m))
     ph = np.angle(w)
-    return V[:, int(np.argmax(ph))], V[:, int(np.argmin(ph))], 0.5 * (ph.max() - ph.min())
+    order = np.argsort(ph)
+    E = 0.5 * (ph[order[-1]] - ph[order[0]])
+    lo, hi = order[:2], order[2:]
+    best = (-1.0, int(lo[0]), int(hi[0]))
+    for i in lo:
+        for j in hi:
+            c = abs(np.vdot(V[:, i], ALPHA_X @ V[:, j]))
+            if c > best[0]:
+                best = (c, int(i), int(j))
+    return V[:, best[1]], V[:, best[2]], E
 
 
 def initial_state(m, mix=(1.0, 1.0)):
@@ -138,6 +152,17 @@ def zb_frequency(v, E):
     return f[band][int(np.argmax(sp[band]))]
 
 
+def zb_velocity_amplitude(v, E):
+    """A_v: amplitude of the <alpha_x>(t) trembling at frequency 2E, from a least-squares fit of
+    [1, t, cos 2Et, sin 2Et] over the first trembling period (before the +-E branches separate).
+    The position swing is R_ZB = A_v / omega_ZB."""
+    w = min(max(int(round(np.pi / E)), 3), len(v) - 1)
+    t = np.arange(w + 1)
+    M = np.c_[np.ones(w + 1), t, np.cos(2 * E * t), np.sin(2 * E * t)]
+    c, *_ = np.linalg.lstsq(M, np.asarray(v[:w + 1]), rcond=None)
+    return float(np.hypot(c[2], c[3]))
+
+
 def main():
     print("Device:", bk.device_report())
     print(f"1+1D Dirac Zitterbewegung; lattice N={N} ({2 + N_POS} qubits), k0={K0}, "
@@ -145,22 +170,26 @@ def main():
 
     masses = [0.0, 0.1, 0.2, 0.35, 0.6, 1.0, 2.0]
     T = 90
-    print(" m~    E_lat  omegaZB_circ  omegaZB_clas   2E    2sqrt(sin^2k+m^2)  max|drho|  fidelity")
+    print(" m~    E_lat  omegaZB_circ  omegaZB_clas   2E    2sqrt(sin^2k+m^2)  "
+          "Rzb_meas  Rzb_exact  max|drho|  fidelity")
     rows = []
     for m in masses:
         xc, vc, E, cstates = run_classical(m, T)
         xq, vq, E2, qstates = run_circuit(m, T)
         wq = zb_frequency(vq, E) if m > 0 else 0.0
         wc = zb_frequency(vc, E) if m > 0 else 0.0
+        bhat = abs(ops.collision_coefficients(m, 0.0)[1])
+        rzb_meas = zb_velocity_amplitude(vq, E) / (2 * E) if m > 0 else 0.0
+        rzb_exact = bhat / (2 * E * np.sin(E)) if m > 0 else 0.0
         maxdev = max(
             float(np.max(np.abs((np.abs(cstates[t].reshape(N, 4)) ** 2).sum(1)
                                 - (np.abs(qstates[t].reshape(N, 4)) ** 2).sum(1))))
             for t in range(T + 1))
         fid = bk.state_fidelity(cstates[T], qstates[T])
         wth = 2 * np.sqrt(np.sin(K0) ** 2 + m ** 2)
-        print(f"{m:5.2f} {E:6.3f}   {wq:8.3f}    {wc:8.3f}   {2*E:6.3f}   {wth:6.3f}       "
-              f"{maxdev:.1e}   {fid:.6f}", flush=True)
-        rows.append((m, E, wq))
+        print(f"{m:5.2f} {E:6.3f}   {wq:8.3f}    {wc:8.3f}   {2*E:6.3f}   {wth:6.3f}     "
+              f"{rzb_meas:7.4f}   {rzb_exact:7.4f}   {maxdev:.1e}   {fid:.6f}", flush=True)
+        rows.append((m, E, wq, rzb_meas))
 
     # ---- figure: classical lines + circuit markers ------------------------------
     fig, (axA, axB) = plt.subplots(1, 2, figsize=(12, 4.6))
@@ -178,6 +207,7 @@ def main():
     axA.legend(fontsize=8); axA.grid(alpha=0.3)
 
     mm = np.array([r[0] for r in rows[1:]]); wq = np.array([r[2] for r in rows[1:]])
+    rzbm = np.array([r[3] for r in rows[1:]])
     mg = np.linspace(0.05, 2.0, 60)
     Eg = np.array([energy_eigenmodes(K0, mmg)[2] for mmg in mg])   # exact lattice dispersion
     bg = np.array([abs(ops.collision_coefficients(mmg, 0.0)[1]) for mmg in mg])  # bhat(m~)
@@ -189,6 +219,7 @@ def main():
     ax2 = axB.twinx()
     ax2.plot(mg, bg / (2 * Eg * np.sin(Eg)), "r--",
              label=r"$R_{ZB}=\hat b/(2E\sin E)$ (exact)")
+    ax2.plot(mm, rzbm, "rs", ms=7, mfc="none", label=r"$R_{ZB}$ (measured)")
     ax2.set_ylabel(r"$R_{ZB}$  (sites)", color="r"); ax2.tick_params(axis="y", labelcolor="r")
     h1, l1 = axB.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
     axB.legend(h1 + h2, l1 + l2, fontsize=8, loc="upper left"); axB.grid(alpha=0.3)
