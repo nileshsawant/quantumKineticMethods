@@ -17,13 +17,15 @@ Physics (1+1D, lattice units, hbar = c = dx = dt = 1).  The one-step Bloch symbo
 is ``U(k) = R . diag(e^{-i k s_c}) . Q_char(m) . R^{-1}`` with per-component streaming
 signs ``s_c``; its eigenphases are ``+/- E(k)`` with the Dirac dispersion
 
-    E(k) = sqrt( sin^2 k + m~^2 ) .
+    cos E(k) = ahat * cos k,   ahat = (1 - m~^2/4)/(1 + m~^2/4)   (exact lattice dispersion;
+                             -> sqrt(sin^2 k + m~^2) for small k, m~) .
 
 A packet that mixes the +E and -E eigenmodes at a carrier k0 shows Zitterbewegung with
 
-    omega_ZB = 2 E(k0)        (trembling frequency)
-    R_ZB     = m~ / (2 E^2)   (trembling amplitude in position; = A_v / omega_ZB,
-                               with velocity amplitude A_v = |<+|alpha_x|->| = m~/E)
+    omega_ZB = 2 E(k0)              (trembling frequency)
+    R_ZB     = bhat / (2 E sin E)   (trembling amplitude in position; = A_v / omega_ZB, with
+                                     velocity amplitude A_v = |<+|alpha_x|->| = bhat/sin E and
+                                     bhat = m~/(1 + m~^2/4); -> m~/2E^2 and m~/E for small m~)
 
 so a massless packet ([alpha_x, H] = 0) does not tremble, and increasing the mass at fixed
 momentum raises omega_ZB and moves R_ZB through its maximum -- the crossover.
@@ -178,13 +180,15 @@ def main():
     mm = np.array([r[0] for r in rows[1:]]); wq = np.array([r[2] for r in rows[1:]])
     mg = np.linspace(0.05, 2.0, 60)
     Eg = np.array([energy_eigenmodes(K0, mmg)[2] for mmg in mg])   # exact lattice dispersion
+    bg = np.array([abs(ops.collision_coefficients(mmg, 0.0)[1]) for mmg in mg])  # bhat(m~)
     axB.plot(mg, 2 * Eg, "b-", label=r"$\omega_{ZB}=2E$ (lattice Dirac)")
     axB.plot(mm, wq, "bo", ms=7, label=r"$\omega_{ZB}$ (circuit)")
     axB.set_xlabel(r"mass  $\tilde m$"); axB.set_ylabel(r"$\omega_{ZB}$  (rad/step)", color="b")
     axB.tick_params(axis="y", labelcolor="b")
     axB.set_title(r"Relativistic $\to$ non-relativistic crossover")
     ax2 = axB.twinx()
-    ax2.plot(mg, mg / (2 * Eg ** 2), "r--", label=r"$R_{ZB}=\tilde m/2E^2$ (Dirac)")
+    ax2.plot(mg, bg / (2 * Eg * np.sin(Eg)), "r--",
+             label=r"$R_{ZB}=\hat b/(2E\sin E)$ (exact)")
     ax2.set_ylabel(r"$R_{ZB}$  (sites)", color="r"); ax2.tick_params(axis="y", labelcolor="r")
     h1, l1 = axB.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
     axB.legend(h1 + h2, l1 + l2, fontsize=8, loc="upper left"); axB.grid(alpha=0.3)
