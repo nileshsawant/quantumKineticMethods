@@ -70,6 +70,39 @@ imprints, massive-particle Zitterbewegung, and massive-barrier reflection. Right
 massless packet at oblique incidence on a barrier splits into reflected and transmitted lobes.
 Classical solver and circuit coincide in every panel.*
 
+## Zitterbewegung and the trapped-ion comparison
+
+Gerritsma *et al.* ([*Nature* **463**, 68 (2010)](https://doi.org/10.1038/nature08688)) simulated
+the 1+1D Dirac equation on a single trapped ion and observed **Zitterbewegung** — the trembling
+motion of a relativistic wave packet — together with the crossover from relativistic to
+non-relativistic behaviour. That **analog** experiment is reproduced here **digitally**: the same
+circuit construction advances the 1+1D Dirac dynamics, and because the ported circuit equals the
+classical solver exactly, the two are run side by side.
+
+On a 256-site line (10 qubits) at fixed carrier momentum, the mass is swept so that $mc^2$ crosses
+$pc$ through the crossover. Two observables are read off the evolving packet:
+
+- the **trembling frequency** $\omega_{\mathrm{ZB}} = 2E$, which follows the exact lattice
+  dispersion and rises with the mass — a massless packet does not tremble at all, since $\alpha_x$
+  is then conserved;
+- the **position amplitude** $R_{\mathrm{ZB}} = \hat{b}/(2E\sin E)$, which grows from zero, peaks
+  near $\tilde{m} \approx 0.7$, and dies away in both the ultrarelativistic and non-relativistic
+  limits — the same crossover Gerritsma *et al.* report.
+
+Across the whole sweep the ported circuit reproduces the classical solver to
+$\max|\Delta\rho| \le 2.3\times10^{-13}$ at unit state fidelity.
+
+<p align="center">
+  <img src="qlb_port/validation_zitterbewegung.png" width="85%" />
+</p>
+
+*Left: the mean position of a massless packet (flat) and three massive packets, which tremble and
+then relax to a drift as their ±E branches separate. Right: the measured trembling frequency
+(filled points) tracking 2E, and the position amplitude (open squares) tracking the exact
+b̂/(2E·sin E) curve, rising to a maximum near m̃ ≈ 0.7 and falling off in both limits.*
+
+Regenerate it with `python -m qlb_port.plot_validation_zitterbewegung`.
+
 ## Repository layout
 
 ```
@@ -106,6 +139,9 @@ python test_qlb_validation.py
 python -m qlb_port.plot_validation
 python -m qlb_port.plot_validation_2d
 python -m qlb_port.plot_validation_3d
+
+# reproduce the Zitterbewegung / trapped-ion comparison
+python -m qlb_port.plot_validation_zitterbewegung
 ```
 
 The larger circuits (for example the 17-qubit reflecting box) are emulated fastest on a GPU
