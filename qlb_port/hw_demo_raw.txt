@@ -1,0 +1,42 @@
+# raw hardware counts  backend=rigetti:cepheus-1-108q  2026-08-21T11:21:32
+# n_pos=2 mass=0.8 k0=1.570796 shots=4000 steps=1
+# density qubit layout: x = high 2 bits, spinor c = low 2 bits
+
+[density_after_1_step] shots=4000 nbits=4
+  0000  396
+  0001  258
+  0010  264
+  0011  256
+  0100  284
+  0101  216
+  0110  278
+  0111  293
+  1000  234
+  1001  164
+  1010  176
+  1011  215
+  1100  266
+  1101  199
+  1110  250
+  1111  251
+  rho_hw(x) = 0.2935 0.2677 0.1973 0.2415
+
+[alpha_x_t=0_measure_q1] shots=4000 nbits=1
+  0  952
+  1  3048
+  <alpha_x>(t=0) = +0.5240
+
+[alpha_x_t=1_measure_q1] shots=4000 nbits=1
+  0  2298
+  1  1702
+  <alpha_x>(t=1) = -0.1490
+
+[alpha_x_t=2_measure_q1] shots=4000 nbits=1
+  0  2320
+  1  1680
+  <alpha_x>(t=2) = -0.1600
+
+[alpha_x_t=3_measure_q1] shots=4000 nbits=1
+  0  1803
+  1  2197
+  <alpha_x>(t=3) = +0.0985

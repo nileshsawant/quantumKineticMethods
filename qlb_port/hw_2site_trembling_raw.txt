@@ -1,0 +1,28 @@
+# 2-site trembling raw hardware counts  backend=rigetti:cepheus-1-108q  2026-08-21T15:47:31
+# npos=1 N=2 mass=0.8 k0=0.000000 E=0.761013 shots=2000 tmax=4
+# <alpha_x> = P(q1=1) - P(q1=0) after rotating into the alpha_x basis
+
+[alpha_x_t=0_measure_q1] shots=2000 nbits=1
+  0  1059
+  1  941
+  <alpha_x>_hw(t=0) = -0.0590
+
+[alpha_x_t=1_measure_q1] shots=2000 nbits=1
+  0  117
+  1  1883
+  <alpha_x>_hw(t=1) = +0.8830
+
+[alpha_x_t=2_measure_q1] shots=2000 nbits=1
+  0  1018
+  1  982
+  <alpha_x>_hw(t=2) = -0.0180
+
+[alpha_x_t=3_measure_q1] shots=2000 nbits=1
+  0  1836
+  1  164
+  <alpha_x>_hw(t=3) = -0.8360
+
+[alpha_x_t=4_measure_q1] shots=2000 nbits=1
+  0  1047
+  1  953
+  <alpha_x>_hw(t=4) = -0.0470

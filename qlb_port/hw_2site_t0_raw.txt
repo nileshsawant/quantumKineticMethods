@@ -1,0 +1,19 @@
+# 2-site t=0 raw hardware counts  backend=rigetti:cepheus-1-108q  2026-08-21T13:40:36
+# npos=1 N=2 mass=0.8 k0=0.000000 shots=2000 (t=0, no QLB step)
+# density layout: site x = high bits, spinor c = low 2 bits
+
+[density_t0] shots=2000 nbits=3
+  000  590
+  001  30
+  010  3
+  011  2
+  100  1302
+  101  57
+  110  15
+  111  1
+  rho_hw(x) = 0.3125 0.6875
+
+[alpha_x_t0_measure_q1] shots=2000 nbits=1
+  0  1044
+  1  956
+  <alpha_x>_hw(t0) = -0.0440

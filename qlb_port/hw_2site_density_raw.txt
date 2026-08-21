@@ -1,0 +1,56 @@
+# 2-site density raw hardware counts  backend=rigetti:cepheus-1-108q  2026-08-21T16:31:02
+# npos=1 N=2 mass=0.8 k0=0.000000 sigma=1.0 shots=2000 tmax=4
+# density layout: site x = high bits, spinor c = low 2 bits
+
+[density_t=0] shots=2000 nbits=3
+  000  603
+  001  19
+  010  9
+  100  1316
+  101  42
+  110  11
+  rho_hw(x) = 0.3155 0.6845
+
+[density_t=1] shots=2000 nbits=3
+  000  689
+  001  84
+  010  63
+  011  596
+  100  256
+  101  31
+  110  21
+  111  260
+  rho_hw(x) = 0.7160 0.2840
+
+[density_t=2] shots=2000 nbits=3
+  000  6
+  001  29
+  010  42
+  011  491
+  100  27
+  101  64
+  110  106
+  111  1235
+  rho_hw(x) = 0.2840 0.7160
+
+[density_t=3] shots=2000 nbits=3
+  000  593
+  001  41
+  010  53
+  011  740
+  100  240
+  101  19
+  110  16
+  111  298
+  rho_hw(x) = 0.7135 0.2865
+
+[density_t=4] shots=2000 nbits=3
+  000  569
+  001  24
+  010  6
+  011  9
+  100  1289
+  101  57
+  110  19
+  111  27
+  rho_hw(x) = 0.3040 0.6960
