@@ -1,0 +1,189 @@
+{
+  "description": "2-site Dirac-QLB circuits as generic Quil for Rigetti QCS Cepheus-1.",
+  "npos": 1,
+  "n_qubits": 3,
+  "mass": 0.8,
+  "k0": 0.0,
+  "sigma": 1.0,
+  "E": 0.7610127542247298,
+  "tmax": 4,
+  "emulator_shots": 2000,
+  "alpha": "<alpha_x> = P(ro[0]=1) - P(ro[0]=0)  (single spinor bit)",
+  "density": "rho(x) from i = sum_k ro[k]*2^k, x = i >> 2;  <x> = sum_x x*rho(x)",
+  "jobs": [
+    {
+      "name": "alpha_t0",
+      "kind": "alpha",
+      "t": 0,
+      "quil": "alpha_t0.quil",
+      "npos": 1,
+      "ro_bits": 1,
+      "exact": 3.925231146709437e-17,
+      "emulator": 0.019,
+      "qpu": 0.021
+    },
+    {
+      "name": "dens_t0",
+      "kind": "density",
+      "t": 0,
+      "quil": "dens_t0.quil",
+      "npos": 1,
+      "ro_bits": 3,
+      "exact_rho": [
+        0.26894142136999516,
+        0.7310585786300049
+      ],
+      "exact": 0.7310585786300049,
+      "emulator_rho": [
+        0.2745,
+        0.7255
+      ],
+      "emulator": 0.7255,
+      "qpu": 0.4125,
+      "qpu_rho": [
+        0.5875,
+        0.4125
+      ]
+    },
+    {
+      "name": "alpha_t1",
+      "kind": "alpha",
+      "t": 1,
+      "quil": "alpha_t1.quil",
+      "npos": 1,
+      "ro_bits": 1,
+      "exact": 0.9988109393579061,
+      "emulator": 1.0,
+      "qpu": 0.773
+    },
+    {
+      "name": "dens_t1",
+      "kind": "density",
+      "t": 1,
+      "quil": "dens_t1.quil",
+      "npos": 1,
+      "ro_bits": 3,
+      "exact_rho": [
+        0.7310585786300042,
+        0.26894142136999494
+      ],
+      "exact": 0.26894142136999494,
+      "emulator_rho": [
+        0.7405,
+        0.2595
+      ],
+      "emulator": 0.2595,
+      "qpu": 0.2635,
+      "qpu_rho": [
+        0.7365,
+        0.2635
+      ]
+    },
+    {
+      "name": "alpha_t2",
+      "kind": "alpha",
+      "t": 2,
+      "quil": "alpha_t2.quil",
+      "npos": 1,
+      "ro_bits": 1,
+      "exact": 0.09738703570433775,
+      "emulator": 0.065,
+      "qpu": 0.176
+    },
+    {
+      "name": "dens_t2",
+      "kind": "density",
+      "t": 2,
+      "quil": "dens_t2.quil",
+      "npos": 1,
+      "ro_bits": 3,
+      "exact_rho": [
+        0.26894142136999466,
+        0.7310585786300036
+      ],
+      "exact": 0.7310585786300036,
+      "emulator_rho": [
+        0.261,
+        0.739
+      ],
+      "emulator": 0.739,
+      "qpu": 0.497,
+      "qpu_rho": [
+        0.503,
+        0.497
+      ]
+    },
+    {
+      "name": "alpha_t3",
+      "kind": "alpha",
+      "t": 3,
+      "quil": "alpha_t3.quil",
+      "npos": 1,
+      "ro_bits": 1,
+      "exact": -0.9893154138790033,
+      "emulator": -0.993,
+      "qpu": -0.681
+    },
+    {
+      "name": "dens_t3",
+      "kind": "density",
+      "t": 3,
+      "quil": "dens_t3.quil",
+      "npos": 1,
+      "ro_bits": 3,
+      "exact_rho": [
+        0.7310585786300028,
+        0.26894142136999444
+      ],
+      "exact": 0.26894142136999444,
+      "emulator_rho": [
+        0.733,
+        0.267
+      ],
+      "emulator": 0.267,
+      "qpu": 0.293,
+      "qpu_rho": [
+        0.707,
+        0.293
+      ]
+    },
+    {
+      "name": "alpha_t4",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "alpha_t4.quil",
+      "npos": 1,
+      "ro_bits": 1,
+      "exact": -0.19384822944759342,
+      "emulator": -0.166,
+      "qpu": -0.111
+    },
+    {
+      "name": "dens_t4",
+      "kind": "density",
+      "t": 4,
+      "quil": "dens_t4.quil",
+      "npos": 1,
+      "ro_bits": 3,
+      "exact_rho": [
+        0.26894142136999427,
+        0.7310585786300021
+      ],
+      "exact": 0.7310585786300021,
+      "emulator_rho": [
+        0.2855,
+        0.7145
+      ],
+      "emulator": 0.7145,
+      "qpu": 0.4175,
+      "qpu_rho": [
+        0.5825,
+        0.4175
+      ]
+    }
+  ],
+  "device": "Cepheus-1-108Q",
+  "qvm": false,
+  "shots": 2000,
+  "total_execution_us": 4257538.0
+}
