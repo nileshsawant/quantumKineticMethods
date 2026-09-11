@@ -116,3 +116,105 @@ def reflecting_streaming_circuit(axis, n_pos):
     if not plus_is_q1_one:
         qc.x(q1)
     return qc
+
+
+# ================================================================================
+# Ancilla-based streaming (ripple-carry incrementer)
+# ================================================================================
+# The increment above is a cascade of multi-controlled X gates, whose ancilla-free
+# synthesis grows super-linearly with n_pos.  A ripple-carry adder instead computes
+# the carry chain once into a register of clean carry ancilla, so a controlled +/-1
+# shift costs O(n_pos) Toffoli gates.  The carry chain is uncomputed, so the ancilla
+# start and end in |0>.  In the controlled version the carry compute/uncompute stay
+# uncontrolled (they cancel when the control is off) and only the O(n_pos) bit-flips
+# are gated, which is what keeps the count linear.
+#
+# ancilla_streaming_circuit(axis, n_pos) lives on 2 + n_pos + (n_pos-1) qubits:
+#     spinor   = qubits 0,1
+#     position = qubits 2..(1+n_pos)
+#     carry    = qubits (2+n_pos)..(2*n_pos)   (clean before and after)
+
+def n_stream_ancilla(n_pos):
+    """Carry-ancilla count used by the ripple-carry streaming (n_pos - 1)."""
+    return max(n_pos - 1, 0)
+
+
+def _ripple_increment(qc, p, a, ctrl=None):
+    """Append +1 (mod 2**len(p)) on register p (p[0]=LSB) with carry ancilla a
+    (len a = len p - 1).  If ctrl is given only the bit-flips are controlled by it
+    (state |1>); the carry chain is uncomputed either way, leaving a in |0>."""
+    n = len(p)
+    if n == 1:                                    # +1 mod 2 is a single flip
+        if ctrl is None:
+            qc.x(p[0])
+        else:
+            qc.cx(ctrl, p[0])
+        return
+    qc.cx(p[0], a[0])                             # a[0] = carry_1 = p[0]
+    for k in range(2, n):                         # a[k-1] = carry_k = p[k-1] & carry_{k-1}
+        qc.ccx(p[k - 1], a[k - 2], a[k - 1])
+    for k in range(n - 1, 1, -1):                 # flip high bits, then uncompute carries
+        if ctrl is None:
+            qc.cx(a[k - 1], p[k])
+        else:
+            qc.ccx(ctrl, a[k - 1], p[k])
+        qc.ccx(p[k - 1], a[k - 2], a[k - 1])
+    if ctrl is None:
+        qc.cx(a[0], p[1])
+    else:
+        qc.ccx(ctrl, a[0], p[1])
+    qc.cx(p[0], a[0])                             # uncompute a[0]
+    if ctrl is None:
+        qc.x(p[0])
+    else:
+        qc.cx(ctrl, p[0])
+
+
+def _ripple_decrement(qc, p, a, ctrl=None):
+    """Append -1 (mod 2**len(p)) as X-conjugated increment (complement, +1,
+    complement); the outer complements cancel when ctrl is off."""
+    for q in p:
+        qc.x(q)
+    _ripple_increment(qc, p, a, ctrl)
+    for q in p:
+        qc.x(q)
+
+
+def _add_ctrl_shift(qc, sign, ctrl, ctrl_state, pos, anc):
+    """Append a +1 (sign>0) or -1 (sign<0) shift of pos, gated on ctrl==ctrl_state."""
+    if ctrl_state == 0:
+        qc.x(ctrl)
+    if sign > 0:
+        _ripple_increment(qc, pos, anc, ctrl)
+    else:
+        _ripple_decrement(qc, pos, anc, ctrl)
+    if ctrl_state == 0:
+        qc.x(ctrl)
+
+
+def ancilla_increment_circuit(n_pos):
+    """+1 (mod 2**n_pos) on qubits 0..n_pos-1 via a ripple-carry chain on the carry
+    ancilla qubits n_pos..(2*n_pos-2), which are restored to |0>."""
+    n_anc = n_stream_ancilla(n_pos)
+    qc = QuantumCircuit(n_pos + n_anc, name="incr_anc")
+    _ripple_increment(qc, list(range(n_pos)), list(range(n_pos, n_pos + n_anc)))
+    return qc
+
+
+def ancilla_streaming_circuit(axis, n_pos):
+    """Ancilla (ripple-carry) version of :func:`streaming_circuit`: the same
+    controlled +/-1 shift, but O(n_pos) Toffoli gates instead of the MCX cascade.
+
+    Returns a QuantumCircuit on 2 + n_pos + (n_pos-1) qubits (spinor 0,1; position
+    2..1+n_pos; carry ancilla 2+n_pos.., clean before and after).
+    """
+    signs = ops.streaming_signs(axis)
+    n_anc = n_stream_ancilla(n_pos)
+    n_total = 2 + n_pos + n_anc
+    qc = QuantumCircuit(n_total, name=f"stream_anc_{axis}")
+    q1 = 1
+    pos = list(range(2, 2 + n_pos))
+    anc = list(range(2 + n_pos, n_total))
+    _add_ctrl_shift(qc, int(signs[2]), q1, 1, pos, anc)   # qubit1 = 1 components
+    _add_ctrl_shift(qc, int(signs[0]), q1, 0, pos, anc)   # qubit1 = 0 components
+    return qc
