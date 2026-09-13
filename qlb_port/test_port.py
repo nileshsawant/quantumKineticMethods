@@ -155,6 +155,45 @@ def test_streaming_statevector():
     check("-x component moves -1 site", bk.state_fidelity(out, expect) > 1 - 1e-9)
 
 
+def test_streaming_fourier():
+    print("Test H2: Fourier-adder (Draper) streaming == classical permutation")
+    for axis in ("x", "y", "z"):
+        for n_pos in (2, 3, 4):
+            qc = streaming.streaming_circuit(axis, n_pos, method="fourier")
+            U = bk.circuit_unitary(qc)
+            P = ops.streaming_reference(axis, n_pos)
+            check(f"fourier streaming {axis} n_pos={n_pos}", np.allclose(U, P),
+                  f"fid {bk.gate_fidelity(P, U):.12f}")
+    # full sweep with fourier streaming == classical sub-step operator
+    for axis in ("x", "y", "z"):
+        for m in (0.0, 0.3):
+            qc = sweep.sweep_circuit(axis, 3, m_tilde=m, streaming_method="fourier")
+            U = bk.circuit_unitary(qc)
+            M = sweep.sweep_operator(axis, 3, m_tilde=m)
+            check(f"fourier sweep {axis} m={m}", np.allclose(U, M),
+                  f"fid {bk.gate_fidelity(M, U):.12f}")
+    # multi-step evolution with the fourier circuit matches the classical solver
+    axis, n_pos, T = "x", 4, 6
+    N = 2 ** n_pos
+    Op = sweep.sweep_operator(axis, n_pos, m_tilde=0.0)
+    sp = ops.X_ROTATION @ (np.array([0, 0, 1, 1], dtype=complex) / np.sqrt(2))
+    x = np.arange(N)
+    env = np.exp(-((x - N // 2) ** 2) / (2 * 2.0 ** 2)) * np.exp(1j * 0.6 * x)
+    psi0 = np.zeros(4 * N, dtype=complex)
+    for xi in range(N):
+        for c in range(4):
+            psi0[xi * 4 + c] = env[xi] * sp[c]
+    psi0 /= np.linalg.norm(psi0)
+    pc = psi0.copy()
+    for _ in range(T):
+        pc = Op @ pc
+    out = bk.apply_to_statevector(
+        sweep.evolution_circuit(axis, n_pos, T, streaming_method="fourier"), psi0)
+    check(f"fourier {T}-step evolution vs classical",
+          bk.state_fidelity(out, pc) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(out, pc):.12f}")
+
+
 def test_sweep_assembly():
     print("Test I: full single-axis sweep circuit == classical sub-step operator")
     for axis in ("x", "y", "z"):
@@ -462,6 +501,7 @@ if __name__ == "__main__":
     test_increment()
     test_streaming()
     test_streaming_statevector()
+    test_streaming_fourier()
     test_sweep_assembly()
     test_free_particle_evolution()
     test_free_particle_propagation()

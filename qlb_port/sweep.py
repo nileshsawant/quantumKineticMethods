@@ -48,7 +48,8 @@ def sweep_operator(axis, n_pos, m_tilde=0.0, g_tilde=0.0):
     return _embed_spinor(R, n_pos) @ S @ _embed_spinor(Q_char, n_pos) @ _embed_spinor(R_inv, n_pos)
 
 
-def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic"):
+def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic",
+                  streaming_method="mcx"):
     """
     Gate-level circuit for one QLB sub-step along `axis`.
 
@@ -59,6 +60,10 @@ def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic"):
     m_tilde : (per-sweep) dimensionless mass coupling (0 => massless)
     g_tilde : (per-sweep) dimensionless potential coupling (0 => free particle)
     boundary: 'periodic' (modular wrap) or 'reflecting' (bounce-back hard walls)
+    streaming_method : 'mcx' (default; the paper's ancilla-free multi-controlled-X
+        ripple) or 'fourier' (Draper Fourier adder: no ancilla, O(n_pos) gates;
+        see :func:`streaming.streaming_circuit`).  Ignored for
+        boundary='reflecting'.
 
     Returns
     -------
@@ -67,10 +72,12 @@ def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic"):
     R = ops.ROTATIONS[axis]
     R_inv = R.conj().T
     Q_char = ops.collision_operator_char(axis, m_tilde, g_tilde)
-    stream = (st.reflecting_streaming_circuit(axis, n_pos) if boundary == "reflecting"
-              else st.streaming_circuit(axis, n_pos))
+    if boundary == "reflecting":
+        stream = st.reflecting_streaming_circuit(axis, n_pos)
+    else:
+        stream = st.streaming_circuit(axis, n_pos, method=streaming_method)
 
-    qc = QuantumCircuit(2 + n_pos, name=f"sweep_{axis}")
+    qc = QuantumCircuit(stream.num_qubits, name=f"sweep_{axis}")
     qc.append(UnitaryGate(R_inv, label="Rinv"), [0, 1])       # rotate into char frame
     qc.append(UnitaryGate(Q_char, label="Qchar"), [0, 1])     # collide
     qc.compose(stream, inplace=True)                          # stream (+/-1)
@@ -78,10 +85,12 @@ def sweep_circuit(axis, n_pos, m_tilde=0.0, g_tilde=0.0, boundary="periodic"):
     return qc
 
 
-def evolution_circuit(axis, n_pos, n_steps, m_tilde=0.0, g_tilde=0.0):
+def evolution_circuit(axis, n_pos, n_steps, m_tilde=0.0, g_tilde=0.0,
+                      streaming_method="mcx"):
     """Circuit for `n_steps` repeated single-axis sub-steps (free-particle evolution)."""
-    qc = QuantumCircuit(2 + n_pos, name=f"evolve_{axis}_{n_steps}")
-    step = sweep_circuit(axis, n_pos, m_tilde, g_tilde)
+    step = sweep_circuit(axis, n_pos, m_tilde, g_tilde,
+                         streaming_method=streaming_method)
+    qc = QuantumCircuit(step.num_qubits, name=f"evolve_{axis}_{n_steps}")
     for _ in range(n_steps):
         qc.compose(step, inplace=True)
     return qc
