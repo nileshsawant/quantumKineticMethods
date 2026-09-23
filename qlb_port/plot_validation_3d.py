@@ -62,7 +62,7 @@ def com(d):
             float((d.sum((1, 2)) * np.arange(Nz)).sum() / tot))
 
 
-def main():
+def main(streaming_method="mcx", out="qlb_port/validation_3d.png"):
     print("Device:", bk.device_report())
     psi0 = initial_packet()
 
@@ -72,7 +72,8 @@ def main():
         pc = threed.classical_step_3d(pc, NX, NY, NZ, 0.0)
     d_c0, d_cT = dens(psi0), dens(pc)
     # circuit densities at t=0 and t=T (one transpile, one run)
-    svs = bk.evolve_snapshots(threed.sweep3d_circuit(NX, NY, NZ), psi0, [0, T])
+    svs = bk.evolve_snapshots(threed.sweep3d_circuit(NX, NY, NZ, streaming_method=streaming_method),
+                              psi0, [0, T])
     d_q0, d_qT = dens(svs[0]), dens(svs[T])
 
     maxdev = max(np.max(np.abs(d_c0 - d_q0)), np.max(np.abs(d_cT - d_qT)))
@@ -124,12 +125,12 @@ def main():
             ax.legend(fontsize=7, loc="upper right")
 
     fig.suptitle(
-        "3D Dirac packet along the (1,1,1) diagonal: classical QLB vs quantum circuit (GPU)\n"
+        f"3D Dirac packet along the (1,1,1) diagonal: classical QLB vs quantum circuit "
+        f"({streaming_method} streaming, GPU)\n"
         f"COM {tuple(round(v, 1) for v in c0)} → {tuple(round(v, 1) for v in cT)} "
         f"(equal motion in x, y, z);  classical vs circuit max |Δ| = {maxdev:.1e}",
         fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
-    out = "qlb_port/validation_3d.png"
     fig.savefig(out, dpi=140)
     print(f"Saved {out}")
 
