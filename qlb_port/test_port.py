@@ -419,6 +419,34 @@ def test_3d_free():
           f"ΔCOM = ({dxyz[0]:.2f}, {dxyz[1]:.2f}, {dxyz[2]:.2f})")
 
 
+def test_3d_fourier():
+    print("Test Q2: 3D Fourier-streamed sweep == classical operator; diagonal mover (GPU)")
+    # exact operator check: a 3D step with Fourier streaming == the classical 3D operator
+    for m, g in [(0.0, 0.0), (0.3, 0.1)]:
+        U = bk.circuit_unitary(threed.sweep3d_circuit(2, 2, 2, m, g, streaming_method="fourier"))
+        M = threed.sweep3d_operator(2, 2, 2, m, g)
+        check(f"3D fourier sweep m={m} g={g}", np.allclose(U, M), f"fid {bk.gate_fidelity(M, U):.12f}")
+    # genuine 3D-diagonal mover, Fourier-streamed, vs classical (11 qubits)
+    nx = ny = nz = 3; Nx, Ny, Nz = 8, 8, 8; Td = 3
+    A = ops.ALPHA_X + ops.BETA + ops.ALPHA_Z
+    wv, Vv = np.linalg.eigh(A)
+    spd = Vv[:, int(np.argmax(wv))]
+    Zc, Yc, Xc = np.meshgrid(np.arange(Nz), np.arange(Ny), np.arange(Nx), indexing="ij")
+    envd = np.exp(-(((Xc - 2) ** 2 + (Yc - 2) ** 2 + (Zc - 2) ** 2) / (2 * 1.4 ** 2))) * np.exp(1j * 0.5 * (Xc + Yc + Zc))
+    pdi = np.zeros((Nz, Ny, Nx, 4), dtype=complex)
+    for c in range(4):
+        pdi[:, :, :, c] = envd * spd[c]
+    p0 = pdi.reshape(-1); p0 /= np.linalg.norm(p0)
+    pcd = p0.copy()
+    for _ in range(Td):
+        pcd = threed.classical_step_3d(pcd, nx, ny, nz, 0.0)
+    outd = bk.apply_to_statevector(
+        threed.evolution3d_circuit(nx, ny, nz, Td, streaming_method="fourier"), p0)
+    check("3D fourier diagonal mover circuit vs classical",
+          bk.state_fidelity(outd, pcd) > 1 - 1e-9,
+          f"fid {bk.state_fidelity(outd, pcd):.12f}")
+
+
 def test_3d_potential():
     print("Test R: 3D potential circuit == classical; planar-barrier oblique scattering (GPU)")
     # exact operator check with a planar barrier (nx=ny=nz=2)
@@ -511,6 +539,7 @@ if __name__ == "__main__":
     test_2d_free()
     test_2d_potential()
     test_3d_free()
+    test_3d_fourier()
     test_3d_potential()
     test_reflecting_boundary()
     print("=" * 70)

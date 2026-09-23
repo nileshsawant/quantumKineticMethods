@@ -43,24 +43,29 @@ def _registers(nx, ny, nz):
     return q
 
 
-def sweep3d_circuit(nx, ny, nz, m_tilde=0.0, g_tilde=0.0, bc=("periodic", "periodic", "periodic")):
+def sweep3d_circuit(nx, ny, nz, m_tilde=0.0, g_tilde=0.0, bc=("periodic", "periodic", "periodic"),
+                    streaming_method="mcx"):
     """One 3D QLB step (x-, y-, z-sweeps) for uniform mass/potential.
 
     bc : per-axis boundary conditions, each 'periodic' or 'reflecting' (hard walls).
+    streaming_method : 'mcx' (default) or 'fourier' (Draper QFT adder); passed to each
+        periodic sweep and ignored on reflecting axes.
     """
     qc = QuantumCircuit(2 + nx + ny + nz, name="sweep3d")
     regs = _registers(nx, ny, nz)
     for axis, n, b in zip(AXES, (nx, ny, nz), bc):
-        qc.compose(sweep.sweep_circuit(axis, n, m_tilde=m_tilde, g_tilde=g_tilde, boundary=b),
+        qc.compose(sweep.sweep_circuit(axis, n, m_tilde=m_tilde, g_tilde=g_tilde, boundary=b,
+                                       streaming_method=streaming_method),
                    qubits=regs[axis], inplace=True)
     return qc
 
 
 def evolution3d_circuit(nx, ny, nz, n_steps, m_tilde=0.0, g_tilde=0.0,
-                        bc=("periodic", "periodic", "periodic")):
+                        bc=("periodic", "periodic", "periodic"), streaming_method="mcx"):
     """`n_steps` repeated 3D steps."""
     qc = QuantumCircuit(2 + nx + ny + nz, name=f"evolve3d_{n_steps}")
-    step = sweep3d_circuit(nx, ny, nz, m_tilde=m_tilde, g_tilde=g_tilde, bc=bc)
+    step = sweep3d_circuit(nx, ny, nz, m_tilde=m_tilde, g_tilde=g_tilde, bc=bc,
+                           streaming_method=streaming_method)
     for _ in range(n_steps):
         qc.compose(step, inplace=True)
     return qc
