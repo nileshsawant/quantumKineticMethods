@@ -43,6 +43,8 @@ def main():
                     help="target carrier (snapped to nearest lattice momentum).")
     ap.add_argument("--sigma", type=float, default=1.0)
     ap.add_argument("--tmax", type=int, default=4, help="scan t=0..tmax.")
+    ap.add_argument("--streaming", choices=["mcx", "fourier"], default="mcx",
+                    help="streaming construction (see streaming.streaming_circuit).")
     ap.add_argument("--shots", type=int, default=2000)
     ap.add_argument("--submit", action="store_true",
                     help="ACTUALLY submit to the cloud backend (spends credits).")
@@ -66,7 +68,7 @@ def main():
     x_exact = rho_exact @ xgrid
 
     # one density circuit per time; emulator (shot-based, like hardware)
-    circs = {t: H.density_circuit(npos, psi_d, m, t) for t in ts}
+    circs = {t: H.density_circuit(npos, psi_d, m, t, args.streaming) for t in ts}
     rho_aer = np.array([H.density_from_counts(H.run_aer(circs[t], shots), npos, shots) for t in ts])
     x_aer = rho_aer @ xgrid
 

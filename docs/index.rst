@@ -1,8 +1,7 @@
 quantumKineticMethods
 =====================
 
-**Exact quantum circuits for the quantum lattice Boltzmann (QLB) method for the
-Dirac equation.**
+**Exact quantum circuits for lattice Boltzmann realization of the Dirac equation.**
 
 This project ports the three-dimensional Succi--Dellar Dirac QLB scheme, operation
 by operation, to *exact* quantum circuits on qubits, and verifies on a state-vector

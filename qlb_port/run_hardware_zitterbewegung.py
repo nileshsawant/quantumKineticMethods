@@ -159,11 +159,11 @@ def _prep(n_pos, psi0):
     return qc
 
 
-def alpha_x_circuit(n_pos, psi0, m, t):
+def alpha_x_circuit(n_pos, psi0, m, t, streaming_method="mcx"):
     """Prepare psi0, apply t QLB steps, rotate spinor into the alpha_x eigenbasis,
     and measure qubit 1 (its sign = the alpha_x eigenvalue)."""
     qc = _prep(n_pos, psi0)
-    step = sweep.sweep_circuit("x", n_pos, m_tilde=m)
+    step = sweep.sweep_circuit("x", n_pos, m_tilde=m, streaming_method=streaming_method)
     for _ in range(t):
         qc.compose(step, inplace=True)
     qc.append(UnitaryGate(_RINV, label="Rinv_meas"), [0, 1])
@@ -173,10 +173,10 @@ def alpha_x_circuit(n_pos, psi0, m, t):
     return meas
 
 
-def density_circuit(n_pos, psi0, m, t):
+def density_circuit(n_pos, psi0, m, t, streaming_method="mcx"):
     """Prepare psi0, apply t QLB steps, and measure every qubit (position + spinor)."""
     qc = _prep(n_pos, psi0)
-    step = sweep.sweep_circuit("x", n_pos, m_tilde=m)
+    step = sweep.sweep_circuit("x", n_pos, m_tilde=m, streaming_method=streaming_method)
     for _ in range(t):
         qc.compose(step, inplace=True)
     n = 2 + n_pos

@@ -21,9 +21,9 @@ position register is mapped to the Fourier basis, where adding a constant is a
 diagonal phase, and mapped back.  The direction control q1 enters as free controlled
 phases.  The shift itself is O(n_pos) phase gates; with the two swapless QFTs the
 circuit is O(n_pos**2) two-qubit gates and uses no ancilla -- measured (transpiled to
-{rz,ry,rx,cx}) 15 / 29 / 47 / 69 CX for n_pos = 3 / 4 / 5 / 6, versus
-106 / 331 / 900 / 2203 CX for the MCX ripple.  See also ancilla_streaming_circuit for
-the ripple-carry (single clean carry chain) alternative.
+{rz,ry,rx,cx}) 5 / 15 / 29 / 47 / 69 CX for n_pos = 2 / 3 / 4 / 5 / 6, versus
+12 / 106 / 331 / 900 / 2203 CX for the MCX ripple.  See also ancilla_streaming_circuit
+for the ripple-carry alternative (n_pos - 1 clean carry ancilla).
 
 Qubit layout (matches operators.streaming_reference):
     spinor   = qubits 0,1   (qubit 0 = LSB)
@@ -110,7 +110,7 @@ def streaming_circuit(axis, n_pos, method="mcx"):
     n_pos : number of position qubits (lattice size N = 2**n_pos)
     method: 'mcx' (default; ancilla-free multi-controlled-X ripple) or 'fourier'
             (Draper Fourier adder: no ancilla, O(n_pos**2) CX via two swapless
-            QFTs; 15/29/47/69 CX transpiled for n_pos=3/4/5/6 vs 106/331/900/2203
+            QFTs; 5/15/29/47/69 CX transpiled for n_pos=2..6 vs 12/106/331/900/2203
             for 'mcx').  See ancilla_streaming_circuit for the ripple-carry route.
 
     Returns

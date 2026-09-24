@@ -158,7 +158,7 @@ def test_streaming_statevector():
 def test_streaming_fourier():
     print("Test H2: Fourier-adder (Draper) streaming == classical permutation")
     for axis in ("x", "y", "z"):
-        for n_pos in (2, 3, 4):
+        for n_pos in range(1, 7):
             qc = streaming.streaming_circuit(axis, n_pos, method="fourier")
             U = bk.circuit_unitary(qc)
             P = ops.streaming_reference(axis, n_pos)

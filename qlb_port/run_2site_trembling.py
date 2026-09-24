@@ -43,6 +43,8 @@ def main():
     ap.add_argument("--k0", type=float, default=np.pi / 2,
                     help="target carrier (snapped to nearest lattice momentum).")
     ap.add_argument("--tmax", type=int, default=4, help="scan t=0..tmax (one period ~4).")
+    ap.add_argument("--streaming", choices=["mcx", "fourier"], default="mcx",
+                    help="streaming construction (see streaming.streaming_circuit).")
     ap.add_argument("--shots", type=int, default=2000)
     ap.add_argument("--submit", action="store_true",
                     help="ACTUALLY submit to the cloud backend (spends credits).")
@@ -72,7 +74,7 @@ def main():
     av_smooth = coef[0] + coef[1] * np.cos(2 * E * t_smooth) + coef[2] * np.sin(2 * E * t_smooth)
 
     # one velocity circuit per time; emulator (shot-based, like hardware)
-    circs = {t: H.alpha_x_circuit(npos, psi_m, m, t) for t in ts}
+    circs = {t: H.alpha_x_circuit(npos, psi_m, m, t, args.streaming) for t in ts}
     av_aer = np.array([H.alpha_x_from_counts(H.run_aer(circs[t], shots), shots) for t in ts])
 
     period = 2 * np.pi / (2 * E)

@@ -7,8 +7,8 @@
 This repository ports the three-dimensional Succi–Dellar Dirac QLB scheme, operation by
 operation, to **exact quantum circuits** on qubits, and verifies on a state-vector emulator
 that the circuits reproduce the classical QLB solver to machine precision. It is the companion
-code to the paper *Exact quantum circuits for the quantum lattice Boltzmann method for the
-Dirac equation*.
+code to the paper *Exact quantum circuits for lattice Boltzmann realization of the Dirac
+equation* ([arXiv:2608.06570](https://doi.org/10.48550/arXiv.2608.06570)).
 
 A QLB time step is a fixed sequence of **unitary** operations — a basis rotation, a collision,
 a streaming shift, and the inverse rotation — so it maps naturally onto a quantum circuit. Here
@@ -42,7 +42,9 @@ together with measured gate counts and a validated, reusable set of circuit prim
 
 - **Streaming is $+1$ on the position register.** Moving every amplitude one site is the map
   $|x\rangle \mapsto |x+1\rangle$, i.e. binary "add one" — a ripple of multi-controlled-X gates
-  on the address bits, applied to all sites at once.
+  on the address bits, applied to all sites at once. Two adder-based alternatives cut its
+  cost: a ripple-carry increment on $n_{\mathrm{pos}}-1$ clean ancilla, and an ancilla-free
+  Fourier (Draper) increment (`streaming_circuit(..., method="fourier")`).
 - **Bounce-back is $+1$ on a *folded* ring.** Folding the direction qubit into the position
   register as its most significant bit turns a hard-wall reflection into a single plain
   increment: interior movers advance one site, and a mover that reaches a wall crosses the fold

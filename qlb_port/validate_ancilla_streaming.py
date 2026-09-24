@@ -10,8 +10,8 @@ Three checks, all by state-vector emulation (no hardware, no Aer/GPU needed):
   [2] the ancilla streaming circuit reproduces the classical +/-1 shift
       permutation ``operators.streaming_reference`` on the spinor-position
       register, again leaving the ancilla clean;
-  [3] the transpiled two-qubit (CX) gate count of a streaming step, MCX cascade
-      vs ripple-carry ancilla, over a range of n_pos.
+  [3] the transpiled two-qubit (CX) gate count and depth of a streaming step,
+      MCX cascade vs ripple-carry ancilla vs Fourier, over a range of n_pos.
 
 Run:
     module load qiskit/aer-gpu
@@ -49,8 +49,9 @@ def _acts_as(qc, perm, n_reg):
 
 
 def _count_2q(qc):
+    """(CX count, depth) after transpiling to _BASIS at optimization level 3."""
     t = transpile(qc, basis_gates=_BASIS, optimization_level=3)
-    return sum(v for g, v in t.count_ops().items() if g == "cx")
+    return sum(v for g, v in t.count_ops().items() if g == "cx"), t.depth()
 
 
 def main():
@@ -81,14 +82,16 @@ def main():
             ok_all &= ok
             print(f"    axis {axis}, n_pos={n_pos}: {'PASS' if ok else 'FAIL'}")
 
-    # [3] two-qubit gate count: MCX cascade vs ripple-carry ancilla
-    print("\n[3] two-qubit (CX) count of one streaming step (opt-level 3):")
-    print("     n_pos | MCX cascade | ancilla ripple | reduction")
-    print("     ------+-------------+----------------+----------")
+    # [3] two-qubit gate count and depth: MCX cascade vs ripple-carry vs Fourier
+    print("\n[3] CX count / depth of one streaming step (opt-level 3):")
+    print("     n_pos | MCX cascade | ripple-carry | Fourier")
+    print("     ------+-------------+--------------+---------")
     for n_pos in range(2, 7):
         mcx = _count_2q(st.streaming_circuit("x", n_pos))
         anc = _count_2q(st.ancilla_streaming_circuit("x", n_pos))
-        print(f"     {n_pos:5d} | {mcx:11d} | {anc:14d} | {mcx / max(anc, 1):6.2f}x")
+        qft = _count_2q(st.streaming_circuit("x", n_pos, method="fourier"))
+        print(f"     {n_pos:5d} | {mcx[0]:5d}/{mcx[1]:<5d} | {anc[0]:5d}/{anc[1]:<5d}  | "
+              f"{qft[0]:3d}/{qft[1]:<3d}")
 
     print("\n" + ("ALL CHECKS PASSED" if ok_all else "SOME CHECKS FAILED"))
     return 0 if ok_all else 1
