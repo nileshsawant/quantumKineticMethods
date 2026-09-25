@@ -49,6 +49,9 @@ def main():
     ap.add_argument("--submit", action="store_true",
                     help="ACTUALLY submit to the cloud backend (spends credits).")
     ap.add_argument("--backend-name", default=H.DEFAULT_BACKEND)
+    ap.add_argument("--layout", type=lambda s: [int(q) for q in s.split(",")], default=None,
+                    help="physical qubits for circuit qubits 0,1,2,..., e.g. 0,1,10,11.")
+    ap.add_argument("--tmin", type=int, default=0, help="first step submitted to hardware.")
     ap.add_argument("--raw", default="qlb_port/hw_2site_trembling_raw.txt",
                     help="raw-counts file (kept separate from earlier runs).")
     ap.add_argument("--out", default="qlb_port/hw_2site_trembling.png")
@@ -98,8 +101,10 @@ def main():
                 print(f"\nSubmitting {len(ts)} velocity circuits to {args.backend_name} "
                       f"({shots} shots each) ...")
                 for i, t in enumerate(ts):
+                    if t < args.tmin:
+                        continue
                     print(f"  velocity t={t} circuit:")
-                    cv = H.run_hardware(service, args.backend_name, circs[t], shots)
+                    cv = H.run_hardware(service, args.backend_name, circs[t], shots, args.layout)
                     H._dump_counts(fh, f"alpha_x_t={t}_measure_q1", cv, 1, shots)
                     av_hw[i] = H.alpha_x_from_counts(cv, shots)
                     fh.write(f"  <alpha_x>_hw(t={t}) = {av_hw[i]:+.4f}\n")
@@ -112,7 +117,7 @@ def main():
             service.close()
 
     save = dict(t=np.array(ts), av_exact=av_exact, av_aer=av_aer, E=float(E),
-                k0=k0, npos=npos, mass=m, shots=shots)
+                k0=k0, npos=npos, mass=m, shots=shots, streaming=args.streaming)
     if av_hw is not None:
         save["av_hw"] = av_hw
     np.savez(args.data, **save)
@@ -135,8 +140,8 @@ def main():
     ax.set_ylabel(r"$\langle\alpha_x\rangle(t)$")
     ax.set_ylim(-1.18, 1.18)
     ax.set_xticks(ts)
-    ax.set_title(rf"Two-site Zitterbewegung on hardware "
-                 rf"($N=2$, $\tilde m={m}$, period $\approx{period:.1f}$ steps)")
+    ax.set_title(rf"{N}-site Zitterbewegung on hardware "
+                 rf"($N={N}$, $\tilde m={m}$, period $\approx{period:.1f}$ steps)")
     ax.legend(frameon=False, ncol=2, loc="lower right")
     fig.tight_layout()
     fig.savefig(args.out, dpi=150, bbox_inches="tight")

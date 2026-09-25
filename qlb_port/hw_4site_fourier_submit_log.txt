@@ -1,0 +1,53 @@
+2-site trembling: npos=2 (N=4 sites, 4 qubits)  k0=0.0000  m~=0.8  E=0.7610  period=4.13 steps  shots=2000
+   t   exact<ax>   emul<ax>   cz
+   0    +0.0000    -0.0010    1
+   1    +0.9988    +0.9990    7
+   2    +0.0974    +0.0740   10
+   3    -0.9893    -0.9950   13
+   4    -0.1938    -0.1980   16
+Submitting 5 velocity circuits to rigetti:cepheus-1-108q (2000 shots each) ...
+  velocity t=0 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=7 2q-gates=1
+  velocity t=1 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=11 2q-gates=5
+  velocity t=2 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=23 2q-gates=10
+  velocity t=3 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=35 2q-gates=15
+  velocity t=4 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=43 2q-gates=20
+  raw hardware counts written to qlb_port/hw_4site_fourier_trembling_raw.txt
+   t   exact<ax>   hw<ax>
+   0    +0.0000    +0.1470
+   1    +0.9988    +0.7860
+   2    +0.0974    -0.1030
+   3    -0.9893    -0.6840
+   4    -0.1938    -0.0960
+wrote qlb_port/hw_4site_fourier_trembling.png and qlb_port/hw_4site_fourier_trembling.npz
+2-site density sloshing: npos=2 (N=4 sites, 4 qubits)  k0=0.0000  m~=0.8  shots=2000
+   t   rho_exact            <x>ex   <x>em   cz
+   0   [0.01, 0.21, 0.57, 0.21] +1.979  +1.976    1
+   1   [0.21, 0.011, 0.21, 0.57] +2.140  +2.117    8
+   2   [0.304, 0.21, 0.277, 0.21] +1.392  +1.428   11
+   3   [0.21, 0.318, 0.21, 0.263] +1.526  +1.510   14
+   4   [0.569, 0.21, 0.012, 0.21] +0.862  +0.845   17
+Submitting 5 density circuits to rigetti:cepheus-1-108q (2000 shots each) ...
+  density t=0 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=11 2q-gates=1
+  density t=1 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=18 2q-gates=8
+  density t=2 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=30 2q-gates=12
+  density t=3 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=40 2q-gates=18
+  density t=4 circuit:
+    [rigetti:cepheus-1-108q] transpiled: physical qubits=[0, 1, 10, 11] depth=51 2q-gates=23
+  raw hardware counts written to qlb_port/hw_4site_fourier_density_raw.txt
+   t   rho_hw               <x>hw
+   0   [0.041, 0.227, 0.519, 0.213] +1.904
+   1   [0.224, 0.092, 0.227, 0.456] +1.916
+   2   [0.311, 0.246, 0.226, 0.217] +1.349
+   3   [0.242, 0.334, 0.219, 0.204] +1.385
+   4   [0.37, 0.202, 0.194, 0.235] +1.293
+wrote qlb_port/hw_4site_fourier_density.png and qlb_port/hw_4site_fourier_density.npz
+DONE rc=0

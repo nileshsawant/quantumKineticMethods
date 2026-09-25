@@ -62,8 +62,6 @@ _SIGNS = ops.streaming_signs("x").astype(float)
 ALPHA_X = ops.ALPHA_X
 
 DEFAULT_BACKEND = "rigetti:cepheus-1-108q"
-# native two-qubit gate names we might see after transpiling to a real target
-_TWO_Q = ("cx", "cz", "ecr", "iswap", "xx_plus_yy", "rzz", "rxx")
 
 
 # ================================================================================
@@ -228,13 +226,27 @@ def get_service():
     return OpenQuantumService(creds=ClientCredentials(client_id=cid, client_secret=sec))
 
 
-def run_hardware(service, backend_name, qc, shots):
-    """Transpile to the real backend target, report cost, submit, return integer counts."""
+def run_hardware(service, backend_name, qc, shots, initial_layout=None):
+    """Transpile to the real backend target, report cost, submit, return integer counts.
+
+    initial_layout : optional list of physical qubits, one per circuit qubit.
+    """
     backend = service.return_backend(backend_name)
-    tqc = transpile(qc, backend, optimization_level=3)
-    n2 = sum(v for g, v in tqc.count_ops().items() if g in _TWO_Q)
-    print(f"    [{backend_name}] transpiled: qubits={tqc.num_qubits} depth={tqc.depth()} "
+    tqc = transpile(qc, backend, optimization_level=3, initial_layout=initial_layout)
+    n2 = sum(1 for inst in tqc.data if inst.operation.num_qubits == 2)
+    active = sorted({tqc.find_bit(q).index for inst in tqc.data for q in inst.qubits})
+    print(f"    [{backend_name}] transpiled: physical qubits={active} depth={tqc.depth()} "
           f"2q-gates={n2}")
+    cm = backend.coupling_map
+    if cm is not None:
+        dead = set(active) - {q for e in cm.get_edges() for q in e}
+        if dead:
+            raise RuntimeError(f"transpiled circuit uses qubits outside the coupling map: {dead}")
+    # The target spans every qubit slot, dead ones included (Cepheus-1: $8), so the SDK's
+    # width check rejects all circuits; the QASM payload addresses only the active qubits.
+    lim = getattr(backend, "_max_qubits_per_job", None)
+    if lim is not None and tqc.num_qubits > lim >= len(active):
+        backend._max_qubits_per_job = None
     job = backend.run(tqc, shots=shots)
     return _counts_to_ints(job.result().get_counts())
 

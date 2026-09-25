@@ -49,6 +49,9 @@ def main():
     ap.add_argument("--submit", action="store_true",
                     help="ACTUALLY submit to the cloud backend (spends credits).")
     ap.add_argument("--backend-name", default=H.DEFAULT_BACKEND)
+    ap.add_argument("--layout", type=lambda s: [int(q) for q in s.split(",")], default=None,
+                    help="physical qubits for circuit qubits 0,1,2,..., e.g. 0,1,10,11.")
+    ap.add_argument("--tmin", type=int, default=0, help="first step submitted to hardware.")
     ap.add_argument("--raw", default="qlb_port/hw_2site_density_raw.txt",
                     help="raw-counts file (kept separate from earlier runs).")
     ap.add_argument("--out", default="qlb_port/hw_2site_density.png")
@@ -93,8 +96,10 @@ def main():
                 print(f"\nSubmitting {len(ts)} density circuits to {args.backend_name} "
                       f"({shots} shots each) ...")
                 for i, t in enumerate(ts):
+                    if t < args.tmin:
+                        continue
                     print(f"  density t={t} circuit:")
-                    cd = H.run_hardware(service, args.backend_name, circs[t], shots)
+                    cd = H.run_hardware(service, args.backend_name, circs[t], shots, args.layout)
                     H._dump_counts(fh, f"density_t={t}", cd, 2 + npos, shots)
                     rho_hw[i] = H.density_from_counts(cd, npos, shots)
                     fh.write("  rho_hw(x) = " + " ".join(f"{v:.4f}" for v in rho_hw[i]) + "\n")
@@ -108,7 +113,8 @@ def main():
             service.close()
 
     save = dict(t=np.array(ts), rho_exact=rho_exact, rho_aer=rho_aer,
-                x_exact=x_exact, x_aer=x_aer, k0=k0, npos=npos, mass=m, shots=shots)
+                x_exact=x_exact, x_aer=x_aer, k0=k0, npos=npos, mass=m, shots=shots,
+                streaming=args.streaming)
     if rho_hw is not None:
         save["rho_hw"] = rho_hw
         save["x_hw"] = x_hw
@@ -124,12 +130,12 @@ def main():
             label=f"emulator ({shots} shots)")
     if x_hw is not None:
         ax.plot(ts, x_hw, "D", color="C3", ms=8, zorder=4, label="hardware")
-    ax.axhline(0.5, color="k", lw=0.6, ls=":")
+    ax.axhline((N - 1) / 2, color="k", lw=0.6, ls=":")
     ax.set_xlabel("step  $t$")
-    ax.set_ylabel(r"mean position  $\langle x\rangle=\rho(1)$")
-    ax.set_ylim(-0.02, 1.02)
+    ax.set_ylabel(r"mean position  $\langle x\rangle$")
+    ax.set_ylim(-0.02 * (N - 1), 1.02 * (N - 1))
     ax.set_xticks(ts)
-    ax.set_title(rf"Two-site position sloshing ($N=2$, $\tilde m={m}$, period $2$ steps)")
+    ax.set_title(rf"{N}-site packet position ($N={N}$, $\tilde m={m}$)")
     ax.legend(frameon=False, ncol=2, loc="upper right")
     fig.tight_layout()
     fig.savefig(args.out, dpi=150, bbox_inches="tight")

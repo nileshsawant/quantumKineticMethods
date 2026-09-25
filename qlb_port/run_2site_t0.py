@@ -149,7 +149,7 @@ def main():
     axB.set_ylabel(r"$\langle\alpha_x\rangle$ at $t=0$")
     axB.set_title(rf"$t=0$ velocity (exact $={av_exact:+.2f}$)")
     tag = "vs hardware" if rho_hw is not None else "(emulator only)"
-    fig.suptitle(f"2-site $t=0$ state: exact vs emulator {tag}", y=1.02)
+    fig.suptitle(f"{N}-site $t=0$ state: exact vs emulator {tag}", y=1.02)
     fig.tight_layout()
     fig.savefig(args.out, dpi=150, bbox_inches="tight")
     print(f"\nwrote {args.out} and {args.data}")
