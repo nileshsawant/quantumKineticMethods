@@ -1,0 +1,25 @@
+target: Cepheus-1-108Q   shots=2000
+  pinned logical->physical qubits: {0: 103, 1: 102, 2: 100, 3: 101}  (INITIAL_REWIRING NAIVE)
+loaded 8 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled even_all_t4_r1
+  compiled even_all_t4_r2
+  compiled odd_all_t4_r1
+  compiled odd_all_t4_r2
+  compiled step1_all_t4_r1
+  compiled step1_all_t4_r2
+  compiled step1_q1_t4_r1
+  compiled step1_q1_t4_r2
+submitted 8 jobs
+
+  job          t   kind      QPU        exact    exact
+  even_all_t4_r1  4   palpha   +0.1160   -0.1938   -0.1938
+  even_all_t4_r2  4   palpha   -0.0900   -0.1938   -0.1938
+  odd_all_t4_r1  4   palpha   +0.0210   -0.1938   -0.1938
+  odd_all_t4_r2  4   palpha   -0.0100   -0.1938   -0.1938
+  step1_all_t4_r1  4   palpha   -0.1520   -0.1938   -0.1938
+  step1_all_t4_r2  4   palpha   -0.0610   -0.1938   -0.1938
+  step1_q1_t4_r1  4   alpha    -0.0280   -0.1938   -0.1938
+  step1_q1_t4_r2  4   alpha    -0.1080   -0.1938   -0.1938
+
+total QPU execution time: 3505965 us  (3.5060 s billed)
+results written to qcs_results_t4check.json

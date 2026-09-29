@@ -1,0 +1,139 @@
+{
+  "description": "t=4 velocity diagnostic: parity sectors and readout width",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "E": 0.7610127542247298,
+  "streaming": "fourier",
+  "jobs": [
+    {
+      "name": "even_all_t4_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "even_all_t4_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "odd_all_t4_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "odd_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "odd_all_t4_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "odd_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "step1_all_t4_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "step1_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "step1_all_t4_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "step1_all_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "step1_q1_t4_r1",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    {
+      "name": "step1_q1_t4_r2",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    }
+  ]
+}
