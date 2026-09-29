@@ -1,0 +1,57 @@
+{
+  "description": "Pauli-twirled native programs (quilc bypassed at submission)",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "E": 0.7610127542247298,
+  "streaming": "fourier",
+  "qubits_native": "103,102,100,101",
+  "twirl_seed": 2026,
+  "jobs": [
+    {
+      "name": "even_all_t4_tw00",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw00.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 0,
+      "native": true,
+      "shots": 125,
+      "execution_us": 155380.0,
+      "counts": {
+        "0": 22,
+        "1": 3,
+        "2": 4,
+        "3": 21,
+        "4": 11,
+        "5": 3,
+        "6": 4,
+        "7": 12,
+        "8": 15,
+        "9": 2,
+        "10": 2,
+        "11": 4,
+        "12": 12,
+        "14": 4,
+        "15": 6
+      },
+      "qpu": -0.088
+    }
+  ],
+  "device": "Cepheus-1-108Q",
+  "qvm": false,
+  "shots": 2000,
+  "qubits": null,
+  "total_execution_us": 155380.0
+}

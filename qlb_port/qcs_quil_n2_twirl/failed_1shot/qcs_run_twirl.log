@@ -1,0 +1,152 @@
+target: Cepheus-1-108Q   shots=2000
+loaded 34 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled even_all_t4_native
+  compiled even_all_t4_tw00
+  compiled even_all_t4_tw01
+  compiled even_all_t4_tw02
+  compiled even_all_t4_tw03
+  compiled even_all_t4_tw04
+  compiled even_all_t4_tw05
+  compiled even_all_t4_tw06
+  compiled even_all_t4_tw07
+  compiled even_all_t4_tw08
+  compiled even_all_t4_tw09
+  compiled even_all_t4_tw10
+  compiled even_all_t4_tw11
+  compiled even_all_t4_tw12
+  compiled even_all_t4_tw13
+  compiled even_all_t4_tw14
+  compiled even_all_t4_tw15
+  compiled step1_q1_t4_native
+  compiled step1_q1_t4_tw00
+  compiled step1_q1_t4_tw01
+  compiled step1_q1_t4_tw02
+  compiled step1_q1_t4_tw03
+  compiled step1_q1_t4_tw04
+  compiled step1_q1_t4_tw05
+  compiled step1_q1_t4_tw06
+  compiled step1_q1_t4_tw07
+  compiled step1_q1_t4_tw08
+  compiled step1_q1_t4_tw09
+  compiled step1_q1_t4_tw10
+  compiled step1_q1_t4_tw11
+  compiled step1_q1_t4_tw12
+  compiled step1_q1_t4_tw13
+  compiled step1_q1_t4_tw14
+  compiled step1_q1_t4_tw15
+submitted 34 jobs
+
+  job          t   kind      QPU        exact    exact
+  even_all_t4_native  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw00  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw01  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw02  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw03  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw04  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw05  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw06  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw07  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw08  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw09  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw10  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw11  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw12  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw13  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw14  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw15  4   palpha   +1.0000   -0.1938   -0.1938
+  step1_q1_t4_native  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw00  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw01  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw02  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw03  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw04  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw05  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw06  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw07  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw08  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw09  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw10  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw11  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw12  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw13  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw14  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw15  4   alpha    +1.0000   -0.1938   -0.1938
+
+total QPU execution time: 1136754 us  (1.1368 s billed)
+results written to qcs_results_twirl_A.json
+target: Cepheus-1-108Q   shots=2000
+loaded 34 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled even_all_t4_native
+  compiled even_all_t4_tw00
+  compiled even_all_t4_tw01
+  compiled even_all_t4_tw02
+  compiled even_all_t4_tw03
+  compiled even_all_t4_tw04
+  compiled even_all_t4_tw05
+  compiled even_all_t4_tw06
+  compiled even_all_t4_tw07
+  compiled even_all_t4_tw08
+  compiled even_all_t4_tw09
+  compiled even_all_t4_tw10
+  compiled even_all_t4_tw11
+  compiled even_all_t4_tw12
+  compiled even_all_t4_tw13
+  compiled even_all_t4_tw14
+  compiled even_all_t4_tw15
+  compiled step1_q1_t4_native
+  compiled step1_q1_t4_tw00
+  compiled step1_q1_t4_tw01
+  compiled step1_q1_t4_tw02
+  compiled step1_q1_t4_tw03
+  compiled step1_q1_t4_tw04
+  compiled step1_q1_t4_tw05
+  compiled step1_q1_t4_tw06
+  compiled step1_q1_t4_tw07
+  compiled step1_q1_t4_tw08
+  compiled step1_q1_t4_tw09
+  compiled step1_q1_t4_tw10
+  compiled step1_q1_t4_tw11
+  compiled step1_q1_t4_tw12
+  compiled step1_q1_t4_tw13
+  compiled step1_q1_t4_tw14
+  compiled step1_q1_t4_tw15
+submitted 34 jobs
+
+  job          t   kind      QPU        exact    exact
+  even_all_t4_native  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw00  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw01  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw02  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw03  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw04  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw05  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw06  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw07  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw08  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw09  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw10  4   palpha   -1.0000   -0.1938   -0.1938
+  even_all_t4_tw11  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw12  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw13  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw14  4   palpha   +1.0000   -0.1938   -0.1938
+  even_all_t4_tw15  4   palpha   -1.0000   -0.1938   -0.1938
+  step1_q1_t4_native  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw00  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw01  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw02  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw03  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw04  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw05  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw06  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw07  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw08  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw09  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw10  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw11  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw12  4   alpha    -1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw13  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw14  4   alpha    +1.0000   -0.1938   -0.1938
+  step1_q1_t4_tw15  4   alpha    -1.0000   -0.1938   -0.1938
+
+total QPU execution time: 1008696 us  (1.0087 s billed)
+results written to qcs_results_twirl_B.json

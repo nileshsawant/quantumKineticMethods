@@ -177,10 +177,11 @@ def main():
     for job in jobs:
         with open(os.path.join(args.dir, job["quil"])) as fh:
             raw = fh.read()
-        if qmap:
+        native = job.get("native", False)          # already physical + native (PRESERVE_BLOCK)
+        if qmap and not native:
             raw = _pin_text(raw, qmap)
         prog = Program(raw)
-        prog.wrap_in_numshots_loop(args.shots)
+        prog.wrap_in_numshots_loop(job.get("shots", args.shots))
         executables[job["name"]] = qc.compile(prog)
         print(f"  compiled {job['name']}")
     if args.compile_only:

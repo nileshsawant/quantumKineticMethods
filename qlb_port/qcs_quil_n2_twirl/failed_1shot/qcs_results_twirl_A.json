@@ -1,0 +1,868 @@
+{
+  "description": "Pauli-twirled native programs (quilc bypassed at submission)",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "E": 0.7610127542247298,
+  "streaming": "fourier",
+  "qubits_native": "103,102,100,101",
+  "twirl_seed": 2026,
+  "jobs": [
+    {
+      "name": "even_all_t4_native",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_native.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": -1,
+      "native": true,
+      "shots": 2000,
+      "execution_us": 134033.0,
+      "counts": {
+        "15": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw00",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw00.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 0,
+      "native": true,
+      "shots": 125,
+      "execution_us": 37366.0,
+      "counts": {
+        "9": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw01",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw01.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 1,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28198.0,
+      "counts": {
+        "8": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw02",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw02.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 2,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28801.0,
+      "counts": {
+        "4": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw03",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw03.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 3,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28144.0,
+      "counts": {
+        "2": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw04",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw04.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 4,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28093.0,
+      "counts": {
+        "7": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw05",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw05.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 5,
+      "native": true,
+      "shots": 125,
+      "execution_us": 32777.0,
+      "counts": {
+        "3": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw06",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw06.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 6,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28195.0,
+      "counts": {
+        "7": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw07",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw07.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 7,
+      "native": true,
+      "shots": 125,
+      "execution_us": 32147.000000000004,
+      "counts": {
+        "8": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw08",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw08.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 8,
+      "native": true,
+      "shots": 125,
+      "execution_us": 34547.0,
+      "counts": {
+        "7": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw09",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw09.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 9,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28940.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw10",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw10.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 10,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31961.000000000004,
+      "counts": {
+        "8": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw11",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw11.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 11,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28413.0,
+      "counts": {
+        "6": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw12",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw12.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 12,
+      "native": true,
+      "shots": 125,
+      "execution_us": 29580.0,
+      "counts": {
+        "12": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw13",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw13.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 13,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28569.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "even_all_t4_tw14",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw14.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 14,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31003.0,
+      "counts": {
+        "7": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "even_all_t4_tw15",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_tw15.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4",
+      "variant": 15,
+      "native": true,
+      "shots": 125,
+      "execution_us": 34860.0,
+      "counts": {
+        "6": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_native",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_native.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": -1,
+      "native": true,
+      "shots": 2000,
+      "execution_us": 28951.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw00",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw00.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 0,
+      "native": true,
+      "shots": 125,
+      "execution_us": 33212.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw01",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw01.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 1,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28755.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw02",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw02.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 2,
+      "native": true,
+      "shots": 125,
+      "execution_us": 32557.000000000004,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw03",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw03.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 3,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28411.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw04",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw04.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 4,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28796.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw05",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw05.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 5,
+      "native": true,
+      "shots": 125,
+      "execution_us": 32804.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw06",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw06.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 6,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28272.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw07",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw07.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 7,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28047.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw08",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw08.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 8,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31999.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw09",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw09.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 9,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31015.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw10",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw10.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 10,
+      "native": true,
+      "shots": 125,
+      "execution_us": 29871.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw11",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw11.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 11,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28517.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw12",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw12.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 12,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28133.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw13",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw13.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 13,
+      "native": true,
+      "shots": 125,
+      "execution_us": 28719.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    },
+    {
+      "name": "step1_q1_t4_tw14",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw14.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 14,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31514.0,
+      "counts": {
+        "0": 1
+      },
+      "qpu": -1.0
+    },
+    {
+      "name": "step1_q1_t4_tw15",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_tw15.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4",
+      "variant": 15,
+      "native": true,
+      "shots": 125,
+      "execution_us": 31554.0,
+      "counts": {
+        "1": 1
+      },
+      "qpu": 1.0
+    }
+  ],
+  "device": "Cepheus-1-108Q",
+  "qvm": false,
+  "shots": 2000,
+  "qubits": null,
+  "total_execution_us": 1136754.0
+}
