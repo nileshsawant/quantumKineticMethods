@@ -95,6 +95,8 @@ def main():
     RR = json.load(open(P + "qcs_quil_n2_parity/qcs_results_repeat_pinned.json"))
     T4 = json.load(open(P + "qcs_quil_n2_t4check/qcs_results_t4check.json"))
     N1 = json.load(open(P + "qcs_quil_n2_fourier/qcs_results_n2f_pinned.json"))
+    TW = [{j["name"]: j for j in json.load(open(P + f"qcs_quil_n2_twirl/qcs_results_twirl_{r}.json"))["jobs"]}
+          for r in "AB"]
     J1 = {j["name"]: j for j in R1["jobs"]}
     JR = {j["name"]: j for j in RR["jobs"]}
     JT = {j["name"]: j for j in T4["jobs"]}
@@ -143,15 +145,17 @@ def main():
               f"{r[:, 1].mean():+.3f}+-{r[:, 1].std(ddof=1):.3f}  TVD raw {r[:, 2].mean():.3f}+-{r[:, 2].std(ddof=1):.3f}"
               f"  TVD ro+post {r[:, 3].mean():.3f}+-{r[:, 3].std(ddof=1):.3f}")
 
-    # ---- every raw t=4 velocity measurement of today ----
+    # ---- every raw t=4 velocity measurement of today (incl. untwirled controls of the twirl runs) ----
     odd = ~EVEN
     t4 = {
         "even parity": [J1["palpha_t4"]["qpu"], JR["palpha_t4_r1"]["qpu"], JR["palpha_t4_r2"]["qpu"],
-                        JT["even_all_t4_r1"]["qpu"], JT["even_all_t4_r2"]["qpu"]],
+                        JT["even_all_t4_r1"]["qpu"], JT["even_all_t4_r2"]["qpu"]]
+                       + [w["even_all_t4_native"]["qpu"] for w in TW],
         "odd parity": [JT["odd_all_t4_r1"]["qpu"], JT["odd_all_t4_r2"]["qpu"]],
         "step-1 state,\nall qubits read": [JT["step1_all_t4_r1"]["qpu"], JT["step1_all_t4_r2"]["qpu"]],
         "step-1 state,\n$q_1$ read": [JN["alpha_t4"]["qpu"], JR["alpha_t4"]["qpu"],
-                                      JT["step1_q1_t4_r1"]["qpu"], JT["step1_q1_t4_r2"]["qpu"]],
+                                      JT["step1_q1_t4_r1"]["qpu"], JT["step1_q1_t4_r2"]["qpu"]]
+                                     + [w["step1_q1_t4_native"]["qpu"] for w in TW],
     }
     exact4 = J1["palpha_t4"]["exact_alpha"]
     print(f"\nt=4 raw velocity (exact {exact4:+.3f}; shot noise ~{np.sqrt(1 / S):.3f}):")
