@@ -42,7 +42,7 @@ import json
 import os
 
 import numpy as np
-from qiskit import transpile
+from qiskit import QuantumCircuit, transpile
 
 from . import run_hardware_zitterbewegung as H
 
@@ -97,6 +97,10 @@ def main():
     ap.add_argument("--outdir", default="qlb_port/qcs_quil")
     ap.add_argument("--no-emulator", action="store_true",
                     help="skip the local Aer reference column (exact only).")
+    ap.add_argument("--streaming", choices=["mcx", "fourier"], default="mcx")
+    ap.add_argument("--readout-cal", action="store_true",
+                    help="also export one program per computational basis state "
+                         "(readout confusion matrix).")
     args = ap.parse_args()
 
     npos, m, tmax, shots = args.npos, args.mass, args.tmax, args.shots
@@ -116,7 +120,7 @@ def main():
     jobs = []
     for t in ts:
         # -- velocity: <alpha_x>(t), measures qubit 1 --
-        qc = H.alpha_x_circuit(npos, psi_m, m, t)
+        qc = H.alpha_x_circuit(npos, psi_m, m, t, streaming_method=args.streaming)
         quil, measured = circuit_to_quil(qc)
         assert measured == [1], f"alpha circuit measured {measured}, expected [1]"
         fname = f"alpha_t{t}.quil"
@@ -130,7 +134,7 @@ def main():
         jobs.append(rec)
 
         # -- density: rho(x,t) and <x>(t), measures every qubit --
-        qc = H.density_circuit(npos, psi_d, m, t)
+        qc = H.density_circuit(npos, psi_d, m, t, streaming_method=args.streaming)
         quil, measured = circuit_to_quil(qc)
         assert measured == list(range(2 + npos)), \
             f"density circuit measured {measured}, expected {list(range(2 + npos))}"
@@ -148,8 +152,26 @@ def main():
             rec["emulator"] = float(rho_e @ xgrid)
         jobs.append(rec)
 
+    if args.readout_cal:
+        n = 2 + npos
+        for b in range(2 ** n):
+            qc = QuantumCircuit(n, n)
+            for k in range(n):
+                if (b >> k) & 1:
+                    qc.x(k)
+            qc.measure(range(n), range(n))
+            quil, _ = circuit_to_quil(qc)
+            fname = f"cal_{b:0{n}b}.quil"
+            with open(os.path.join(args.outdir, fname), "w") as fh:
+                fh.write(quil)
+            jobs.append({"name": f"cal_{b:0{n}b}", "kind": "cal", "t": 0, "quil": fname,
+                         "npos": npos, "ro_bits": n, "prepared": b, "exact": 1.0})
+
     manifest = {
-        "description": "2-site Dirac-QLB circuits as generic Quil for Rigetti QCS Cepheus-1.",
+        "description": f"Dirac-QLB circuits ({args.streaming} streaming) as generic Quil for "
+                       "Rigetti QCS Cepheus-1.",
+        "streaming": args.streaming,
+        "qubit_order": "logical 0,1 = spinor q0,q1; 2.. = position p0 (LSB), p1, ...",
         "npos": npos, "n_qubits": 2 + npos, "mass": m, "k0": k0, "sigma": args.sigma,
         "E": float(E), "tmax": tmax, "emulator_shots": shots,
         "alpha": "<alpha_x> = P(ro[0]=1) - P(ro[0]=0)  (single spinor bit)",
@@ -167,7 +189,7 @@ def main():
     print(hdr)
     for j in jobs:
         line = f"  {j['name']:11s} {j['t']:2d}   {j['exact']:+7.4f}"
-        if not args.no_emulator:
+        if not args.no_emulator and "emulator" in j:
             line += f"   {j['emulator']:+7.4f}"
         print(line)
     print(f"\nmanifest: {os.path.join(args.outdir, 'manifest.json')}")

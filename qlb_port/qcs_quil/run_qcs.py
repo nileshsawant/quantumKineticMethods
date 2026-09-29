@@ -51,6 +51,9 @@ def _load_ro(result):
 def _observable(job, bits):
     """(value, rho) for a job given its ro bit array.  rho is None for alpha jobs."""
     bits = np.asarray(bits).astype(int)
+    if job["kind"] == "cal":                   # fraction read back as prepared
+        ints = (bits * (1 << np.arange(bits.shape[1]))).sum(axis=1)
+        return float((ints == job["prepared"]).mean()), None
     if job["kind"] == "alpha":
         b = bits[:, 0]                          # single spinor bit after R^-1
         return float((2 * b - 1).mean()), None  # P(1) - P(0)
@@ -182,26 +185,51 @@ def main():
         print("compile-only: all programs compiled, no QPU time used.")
         return
 
-    total_us = 0.0
-    ref_key = "emulator" if "emulator" in jobs[0] else "exact"
-    print(f"\n  job          t   kind      QPU        exact    {ref_key}")
-    for job in jobs:
-        res = qc.run(executables[job["name"]])
-        val, rho = _observable(job, _load_ro(res))
-        dur = getattr(res, "execution_duration_microseconds", None)
-        total_us += float(dur) if dur else 0.0
-        job["qpu"] = val
-        if rho is not None:
-            job["qpu_rho"] = [float(v) for v in rho]
-        print(f"  {job['name']:11s} {job['t']:2d}   {job['kind']:8s} "
-              f"{val:+7.4f}   {job['exact']:+7.4f}   {job.get(ref_key, float('nan')):+7.4f}")
-
     manifest["device"] = args.device
     manifest["qvm"] = args.qvm
     manifest["shots"] = args.shots
-    manifest["total_execution_us"] = total_us
-    with open(args.out, "w") as fh:
-        json.dump(manifest, fh, indent=2)
+    manifest["qubits"] = args.qubits
+
+    done = {}
+    if os.path.exists(args.out):                  # resume: keep jobs that already returned
+        with open(args.out) as fh:
+            done = {j["name"]: j for j in json.load(fh)["jobs"] if "counts" in j}
+        print(f"resuming: {len(done)} jobs already in {args.out}")
+    for i, job in enumerate(jobs):
+        if job["name"] in done:
+            jobs[i] = done[job["name"]]
+
+    def save():
+        manifest["total_execution_us"] = sum(j.get("execution_us", 0.0) for j in jobs)
+        with open(args.out + ".tmp", "w") as fh:
+            json.dump(manifest, fh, indent=2)
+        os.replace(args.out + ".tmp", args.out)
+
+    # submit everything first so the jobs queue together, then collect in order
+    pending = [j for j in jobs if "counts" not in j]
+    handles = {j["name"]: qc.qam.execute(executables[j["name"]]) for j in pending}
+    print(f"submitted {len(handles)} jobs")
+
+    ref_key = "emulator" if "emulator" in jobs[0] else "exact"
+    print(f"\n  job          t   kind      QPU        exact    {ref_key}")
+    for job in pending:
+        res = qc.qam.get_result(handles[job["name"]])
+        bits = np.asarray(_load_ro(res)).astype(int)
+        val, rho = _observable(job, bits)
+        dur = getattr(res, "execution_duration_microseconds", None)
+        job["execution_us"] = float(dur) if dur else 0.0
+        ints = (bits * (1 << np.arange(bits.shape[1]))).sum(axis=1)
+        job["counts"] = {int(i): int(c) for i, c in zip(*np.unique(ints, return_counts=True))}
+        job["qpu"] = val
+        if rho is not None:
+            job["qpu_rho"] = [float(v) for v in rho]
+        save()
+        print(f"  {job['name']:11s} {job['t']:2d}   {job['kind']:8s} "
+              f"{val:+7.4f}   {job['exact']:+7.4f}   {job.get(ref_key, float('nan')):+7.4f}",
+              flush=True)
+
+    save()
+    total_us = manifest["total_execution_us"]
     print(f"\ntotal QPU execution time: {total_us:.0f} us  ({total_us / 1e6:.4f} s billed)")
     print(f"results written to {args.out}")
 

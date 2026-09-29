@@ -1,0 +1,61 @@
+target: Cepheus-1-108Q   shots=2000
+  pinned logical->physical qubits: {0: 103, 1: 102, 2: 100, 3: 101}  (INITIAL_REWIRING NAIVE)
+loaded 26 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled alpha_t0
+  compiled dens_t0
+  compiled alpha_t1
+  compiled dens_t1
+  compiled alpha_t2
+  compiled dens_t2
+  compiled alpha_t3
+  compiled dens_t3
+  compiled alpha_t4
+  compiled dens_t4
+  compiled cal_0000
+  compiled cal_0001
+  compiled cal_0010
+  compiled cal_0011
+  compiled cal_0100
+  compiled cal_0101
+  compiled cal_0110
+  compiled cal_0111
+  compiled cal_1000
+  compiled cal_1001
+  compiled cal_1010
+  compiled cal_1011
+  compiled cal_1100
+  compiled cal_1101
+  compiled cal_1110
+  compiled cal_1111
+submitted 26 jobs
+
+  job          t   kind      QPU        exact    emulator
+  alpha_t0     0   alpha    +0.0160   +0.0000   -0.0010
+  dens_t0      0   density  +1.9810   +1.9791   +1.9750
+  alpha_t1     1   alpha    +0.8160   +0.9988   +0.9990
+  dens_t1      1   density  +2.0265   +2.1395   +2.1575
+  alpha_t2     2   alpha    -0.0010   +0.0974   +0.0640
+  dens_t2      2   density  +1.5025   +1.3922   +1.3865
+  alpha_t3     3   alpha    -0.7020   -0.9893   -0.9920
+  dens_t3      3   density  +1.6990   +1.5260   +1.5055
+  alpha_t4     4   alpha    -0.0430   -0.1938   -0.1530
+  dens_t4      4   density  +1.2135   +0.8625   +0.8655
+  cal_0000     0   cal      +0.9690   +1.0000      +nan
+  cal_0001     0   cal      +0.9410   +1.0000      +nan
+  cal_0010     0   cal      +0.9595   +1.0000      +nan
+  cal_0011     0   cal      +0.9315   +1.0000      +nan
+  cal_0100     0   cal      +0.9590   +1.0000      +nan
+  cal_0101     0   cal      +0.9265   +1.0000      +nan
+  cal_0110     0   cal      +0.9400   +1.0000      +nan
+  cal_0111     0   cal      +0.9130   +1.0000      +nan
+  cal_1000     0   cal      +0.8305   +1.0000      +nan
+  cal_1001     0   cal      +0.8270   +1.0000      +nan
+  cal_1010     0   cal      +0.8065   +1.0000      +nan
+  cal_1011     0   cal      +0.8035   +1.0000      +nan
+  cal_1100     0   cal      +0.9440   +1.0000      +nan
+  cal_1101     0   cal      +0.9270   +1.0000      +nan
+  cal_1110     0   cal      +0.9350   +1.0000      +nan
+  cal_1111     0   cal      +0.9120   +1.0000      +nan
+
+total QPU execution time: 11231923 us  (11.2319 s billed)
+results written to qcs_results_n2f_pinned.json
