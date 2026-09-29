@@ -107,11 +107,13 @@ def main():
     ts = np.array(sorted(rows))
     axA.plot(tsm, np.sin(2 * E * tsm), color="0.6", lw=1.6, label=r"exact  $\sin 2Et$")
     axA.plot(ts, [rows[t]["exact"] for t in ts], "o", color="0.4", ms=5)
-    axA.errorbar(ts - 0.12, [rows[t]["v"][1] for t in ts], yerr=[rows[t]["sdv"][1] for t in ts], fmt="o",
+    axA.errorbar(ts - 0.18, [rows[t]["v"][1] for t in ts], yerr=[rows[t]["sdv"][1] for t in ts], fmt="o",
                  color="C4", mfc="none", ms=8, mew=1.6, capsize=3, label="twirled, readout-corrected")
-    axA.errorbar(ts, [rows[t]["est"][1] for t in ts], yerr=[rows[t]["sd"][1] for t in ts], fmt="s",
-                 color="C1", ms=7, capsize=3, label="zero-noise extrapolation (exponential)")
-    axA.errorbar(ts + 0.12, [rows[t]["est"][2] for t in ts], yerr=[rows[t]["sd"][2] for t in ts], fmt="^",
+    axA.errorbar(ts - 0.06, [rows[t]["est"][0] for t in ts], yerr=[rows[t]["sd"][0] for t in ts], fmt="D",
+                 color="C0", ms=6, capsize=3, label="zero-noise extrapolation (linear, $s=1,3$)")
+    axA.errorbar(ts + 0.06, [rows[t]["est"][1] for t in ts], yerr=[rows[t]["sd"][1] for t in ts], fmt="s",
+                 color="C1", ms=7, capsize=3, label="zero-noise extrapolation (exponential, $s=1,3,5$)")
+    axA.errorbar(ts + 0.18, [rows[t]["est"][2] for t in ts], yerr=[rows[t]["sd"][2] for t in ts], fmt="^",
                  color="C2", ms=8, capsize=3, label="mirror rescaling")
     axA.axhline(0, color="k", lw=0.6, ls=":")
     axA.set_xticks(range(5))
