@@ -1,0 +1,392 @@
+target: Cepheus-1-108Q   shots=2000
+loaded 192 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled alpha_t1_tw00
+  compiled alpha_t1_tw01
+  compiled alpha_t1_tw02
+  compiled alpha_t1_tw03
+  compiled alpha_t1_tw04
+  compiled alpha_t1_tw05
+  compiled alpha_t1_tw06
+  compiled alpha_t1_tw07
+  compiled alpha_t1_tw08
+  compiled alpha_t1_tw09
+  compiled alpha_t1_tw10
+  compiled alpha_t1_tw11
+  compiled alpha_t1_tw12
+  compiled alpha_t1_tw13
+  compiled alpha_t1_tw14
+  compiled alpha_t1_tw15
+  compiled alpha_t1_cdr00
+  compiled alpha_t1_cdr01
+  compiled alpha_t1_cdr02
+  compiled alpha_t1_cdr03
+  compiled alpha_t1_cdr04
+  compiled alpha_t1_cdr05
+  compiled alpha_t1_cdr06
+  compiled alpha_t1_cdr07
+  compiled alpha_t1_cdr08
+  compiled alpha_t1_cdr09
+  compiled alpha_t1_cdr10
+  compiled alpha_t1_cdr11
+  compiled alpha_t1_cdr12
+  compiled alpha_t1_cdr13
+  compiled alpha_t1_cdr14
+  compiled alpha_t1_cdr15
+  compiled alpha_t1_cdr16
+  compiled alpha_t1_cdr17
+  compiled alpha_t1_cdr18
+  compiled alpha_t1_cdr19
+  compiled alpha_t1_cdr20
+  compiled alpha_t1_cdr21
+  compiled alpha_t1_cdr22
+  compiled alpha_t1_cdr23
+  compiled alpha_t1_cdr24
+  compiled alpha_t1_cdr25
+  compiled alpha_t1_cdr26
+  compiled alpha_t1_cdr27
+  compiled alpha_t1_cdr28
+  compiled alpha_t1_cdr29
+  compiled alpha_t1_cdr30
+  compiled alpha_t1_cdr31
+  compiled alpha_t2_tw00
+  compiled alpha_t2_tw01
+  compiled alpha_t2_tw02
+  compiled alpha_t2_tw03
+  compiled alpha_t2_tw04
+  compiled alpha_t2_tw05
+  compiled alpha_t2_tw06
+  compiled alpha_t2_tw07
+  compiled alpha_t2_tw08
+  compiled alpha_t2_tw09
+  compiled alpha_t2_tw10
+  compiled alpha_t2_tw11
+  compiled alpha_t2_tw12
+  compiled alpha_t2_tw13
+  compiled alpha_t2_tw14
+  compiled alpha_t2_tw15
+  compiled alpha_t2_cdr00
+  compiled alpha_t2_cdr01
+  compiled alpha_t2_cdr02
+  compiled alpha_t2_cdr03
+  compiled alpha_t2_cdr04
+  compiled alpha_t2_cdr05
+  compiled alpha_t2_cdr06
+  compiled alpha_t2_cdr07
+  compiled alpha_t2_cdr08
+  compiled alpha_t2_cdr09
+  compiled alpha_t2_cdr10
+  compiled alpha_t2_cdr11
+  compiled alpha_t2_cdr12
+  compiled alpha_t2_cdr13
+  compiled alpha_t2_cdr14
+  compiled alpha_t2_cdr15
+  compiled alpha_t2_cdr16
+  compiled alpha_t2_cdr17
+  compiled alpha_t2_cdr18
+  compiled alpha_t2_cdr19
+  compiled alpha_t2_cdr20
+  compiled alpha_t2_cdr21
+  compiled alpha_t2_cdr22
+  compiled alpha_t2_cdr23
+  compiled alpha_t2_cdr24
+  compiled alpha_t2_cdr25
+  compiled alpha_t2_cdr26
+  compiled alpha_t2_cdr27
+  compiled alpha_t2_cdr28
+  compiled alpha_t2_cdr29
+  compiled alpha_t2_cdr30
+  compiled alpha_t2_cdr31
+  compiled alpha_t3_tw00
+  compiled alpha_t3_tw01
+  compiled alpha_t3_tw02
+  compiled alpha_t3_tw03
+  compiled alpha_t3_tw04
+  compiled alpha_t3_tw05
+  compiled alpha_t3_tw06
+  compiled alpha_t3_tw07
+  compiled alpha_t3_tw08
+  compiled alpha_t3_tw09
+  compiled alpha_t3_tw10
+  compiled alpha_t3_tw11
+  compiled alpha_t3_tw12
+  compiled alpha_t3_tw13
+  compiled alpha_t3_tw14
+  compiled alpha_t3_tw15
+  compiled alpha_t3_cdr00
+  compiled alpha_t3_cdr01
+  compiled alpha_t3_cdr02
+  compiled alpha_t3_cdr03
+  compiled alpha_t3_cdr04
+  compiled alpha_t3_cdr05
+  compiled alpha_t3_cdr06
+  compiled alpha_t3_cdr07
+  compiled alpha_t3_cdr08
+  compiled alpha_t3_cdr09
+  compiled alpha_t3_cdr10
+  compiled alpha_t3_cdr11
+  compiled alpha_t3_cdr12
+  compiled alpha_t3_cdr13
+  compiled alpha_t3_cdr14
+  compiled alpha_t3_cdr15
+  compiled alpha_t3_cdr16
+  compiled alpha_t3_cdr17
+  compiled alpha_t3_cdr18
+  compiled alpha_t3_cdr19
+  compiled alpha_t3_cdr20
+  compiled alpha_t3_cdr21
+  compiled alpha_t3_cdr22
+  compiled alpha_t3_cdr23
+  compiled alpha_t3_cdr24
+  compiled alpha_t3_cdr25
+  compiled alpha_t3_cdr26
+  compiled alpha_t3_cdr27
+  compiled alpha_t3_cdr28
+  compiled alpha_t3_cdr29
+  compiled alpha_t3_cdr30
+  compiled alpha_t3_cdr31
+  compiled alpha_t4_tw00
+  compiled alpha_t4_tw01
+  compiled alpha_t4_tw02
+  compiled alpha_t4_tw03
+  compiled alpha_t4_tw04
+  compiled alpha_t4_tw05
+  compiled alpha_t4_tw06
+  compiled alpha_t4_tw07
+  compiled alpha_t4_tw08
+  compiled alpha_t4_tw09
+  compiled alpha_t4_tw10
+  compiled alpha_t4_tw11
+  compiled alpha_t4_tw12
+  compiled alpha_t4_tw13
+  compiled alpha_t4_tw14
+  compiled alpha_t4_tw15
+  compiled alpha_t4_cdr00
+  compiled alpha_t4_cdr01
+  compiled alpha_t4_cdr02
+  compiled alpha_t4_cdr03
+  compiled alpha_t4_cdr04
+  compiled alpha_t4_cdr05
+  compiled alpha_t4_cdr06
+  compiled alpha_t4_cdr07
+  compiled alpha_t4_cdr08
+  compiled alpha_t4_cdr09
+  compiled alpha_t4_cdr10
+  compiled alpha_t4_cdr11
+  compiled alpha_t4_cdr12
+  compiled alpha_t4_cdr13
+  compiled alpha_t4_cdr14
+  compiled alpha_t4_cdr15
+  compiled alpha_t4_cdr16
+  compiled alpha_t4_cdr17
+  compiled alpha_t4_cdr18
+  compiled alpha_t4_cdr19
+  compiled alpha_t4_cdr20
+  compiled alpha_t4_cdr21
+  compiled alpha_t4_cdr22
+  compiled alpha_t4_cdr23
+  compiled alpha_t4_cdr24
+  compiled alpha_t4_cdr25
+  compiled alpha_t4_cdr26
+  compiled alpha_t4_cdr27
+  compiled alpha_t4_cdr28
+  compiled alpha_t4_cdr29
+  compiled alpha_t4_cdr30
+  compiled alpha_t4_cdr31
+submitted 192 jobs
+
+  job          t   kind      QPU        exact    emulator
+  alpha_t1_tw00  1   alpha    +0.8400   +0.9988   +0.9990
+  alpha_t1_tw01  1   alpha    +0.7760   +0.9988   +0.9990
+  alpha_t1_tw02  1   alpha    +0.8720   +0.9988   +0.9990
+  alpha_t1_tw03  1   alpha    +0.8560   +0.9988   +0.9990
+  alpha_t1_tw04  1   alpha    +0.8080   +0.9988   +0.9990
+  alpha_t1_tw05  1   alpha    +0.6800   +0.9988   +0.9990
+  alpha_t1_tw06  1   alpha    +0.9040   +0.9988   +0.9990
+  alpha_t1_tw07  1   alpha    +0.7600   +0.9988   +0.9990
+  alpha_t1_tw08  1   alpha    +0.8560   +0.9988   +0.9990
+  alpha_t1_tw09  1   alpha    +0.6800   +0.9988   +0.9990
+  alpha_t1_tw10  1   alpha    +0.8400   +0.9988   +0.9990
+  alpha_t1_tw11  1   alpha    +0.8240   +0.9988   +0.9990
+  alpha_t1_tw12  1   alpha    +0.7600   +0.9988   +0.9990
+  alpha_t1_tw13  1   alpha    +0.6800   +0.9988   +0.9990
+  alpha_t1_tw14  1   alpha    +0.7120   +0.9988   +0.9990
+  alpha_t1_tw15  1   alpha    +0.8560   +0.9988   +0.9990
+  alpha_t1_cdr00  1   alpha    +0.6720   +0.9988   +0.9990
+  alpha_t1_cdr01  1   alpha    -0.1440   -0.0000   +0.9990
+  alpha_t1_cdr02  1   alpha    +0.8640   +0.9988   +0.9990
+  alpha_t1_cdr03  1   alpha    +0.0000   -0.0000   +0.9990
+  alpha_t1_cdr04  1   alpha    -0.8240   -1.0000   +0.9990
+  alpha_t1_cdr05  1   alpha    +0.7920   +0.9988   +0.9990
+  alpha_t1_cdr06  1   alpha    +0.7200   +0.9988   +0.9990
+  alpha_t1_cdr07  1   alpha    +0.7840   +0.9988   +0.9990
+  alpha_t1_cdr08  1   alpha    +0.7680   +1.0000   +0.9990
+  alpha_t1_cdr09  1   alpha    +0.8080   +0.9988   +0.9990
+  alpha_t1_cdr10  1   alpha    -0.0240   +0.0000   +0.9990
+  alpha_t1_cdr11  1   alpha    +0.8320   +0.9988   +0.9990
+  alpha_t1_cdr12  1   alpha    +0.7680   +1.0000   +0.9990
+  alpha_t1_cdr13  1   alpha    +0.1760   -0.0000   +0.9990
+  alpha_t1_cdr14  1   alpha    +0.7840   +0.9988   +0.9990
+  alpha_t1_cdr15  1   alpha    +0.7280   +0.9988   +0.9990
+  alpha_t1_cdr16  1   alpha    -0.8560   -1.0000   +0.9990
+  alpha_t1_cdr17  1   alpha    -0.7040   -1.0000   +0.9990
+  alpha_t1_cdr18  1   alpha    +0.0000   -0.0000   +0.9990
+  alpha_t1_cdr19  1   alpha    +0.3120   -0.0000   +0.9990
+  alpha_t1_cdr20  1   alpha    +0.7520   +0.9988   +0.9990
+  alpha_t1_cdr21  1   alpha    +0.7040   +0.9988   +0.9990
+  alpha_t1_cdr22  1   alpha    +0.7440   +1.0000   +0.9990
+  alpha_t1_cdr23  1   alpha    -0.0320   -0.0000   +0.9990
+  alpha_t1_cdr24  1   alpha    +0.7840   +0.9988   +0.9990
+  alpha_t1_cdr25  1   alpha    +0.2640   -0.0000   +0.9990
+  alpha_t1_cdr26  1   alpha    +0.7680   +1.0000   +0.9990
+  alpha_t1_cdr27  1   alpha    +0.7360   +0.9988   +0.9990
+  alpha_t1_cdr28  1   alpha    -0.1760   -0.0000   +0.9990
+  alpha_t1_cdr29  1   alpha    +0.8080   +1.0000   +0.9990
+  alpha_t1_cdr30  1   alpha    +0.7600   +0.9988   +0.9990
+  alpha_t1_cdr31  1   alpha    -0.1360   -0.0000   +0.9990
+  alpha_t2_tw00  2   alpha    +0.0560   +0.0974   +0.0640
+  alpha_t2_tw01  2   alpha    -0.0400   +0.0974   +0.0640
+  alpha_t2_tw02  2   alpha    +0.0720   +0.0974   +0.0640
+  alpha_t2_tw03  2   alpha    +0.0400   +0.0974   +0.0640
+  alpha_t2_tw04  2   alpha    +0.1840   +0.0974   +0.0640
+  alpha_t2_tw05  2   alpha    +0.0560   +0.0974   +0.0640
+  alpha_t2_tw06  2   alpha    +0.0720   +0.0974   +0.0640
+  alpha_t2_tw07  2   alpha    +0.4080   +0.0974   +0.0640
+  alpha_t2_tw08  2   alpha    +0.1200   +0.0974   +0.0640
+  alpha_t2_tw09  2   alpha    +0.1520   +0.0974   +0.0640
+  alpha_t2_tw10  2   alpha    +0.0400   +0.0974   +0.0640
+  alpha_t2_tw11  2   alpha    +0.1360   +0.0974   +0.0640
+  alpha_t2_tw12  2   alpha    +0.0240   +0.0974   +0.0640
+  alpha_t2_tw13  2   alpha    +0.3120   +0.0974   +0.0640
+  alpha_t2_tw14  2   alpha    -0.0240   +0.0974   +0.0640
+  alpha_t2_tw15  2   alpha    +0.0720   +0.0974   +0.0640
+  alpha_t2_cdr00  2   alpha    +0.6560   +1.0000   +0.0640
+  alpha_t2_cdr01  2   alpha    +0.8000   +1.0000   +0.0640
+  alpha_t2_cdr02  2   alpha    -0.7600   -0.9988   +0.0640
+  alpha_t2_cdr03  2   alpha    +0.1360   +0.0974   +0.0640
+  alpha_t2_cdr04  2   alpha    +0.7680   +1.0000   +0.0640
+  alpha_t2_cdr05  2   alpha    +0.0400   +0.1513   +0.0640
+  alpha_t2_cdr06  2   alpha    -0.6640   -0.9988   +0.0640
+  alpha_t2_cdr07  2   alpha    -0.6640   -1.0000   +0.0640
+  alpha_t2_cdr08  2   alpha    +0.1440   +0.0488   +0.0640
+  alpha_t2_cdr09  2   alpha    +0.6880   +0.9988   +0.0640
+  alpha_t2_cdr10  2   alpha    -0.2080   -0.1515   +0.0640
+  alpha_t2_cdr11  2   alpha    -0.4080   -1.0000   +0.0640
+  alpha_t2_cdr12  2   alpha    -0.1920   -0.0000   +0.0640
+  alpha_t2_cdr13  2   alpha    +0.6160   +1.0000   +0.0640
+  alpha_t2_cdr14  2   alpha    +0.1440   +0.0006   +0.0640
+  alpha_t2_cdr15  2   alpha    -0.5840   -1.0000   +0.0640
+  alpha_t2_cdr16  2   alpha    -0.0560   -0.1513   +0.0640
+  alpha_t2_cdr17  2   alpha    -0.6400   -1.0000   +0.0640
+  alpha_t2_cdr18  2   alpha    -0.0080   -0.1513   +0.0640
+  alpha_t2_cdr19  2   alpha    +0.2960   -0.0000   +0.0640
+  alpha_t2_cdr20  2   alpha    +0.8080   +1.0000   +0.0640
+  alpha_t2_cdr21  2   alpha    -0.0160   -0.0074   +0.0640
+  alpha_t2_cdr22  2   alpha    -0.1600   -0.1513   +0.0640
+  alpha_t2_cdr23  2   alpha    +0.4880   +0.9988   +0.0640
+  alpha_t2_cdr24  2   alpha    +0.0400   -0.0000   +0.0640
+  alpha_t2_cdr25  2   alpha    -0.0880   -0.0000   +0.0640
+  alpha_t2_cdr26  2   alpha    +0.6960   +1.0000   +0.0640
+  alpha_t2_cdr27  2   alpha    +0.5920   +0.9988   +0.0640
+  alpha_t2_cdr28  2   alpha    +0.0080   +0.0482   +0.0640
+  alpha_t2_cdr29  2   alpha    -0.1440   -0.0000   +0.0640
+  alpha_t2_cdr30  2   alpha    +0.0640   +0.0488   +0.0640
+  alpha_t2_cdr31  2   alpha    -0.7120   -1.0000   +0.0640
+  alpha_t3_tw00  3   alpha    -0.3600   -0.9893   -0.9920
+  alpha_t3_tw01  3   alpha    -0.3920   -0.9893   -0.9920
+  alpha_t3_tw02  3   alpha    -0.5200   -0.9893   -0.9920
+  alpha_t3_tw03  3   alpha    -0.6160   -0.9893   -0.9920
+  alpha_t3_tw04  3   alpha    -0.2800   -0.9893   -0.9920
+  alpha_t3_tw05  3   alpha    -0.7280   -0.9893   -0.9920
+  alpha_t3_tw06  3   alpha    -0.6320   -0.9893   -0.9920
+  alpha_t3_tw07  3   alpha    -0.5200   -0.9893   -0.9920
+  alpha_t3_tw08  3   alpha    -0.5520   -0.9893   -0.9920
+  alpha_t3_tw09  3   alpha    -0.6800   -0.9893   -0.9920
+  alpha_t3_tw10  3   alpha    -0.6800   -0.9893   -0.9920
+  alpha_t3_tw11  3   alpha    -0.6800   -0.9893   -0.9920
+  alpha_t3_tw12  3   alpha    -0.6000   -0.9893   -0.9920
+  alpha_t3_tw13  3   alpha    -0.5680   -0.9893   -0.9920
+  alpha_t3_tw14  3   alpha    -0.5040   -0.9893   -0.9920
+  alpha_t3_tw15  3   alpha    -0.4880   -0.9893   -0.9920
+  alpha_t3_cdr00  3   alpha    +0.5760   +1.0000   -0.9920
+  alpha_t3_cdr01  3   alpha    -0.5680   -0.9873   -0.9920
+  alpha_t3_cdr02  3   alpha    -0.1360   -0.1513   -0.9920
+  alpha_t3_cdr03  3   alpha    +0.0960   -0.0000   -0.9920
+  alpha_t3_cdr04  3   alpha    -0.2000   -0.0000   -0.9920
+  alpha_t3_cdr05  3   alpha    -0.1520   -0.0000   -0.9920
+  alpha_t3_cdr06  3   alpha    +0.4320   +0.9799   -0.9920
+  alpha_t3_cdr07  3   alpha    +0.0560   -0.0963   -0.9920
+  alpha_t3_cdr08  3   alpha    -0.0800   -0.0000   -0.9920
+  alpha_t3_cdr09  3   alpha    +0.4480   +0.9952   -0.9920
+  alpha_t3_cdr10  3   alpha    +0.6800   +0.9873   -0.9920
+  alpha_t3_cdr11  3   alpha    +0.0880   -0.0561   -0.9920
+  alpha_t3_cdr12  3   alpha    +0.0960   +0.0074   -0.9920
+  alpha_t3_cdr13  3   alpha    +0.5520   +0.9988   -0.9920
+  alpha_t3_cdr14  3   alpha    +0.6480   +1.0000   -0.9920
+  alpha_t3_cdr15  3   alpha    -0.5440   -1.0000   -0.9920
+  alpha_t3_cdr16  3   alpha    +0.6160   +0.9873   -0.9920
+  alpha_t3_cdr17  3   alpha    -0.0320   +0.1032   -0.9920
+  alpha_t3_cdr18  3   alpha    -0.0960   +0.0074   -0.9920
+  alpha_t3_cdr19  3   alpha    -0.5360   -0.9988   -0.9920
+  alpha_t3_cdr20  3   alpha    +0.0880   -0.0000   -0.9920
+  alpha_t3_cdr21  3   alpha    -0.5360   -0.9953   -0.9920
+  alpha_t3_cdr22  3   alpha    -0.2240   -0.1535   -0.9920
+  alpha_t3_cdr23  3   alpha    +0.6480   +1.0000   -0.9920
+  alpha_t3_cdr24  3   alpha    +0.4400   +1.0000   -0.9920
+  alpha_t3_cdr25  3   alpha    +0.0240   -0.1515   -0.9920
+  alpha_t3_cdr26  3   alpha    +0.2800   +0.9988   -0.9920
+  alpha_t3_cdr27  3   alpha    +0.0080   -0.0000   -0.9920
+  alpha_t3_cdr28  3   alpha    -0.0800   +0.0488   -0.9920
+  alpha_t3_cdr29  3   alpha    +0.4960   +0.9976   -0.9920
+  alpha_t3_cdr30  3   alpha    +0.4480   +0.9685   -0.9920
+  alpha_t3_cdr31  3   alpha    +0.2400   -0.0488   -0.9920
+  alpha_t4_tw00  4   alpha    +0.0080   -0.1938   -0.1530
+  alpha_t4_tw01  4   alpha    +0.0240   -0.1938   -0.1530
+  alpha_t4_tw02  4   alpha    +0.0560   -0.1938   -0.1530
+  alpha_t4_tw03  4   alpha    -0.3760   -0.1938   -0.1530
+  alpha_t4_tw04  4   alpha    -0.1360   -0.1938   -0.1530
+  alpha_t4_tw05  4   alpha    -0.3760   -0.1938   -0.1530
+  alpha_t4_tw06  4   alpha    -0.0880   -0.1938   -0.1530
+  alpha_t4_tw07  4   alpha    -0.0560   -0.1938   -0.1530
+  alpha_t4_tw08  4   alpha    +0.0560   -0.1938   -0.1530
+  alpha_t4_tw09  4   alpha    +0.2000   -0.1938   -0.1530
+  alpha_t4_tw10  4   alpha    -0.2320   -0.1938   -0.1530
+  alpha_t4_tw11  4   alpha    -0.1040   -0.1938   -0.1530
+  alpha_t4_tw12  4   alpha    -0.0560   -0.1938   -0.1530
+  alpha_t4_tw13  4   alpha    -0.0720   -0.1938   -0.1530
+  alpha_t4_tw14  4   alpha    -0.1680   -0.1938   -0.1530
+  alpha_t4_tw15  4   alpha    +0.0080   -0.1938   -0.1530
+  alpha_t4_cdr00  4   alpha    -0.1440   -0.9988   -0.1530
+  alpha_t4_cdr01  4   alpha    +0.3280   -0.0000   -0.1530
+  alpha_t4_cdr02  4   alpha    +0.0960   +0.1513   -0.1530
+  alpha_t4_cdr03  4   alpha    -0.3600   -0.9985   -0.1530
+  alpha_t4_cdr04  4   alpha    -0.1200   -0.1633   -0.1530
+  alpha_t4_cdr05  4   alpha    -0.0400   +0.0485   -0.1530
+  alpha_t4_cdr06  4   alpha    +0.0080   -0.0000   -0.1530
+  alpha_t4_cdr07  4   alpha    -0.4960   -0.9800   -0.1530
+  alpha_t4_cdr08  4   alpha    +0.2240   +0.9988   -0.1530
+  alpha_t4_cdr09  4   alpha    +0.1680   +0.2995   -0.1530
+  alpha_t4_cdr10  4   alpha    -0.1920   -0.0711   -0.1530
+  alpha_t4_cdr11  4   alpha    +0.0960   +0.0968   -0.1530
+  alpha_t4_cdr12  4   alpha    +0.0560   -0.0000   -0.1530
+  alpha_t4_cdr13  4   alpha    +0.4400   +0.9837   -0.1530
+  alpha_t4_cdr14  4   alpha    +0.4480   +0.9947   -0.1530
+  alpha_t4_cdr15  4   alpha    -0.5520   -0.9885   -0.1530
+  alpha_t4_cdr16  4   alpha    +0.1440   +0.0487   -0.1530
+  alpha_t4_cdr17  4   alpha    +0.3680   +0.9946   -0.1530
+  alpha_t4_cdr18  4   alpha    +0.5920   +0.9988   -0.1530
+  alpha_t4_cdr19  4   alpha    +0.2240   +0.0488   -0.1530
+  alpha_t4_cdr20  4   alpha    -0.2080   -0.1513   -0.1530
+  alpha_t4_cdr21  4   alpha    +0.2880   +0.9988   -0.1530
+  alpha_t4_cdr22  4   alpha    -0.2800   -0.1513   -0.1530
+  alpha_t4_cdr23  4   alpha    +0.1200   +0.1440   -0.1530
+  alpha_t4_cdr24  4   alpha    -0.1200   -0.0000   -0.1530
+  alpha_t4_cdr25  4   alpha    +0.2800   +0.1513   -0.1530
+  alpha_t4_cdr26  4   alpha    -0.2720   -0.0488   -0.1530
+  alpha_t4_cdr27  4   alpha    -0.0560   -0.0000   -0.1530
+  alpha_t4_cdr28  4   alpha    -0.1760   -0.1032   -0.1530
+  alpha_t4_cdr29  4   alpha    -0.0800   -0.0482   -0.1530
+  alpha_t4_cdr30  4   alpha    +0.5680   +0.9787   -0.1530
+  alpha_t4_cdr31  4   alpha    -0.5040   -0.9849   -0.1530
+
+total QPU execution time: 13874495 us  (13.8745 s billed)
+results written to qcs_results_cdr.json
