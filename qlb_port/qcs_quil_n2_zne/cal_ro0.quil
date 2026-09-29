@@ -1,0 +1,2 @@
+DECLARE ro BIT[1]
+MEASURE 102 ro[0]

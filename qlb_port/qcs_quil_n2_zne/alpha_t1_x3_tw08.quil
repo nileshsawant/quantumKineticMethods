@@ -1,0 +1,155 @@
+DECLARE ro BIT[1]
+PRAGMA INITIAL_REWIRING "NAIVE"
+PRAGMA PRESERVE_BLOCK
+RZ(-pi) 103
+RX(pi/2) 103
+RZ(pi/2) 103
+RZ(-pi/2) 102
+RZ(pi) 103
+RX(pi) 103
+RZ(pi) 102
+RX(pi) 102
+CZ 103 102
+RX(pi) 103
+RX(pi) 102
+RZ(pi) 103
+RX(pi) 102
+CZ 103 102
+RX(pi) 102
+RX(pi) 103
+RX(pi) 102
+CZ 103 102
+RZ(pi) 103
+RX(pi) 103
+RZ(pi) 102
+RX(pi) 102
+RX(pi/2) 102
+RZ(1.522025508449457) 102
+RX(-pi/2) 102
+RZ(-pi/2) 103
+RX(pi/2) 103
+RZ(pi/2) 103
+RX(pi) 103
+RX(pi) 102
+CZ 103 102
+RZ(pi) 103
+RX(pi) 103
+RZ(pi) 102
+RX(pi) 102
+CZ 103 102
+RZ(pi) 103
+RX(pi) 103
+RZ(pi) 102
+RX(pi) 102
+CZ 103 102
+RX(pi) 103
+RX(pi) 102
+RZ(-pi/2) 100
+RX(pi/2) 100
+RZ(3.1238009901304125) 100
+RX(-pi/2) 100
+RZ(pi) 100
+RZ(4.578109211966009) 101
+RX(pi) 100
+RX(pi) 101
+CZ 100 101
+RZ(pi) 100
+RX(pi) 100
+RZ(pi) 101
+RX(pi) 101
+RZ(pi) 100
+RX(pi) 100
+RZ(pi) 101
+RX(pi) 101
+CZ 100 101
+RX(pi) 100
+RX(pi) 101
+RX(pi) 100
+RZ(pi) 101
+CZ 100 101
+RX(pi) 100
+RX(pi/2) 100
+RZ(pi/4) 100
+RX(-pi/2) 100
+RX(pi) 100
+RX(pi) 101
+CZ 100 101
+RZ(pi) 100
+RX(pi) 100
+RZ(pi) 101
+RX(pi) 101
+RX(pi) 101
+CZ 100 101
+RZ(pi) 100
+RX(pi) 101
+RX(pi) 100
+RZ(pi) 101
+CZ 100 101
+RX(pi) 100
+RZ(0.13427976841868206) 101
+RZ((-3*pi)/2) 102
+RX(pi/2) 102
+RZ(pi/2) 102
+RZ(pi) 101
+CZ 101 102
+RZ(pi) 101
+RZ(pi) 101
+RX(pi) 101
+RX(pi) 102
+CZ 101 102
+RX(pi) 101
+RZ(pi) 102
+RX(pi) 102
+RZ(pi) 101
+RX(pi) 101
+CZ 101 102
+RZ(pi) 101
+RX(pi) 101
+RZ(pi) 102
+RZ(-pi) 101
+RX(pi/2) 100
+RZ(2.3384028267329633) 100
+RX(pi/2) 100
+RZ(pi/2) 100
+RZ(pi) 100
+RZ(pi) 101
+CZ 100 101
+RZ(pi) 100
+RZ(pi) 101
+RX(pi) 100
+RZ(pi) 101
+RX(pi) 101
+CZ 100 101
+RZ(pi) 100
+RX(pi) 100
+RX(pi) 101
+RX(pi) 100
+CZ 100 101
+RX(pi) 100
+RZ(pi) 101
+RZ(-pi) 102
+RZ(-pi/2) 100
+RX(pi/2) 100
+RZ((3*pi)/4) 100
+RX(-pi/2) 100
+RZ(-pi/2) 101
+RZ(pi) 100
+CZ 100 101
+RZ(pi) 100
+CZ 100 101
+RZ(pi) 100
+RX(pi) 100
+RZ(pi) 101
+RX(pi) 101
+CZ 100 101
+RX(pi) 100
+RX(pi) 101
+RZ(-pi) 100
+RX(pi/2) 100
+RZ(pi/4) 100
+RX(pi/2) 101
+RZ(pi/2) 101
+RX(pi/2) 103
+RZ(-pi/2) 103
+PRAGMA END_PRESERVE_BLOCK
+MEASURE 102 ro[0]
