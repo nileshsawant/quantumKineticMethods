@@ -101,6 +101,9 @@ def main():
     ap.add_argument("--readout-cal", action="store_true",
                     help="also export one program per computational basis state "
                          "(readout confusion matrix).")
+    ap.add_argument("--parity", action="store_true",
+                    help="export even-parity states with R^-1 readout of all qubits "
+                         "(symmetry verification) instead of the standard circuits.")
     args = ap.parse_args()
 
     npos, m, tmax, shots = args.npos, args.mass, args.tmax, args.shots
@@ -113,12 +116,29 @@ def main():
     # run_2site_* drivers, so the QPU reproduces those exact/emulator numbers.
     psi_m, E = H.mode_state(npos, k0, m)
     psi_d, _ = H.packet_state(npos, k0, m, args.sigma)
+    if args.parity:
+        psi_m, psi_d = H.even_sector(psi_m, npos), H.even_sector(psi_d, npos)
 
     traj_v = H.classical_evolution(psi_m, npos, m, tmax)
     traj_d = H.classical_evolution(psi_d, npos, m, tmax)
 
     jobs = []
     for t in ts:
+        if args.parity:
+            for kind, psi, traj in (("palpha", psi_m, traj_v), ("pdens", psi_d, traj_d)):
+                quil, measured = circuit_to_quil(
+                    H.parity_circuit(npos, psi, m, t, streaming_method=args.streaming))
+                assert measured == list(range(2 + npos))
+                fname = f"{kind}_t{t}.quil"
+                with open(os.path.join(args.outdir, fname), "w") as fh:
+                    fh.write(quil)
+                rho = H.density(traj[t], npos)
+                av = float(H.alpha_x_expectation(traj[t], npos))
+                jobs.append({"name": f"{kind}_t{t}", "kind": kind, "t": t, "quil": fname,
+                             "npos": npos, "ro_bits": 2 + npos, "exact_alpha": av,
+                             "exact_rho": [float(v) for v in rho],
+                             "exact": av if kind == "palpha" else float(rho @ xgrid)})
+            continue
         # -- velocity: <alpha_x>(t), measures qubit 1 --
         qc = H.alpha_x_circuit(npos, psi_m, m, t, streaming_method=args.streaming)
         quil, measured = circuit_to_quil(qc)
@@ -171,6 +191,7 @@ def main():
         "description": f"Dirac-QLB circuits ({args.streaming} streaming) as generic Quil for "
                        "Rigetti QCS Cepheus-1.",
         "streaming": args.streaming,
+        "parity": args.parity,
         "qubit_order": "logical 0,1 = spinor q0,q1; 2.. = position p0 (LSB), p1, ...",
         "npos": npos, "n_qubits": 2 + npos, "mass": m, "k0": k0, "sigma": args.sigma,
         "E": float(E), "tmax": tmax, "emulator_shots": shots,

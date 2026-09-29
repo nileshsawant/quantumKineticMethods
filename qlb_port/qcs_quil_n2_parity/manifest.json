@@ -1,0 +1,338 @@
+{
+  "description": "Dirac-QLB circuits (fourier streaming) as generic Quil for Rigetti QCS Cepheus-1.",
+  "streaming": "fourier",
+  "parity": true,
+  "qubit_order": "logical 0,1 = spinor q0,q1; 2.. = position p0 (LSB), p1, ...",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "sigma": 1.0,
+  "E": 0.7610127542247298,
+  "tmax": 4,
+  "emulator_shots": 2000,
+  "alpha": "<alpha_x> = P(ro[0]=1) - P(ro[0]=0)  (single spinor bit)",
+  "density": "rho(x) from i = sum_k ro[k]*2^k, x = i >> 2;  <x> = sum_x x*rho(x)",
+  "jobs": [
+    {
+      "name": "palpha_t0",
+      "kind": "palpha",
+      "t": 0,
+      "quil": "palpha_t0.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 0.0,
+      "exact_rho": [
+        0.25000000000000006,
+        0.25000000000000006,
+        0.25000000000000006,
+        0.25000000000000006
+      ],
+      "exact": 0.0
+    },
+    {
+      "name": "pdens_t0",
+      "kind": "pdens",
+      "t": 0,
+      "quil": "pdens_t0.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 5.013430651530981e-17,
+      "exact_rho": [
+        0.010441767819461798,
+        0.2097285130811527,
+        0.5701012060182324,
+        0.2097285130811527
+      ],
+      "exact": 1.9791164643610757
+    },
+    {
+      "name": "palpha_t1",
+      "kind": "palpha",
+      "t": 1,
+      "quil": "palpha_t1.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 0.9988109393579061,
+      "exact_rho": [
+        0.24999999999999978,
+        0.24999999999999975,
+        0.24999999999999975,
+        0.24999999999999978
+      ],
+      "exact": 0.9988109393579061
+    },
+    {
+      "name": "pdens_t1",
+      "kind": "pdens",
+      "t": 1,
+      "quil": "pdens_t1.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 0.9988109393579061,
+      "exact_rho": [
+        0.20972851308115253,
+        0.010774502324930732,
+        0.20972851308115248,
+        0.569768471512763
+      ],
+      "exact": 2.139536943025525
+    },
+    {
+      "name": "palpha_t2",
+      "kind": "palpha",
+      "t": 2,
+      "quil": "palpha_t2.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 0.0973870357043379,
+      "exact_rho": [
+        0.2499999999999995,
+        0.2499999999999995,
+        0.2499999999999995,
+        0.24999999999999956
+      ],
+      "exact": 0.0973870357043379
+    },
+    {
+      "name": "pdens_t2",
+      "kind": "pdens",
+      "t": 2,
+      "quil": "pdens_t2.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": 0.07663223410378282,
+      "exact_rho": [
+        0.30391360164307346,
+        0.20972851308115226,
+        0.27662937219461975,
+        0.2097285130811523
+      ],
+      "exact": 1.3921727967138486
+    },
+    {
+      "name": "palpha_t3",
+      "kind": "palpha",
+      "t": 3,
+      "quil": "palpha_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.9893154138790037,
+      "exact_rho": [
+        0.24999999999999933,
+        0.24999999999999933,
+        0.2499999999999994,
+        0.24999999999999933
+      ],
+      "exact": -0.9893154138790037
+    },
+    {
+      "name": "pdens_t3",
+      "kind": "pdens",
+      "t": 3,
+      "quil": "pdens_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.5656125285838826,
+      "exact_rho": [
+        0.20972851308115212,
+        0.317523273763913,
+        0.20972851308115215,
+        0.2630197000737797
+      ],
+      "exact": 1.5260394001475563
+    },
+    {
+      "name": "palpha_t4",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "palpha_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.19384822944759333,
+      "exact_rho": [
+        0.24999999999999908,
+        0.24999999999999914,
+        0.24999999999999908,
+        0.24999999999999908
+      ],
+      "exact": -0.19384822944759333
+    },
+    {
+      "name": "pdens_t4",
+      "kind": "pdens",
+      "t": 4,
+      "quil": "pdens_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.15253593861025705,
+      "exact_rho": [
+        0.5687710592793642,
+        0.20972851308115192,
+        0.011771914558328097,
+        0.20972851308115192
+      ],
+      "exact": 0.8624578814412639
+    },
+    {
+      "name": "cal_0000",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0000.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 0,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0001",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0001.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 1,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0010",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0010.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 2,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0011",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0011.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 3,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0100",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0100.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 4,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0101",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0101.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 5,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0110",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0110.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 6,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_0111",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_0111.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 7,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1000",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1000.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 8,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1001",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1001.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 9,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1010",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1010.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 10,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1011",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1011.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 11,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1100",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1100.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 12,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1101",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1101.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 13,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1110",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1110.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 14,
+      "exact": 1.0
+    },
+    {
+      "name": "cal_1111",
+      "kind": "cal",
+      "t": 0,
+      "quil": "cal_1111.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "prepared": 15,
+      "exact": 1.0
+    }
+  ]
+}

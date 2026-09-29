@@ -57,6 +57,8 @@ def _observable(job, bits):
     if job["kind"] == "alpha":
         b = bits[:, 0]                          # single spinor bit after R^-1
         return float((2 * b - 1).mean()), None  # P(1) - P(0)
+    if job["kind"] == "palpha":                # all qubits read; q1 is ro[1]
+        return float((2 * bits[:, 1] - 1).mean()), None
     shots, nb = bits.shape                       # density: rebuild flat index i
     ints = (bits * (1 << np.arange(nb))).sum(axis=1)
     N = 2 ** job["npos"]

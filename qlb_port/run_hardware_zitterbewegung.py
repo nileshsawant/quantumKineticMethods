@@ -157,6 +157,31 @@ def _prep(n_pos, psi0):
     return qc
 
 
+def even_sector(psi, n_pos):
+    """Project psi onto even characteristic-frame spinor parity (components c=0,3 of
+    R^-1 psi), which the free x-sweep conserves; normalized."""
+    g = (_RINV @ psi.reshape(2 ** n_pos, 4).T).T
+    g[:, 1] = g[:, 2] = 0
+    out = (_R @ g.T).T.reshape(-1)
+    return out / np.linalg.norm(out)
+
+
+def parity_circuit(n_pos, psi0, m, t, streaming_method="mcx"):
+    """Prepare psi0, apply t QLB steps, rotate the spinor into the characteristic frame,
+    and measure every qubit: q1 gives <alpha_x>, q0 xor q1 the conserved parity, and the
+    position bits the density."""
+    qc = _prep(n_pos, psi0)
+    step = sweep.sweep_circuit("x", n_pos, m_tilde=m, streaming_method=streaming_method)
+    for _ in range(t):
+        qc.compose(step, inplace=True)
+    qc.append(UnitaryGate(_RINV, label="Rinv_meas"), [0, 1])
+    n = 2 + n_pos
+    meas = QuantumCircuit(n, n)
+    meas.compose(qc, inplace=True)
+    meas.measure(range(n), range(n))
+    return meas
+
+
 def alpha_x_circuit(n_pos, psi0, m, t, streaming_method="mcx"):
     """Prepare psi0, apply t QLB steps, rotate spinor into the alpha_x eigenbasis,
     and measure qubit 1 (its sign = the alpha_x eigenvalue)."""
