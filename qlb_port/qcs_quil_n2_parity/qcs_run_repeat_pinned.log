@@ -1,0 +1,29 @@
+target: Cepheus-1-108Q   shots=2000
+  pinned logical->physical qubits: {0: 103, 1: 102, 2: 100, 3: 101}  (INITIAL_REWIRING NAIVE)
+loaded 10 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled palpha_t3_r1
+  compiled palpha_t4_r1
+  compiled pdens_t3_r1
+  compiled pdens_t4_r1
+  compiled palpha_t3_r2
+  compiled palpha_t4_r2
+  compiled pdens_t3_r2
+  compiled pdens_t4_r2
+  compiled alpha_t3
+  compiled alpha_t4
+submitted 10 jobs
+
+  job          t   kind      QPU        exact    exact
+  palpha_t3_r1  3   palpha   -0.6730   -0.9893   -0.9893
+  palpha_t4_r1  4   palpha   +0.1330   -0.1938   -0.1938
+  pdens_t3_r1  3   pdens    +1.6380   +1.5260   +1.5260
+  pdens_t4_r1  4   pdens    +1.2130   +0.8625   +0.8625
+  palpha_t3_r2  3   palpha   -0.7220   -0.9893   -0.9893
+  palpha_t4_r2  4   palpha   +0.1220   -0.1938   -0.1938
+  pdens_t3_r2  3   pdens    +1.7245   +1.5260   +1.5260
+  pdens_t4_r2  4   pdens    +1.2680   +0.8625   +0.8625
+  alpha_t3     3   alpha    -0.6930   -0.9893   -0.9893
+  alpha_t4     4   alpha    -0.1140   -0.1938   -0.1938
+
+total QPU execution time: 4376326 us  (4.3763 s billed)
+results written to qcs_results_repeat_pinned.json

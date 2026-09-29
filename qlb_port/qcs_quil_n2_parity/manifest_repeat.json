@@ -1,0 +1,166 @@
+{
+  "description": "repeat of t=3,4 parity circuits (x2) + step-1 alpha t=3,4",
+  "streaming": "fourier",
+  "parity": true,
+  "qubit_order": "logical 0,1 = spinor q0,q1; 2.. = position p0 (LSB), p1, ...",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "sigma": 1.0,
+  "E": 0.7610127542247298,
+  "tmax": 4,
+  "emulator_shots": 2000,
+  "alpha": "<alpha_x> = P(ro[0]=1) - P(ro[0]=0)  (single spinor bit)",
+  "density": "rho(x) from i = sum_k ro[k]*2^k, x = i >> 2;  <x> = sum_x x*rho(x)",
+  "jobs": [
+    {
+      "name": "palpha_t3_r1",
+      "kind": "palpha",
+      "t": 3,
+      "quil": "palpha_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.9893154138790037,
+      "exact_rho": [
+        0.24999999999999933,
+        0.24999999999999933,
+        0.2499999999999994,
+        0.24999999999999933
+      ],
+      "exact": -0.9893154138790037
+    },
+    {
+      "name": "palpha_t4_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "palpha_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.19384822944759333,
+      "exact_rho": [
+        0.24999999999999908,
+        0.24999999999999914,
+        0.24999999999999908,
+        0.24999999999999908
+      ],
+      "exact": -0.19384822944759333
+    },
+    {
+      "name": "pdens_t3_r1",
+      "kind": "pdens",
+      "t": 3,
+      "quil": "pdens_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.5656125285838826,
+      "exact_rho": [
+        0.20972851308115212,
+        0.317523273763913,
+        0.20972851308115215,
+        0.2630197000737797
+      ],
+      "exact": 1.5260394001475563
+    },
+    {
+      "name": "pdens_t4_r1",
+      "kind": "pdens",
+      "t": 4,
+      "quil": "pdens_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.15253593861025705,
+      "exact_rho": [
+        0.5687710592793642,
+        0.20972851308115192,
+        0.011771914558328097,
+        0.20972851308115192
+      ],
+      "exact": 0.8624578814412639
+    },
+    {
+      "name": "palpha_t3_r2",
+      "kind": "palpha",
+      "t": 3,
+      "quil": "palpha_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.9893154138790037,
+      "exact_rho": [
+        0.24999999999999933,
+        0.24999999999999933,
+        0.2499999999999994,
+        0.24999999999999933
+      ],
+      "exact": -0.9893154138790037
+    },
+    {
+      "name": "palpha_t4_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "palpha_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.19384822944759333,
+      "exact_rho": [
+        0.24999999999999908,
+        0.24999999999999914,
+        0.24999999999999908,
+        0.24999999999999908
+      ],
+      "exact": -0.19384822944759333
+    },
+    {
+      "name": "pdens_t3_r2",
+      "kind": "pdens",
+      "t": 3,
+      "quil": "pdens_t3.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.5656125285838826,
+      "exact_rho": [
+        0.20972851308115212,
+        0.317523273763913,
+        0.20972851308115215,
+        0.2630197000737797
+      ],
+      "exact": 1.5260394001475563
+    },
+    {
+      "name": "pdens_t4_r2",
+      "kind": "pdens",
+      "t": 4,
+      "quil": "pdens_t4.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact_alpha": -0.15253593861025705,
+      "exact_rho": [
+        0.5687710592793642,
+        0.20972851308115192,
+        0.011771914558328097,
+        0.20972851308115192
+      ],
+      "exact": 0.8624578814412639
+    },
+    {
+      "name": "alpha_t3",
+      "kind": "alpha",
+      "t": 3,
+      "quil": "n2f_alpha_t3.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.9893154138790039,
+      "emulator": -0.992
+    },
+    {
+      "name": "alpha_t4",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "n2f_alpha_t4.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "emulator": -0.153
+    }
+  ]
+}
