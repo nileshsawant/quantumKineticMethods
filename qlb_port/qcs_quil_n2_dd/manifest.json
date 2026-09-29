@@ -1,0 +1,492 @@
+{
+  "description": "dynamical decoupling test: orig / fenced / fenced+echo, interleaved",
+  "npos": 2,
+  "n_qubits": 4,
+  "mass": 0.8,
+  "k0": 0.0,
+  "E": 0.7610127542247298,
+  "streaming": "fourier",
+  "qubits_native": "103,102,100,101",
+  "jobs": [
+    {
+      "name": "step1_q1_t4_orig_r0",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_orig",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_fence_r0",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_fence",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_dd_r0",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_dd",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_orig_r0",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_orig",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_fence_r0",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_fence",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_dd_r0",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_dd",
+      "variant": 0,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_orig_r1",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_orig",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_fence_r1",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_fence",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_dd_r1",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_dd",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_orig_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_orig",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_fence_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_fence",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_dd_r1",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_dd",
+      "variant": 1,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_orig_r2",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_orig",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_fence_r2",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_fence",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_dd_r2",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_dd",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_orig_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_orig",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_fence_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_fence",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_dd_r2",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_dd",
+      "variant": 2,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_orig_r3",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_orig",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_fence_r3",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_fence",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "step1_q1_t4_dd_r3",
+      "kind": "alpha",
+      "t": 4,
+      "quil": "step1_q1_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 1,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "step1_q1_t4_dd",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_orig_r3",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_orig.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_orig",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_fence_r3",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_fence.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_fence",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    },
+    {
+      "name": "even_all_t4_dd_r3",
+      "kind": "palpha",
+      "t": 4,
+      "quil": "even_all_t4_dd.quil",
+      "npos": 2,
+      "ro_bits": 4,
+      "exact": -0.19384822944759292,
+      "exact_alpha": -0.19384822944759292,
+      "exact_rho": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ],
+      "group": "even_all_t4_dd",
+      "variant": 3,
+      "native": true,
+      "shots": 2000
+    }
+  ]
+}

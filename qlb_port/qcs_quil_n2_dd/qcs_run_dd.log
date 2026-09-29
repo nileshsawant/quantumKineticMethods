@@ -1,0 +1,56 @@
+target: Cepheus-1-108Q   shots=2000
+loaded 24 jobs from ./manifest.json  (npos=2, m~=0.8, E=0.7610)
+  compiled step1_q1_t4_orig_r0
+  compiled step1_q1_t4_fence_r0
+  compiled step1_q1_t4_dd_r0
+  compiled even_all_t4_orig_r0
+  compiled even_all_t4_fence_r0
+  compiled even_all_t4_dd_r0
+  compiled step1_q1_t4_orig_r1
+  compiled step1_q1_t4_fence_r1
+  compiled step1_q1_t4_dd_r1
+  compiled even_all_t4_orig_r1
+  compiled even_all_t4_fence_r1
+  compiled even_all_t4_dd_r1
+  compiled step1_q1_t4_orig_r2
+  compiled step1_q1_t4_fence_r2
+  compiled step1_q1_t4_dd_r2
+  compiled even_all_t4_orig_r2
+  compiled even_all_t4_fence_r2
+  compiled even_all_t4_dd_r2
+  compiled step1_q1_t4_orig_r3
+  compiled step1_q1_t4_fence_r3
+  compiled step1_q1_t4_dd_r3
+  compiled even_all_t4_orig_r3
+  compiled even_all_t4_fence_r3
+  compiled even_all_t4_dd_r3
+submitted 24 jobs
+
+  job          t   kind      QPU        exact    exact
+  step1_q1_t4_orig_r0  4   alpha    +0.1100   -0.1938   -0.1938
+  step1_q1_t4_fence_r0  4   alpha    -0.2210   -0.1938   -0.1938
+  step1_q1_t4_dd_r0  4   alpha    -0.1560   -0.1938   -0.1938
+  even_all_t4_orig_r0  4   palpha   -0.1730   -0.1938   -0.1938
+  even_all_t4_fence_r0  4   palpha   -0.2950   -0.1938   -0.1938
+  even_all_t4_dd_r0  4   palpha   -0.3090   -0.1938   -0.1938
+  step1_q1_t4_orig_r1  4   alpha    +0.1580   -0.1938   -0.1938
+  step1_q1_t4_fence_r1  4   alpha    -0.2220   -0.1938   -0.1938
+  step1_q1_t4_dd_r1  4   alpha    -0.1960   -0.1938   -0.1938
+  even_all_t4_orig_r1  4   palpha   -0.1740   -0.1938   -0.1938
+  even_all_t4_fence_r1  4   palpha   -0.3080   -0.1938   -0.1938
+  even_all_t4_dd_r1  4   palpha   -0.3300   -0.1938   -0.1938
+  step1_q1_t4_orig_r2  4   alpha    +0.1400   -0.1938   -0.1938
+  step1_q1_t4_fence_r2  4   alpha    -0.2390   -0.1938   -0.1938
+  step1_q1_t4_dd_r2  4   alpha    -0.1690   -0.1938   -0.1938
+  even_all_t4_orig_r2  4   palpha   -0.1530   -0.1938   -0.1938
+  even_all_t4_fence_r2  4   palpha   -0.2780   -0.1938   -0.1938
+  even_all_t4_dd_r2  4   palpha   -0.3630   -0.1938   -0.1938
+  step1_q1_t4_orig_r3  4   alpha    +0.1420   -0.1938   -0.1938
+  step1_q1_t4_fence_r3  4   alpha    -0.2080   -0.1938   -0.1938
+  step1_q1_t4_dd_r3  4   alpha    -0.1560   -0.1938   -0.1938
+  even_all_t4_orig_r3  4   palpha   -0.1310   -0.1938   -0.1938
+  even_all_t4_fence_r3  4   palpha   -0.3310   -0.1938   -0.1938
+  even_all_t4_dd_r3  4   palpha   -0.3620   -0.1938   -0.1938
+
+total QPU execution time: 10508082 us  (10.5081 s billed)
+results written to qcs_results_dd.json
