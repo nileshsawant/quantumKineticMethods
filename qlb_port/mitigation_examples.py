@@ -11,6 +11,8 @@ Usage:
 import json
 import math
 
+import numpy as np
+
 
 def main():
     print("1. shot noise of v = P(1) - P(0):  sigma = sqrt((1 - v^2) / N)")
@@ -62,6 +64,19 @@ def main():
         pl = [sum(math.comb(d, k) * p ** k * (1 - p) ** (d - k) for k in range(d // 2 + 1, d + 1))
               for d in (3, 5, 7, 9)]
         print(f"   p = {p}: d = 3, 5, 7, 9 -> " + ", ".join(f"{x:.2e}" for x in pl))
+
+    print("\n9. density matrix of |+> under a Z error with probability p and under RZ(eps)")
+    X = np.array([[0, 1], [1, 0]], dtype=complex)
+    Z = np.diag([1, -1]).astype(complex)
+    rho = 0.5 * np.ones((2, 2), dtype=complex)
+    p = 0.1
+    out = (1 - p) * rho + p * Z @ rho @ Z
+    print(f"   p = {p}: rho -> {np.real_if_close(out).round(3).tolist()}, <X> = Tr(X rho) = "
+          f"{np.trace(X @ out).real:.3f} (= 1 - 2p)")
+    eps = 0.05
+    U = np.diag([np.exp(-0.5j * eps), np.exp(0.5j * eps)])
+    out = U @ rho @ U.conj().T
+    print(f"   eps = {eps}: <X> = {np.trace(X @ out).real:.5f}, cos(eps) = {math.cos(eps):.5f}")
 
 
 if __name__ == "__main__":
