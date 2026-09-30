@@ -105,8 +105,21 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", default=RES)
     ap.add_argument("--noise-check", action="store_true")
+    ap.add_argument("--diag", action="store_true",
+                    help="summarize the diagnostic runs (export_check_diagnostics.py) instead")
     ap.add_argument("--outdir", default="proposal/quairk/ancillaStreaming/figures")
     args = ap.parse_args()
+    if args.diag:
+        for f, cols in (("qlb_port/qcs_quil_n2_pdiag/qcs_results_pdiag.json",
+                         "q0 q1 p0 p1 | a56 a64 a66"),
+                        ("qlb_port/qcs_quil_n2_czrep/qcs_results_czrep.json", "q0 | a56 a64")):
+            R_ = json.load(open(f))
+            print(f"{f}: {R_.get('total_execution_us', 0) / 1e6:.1f} s QPU; P(1) of {cols}")
+            for j in R_["jobs"]:
+                b = np.array([[int(c) for c in s] for s in j["bitstrings"]])
+                extra = (f"   parity odd {float((b[:, 0] != b[:, 1]).mean()):.3f}" if b.shape[1] == 7 else "")
+                print(f"   {j['name']:12s} " + " ".join(f"{x:.3f}" for x in b.mean(axis=0)) + extra)
+        return
     R_ = json.load(open(args.results))
     jobs = [j for j in R_["jobs"] if j.get("role") == "pcheck"]
     base = os.path.dirname(args.results)

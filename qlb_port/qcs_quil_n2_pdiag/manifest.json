@@ -1,0 +1,61 @@
+{
+  "description": "diagnostics of the in-circuit parity checks",
+  "jobs": [
+    {
+      "name": "rest",
+      "quil": "rest.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    },
+    {
+      "name": "anc_cal",
+      "quil": "anc_cal.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 1
+    },
+    {
+      "name": "idle_t4",
+      "quil": "idle_t4.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    },
+    {
+      "name": "chk_00",
+      "quil": "chk_00.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    },
+    {
+      "name": "chk_11",
+      "quil": "chk_11.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    },
+    {
+      "name": "chk_bell",
+      "quil": "chk_bell.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    },
+    {
+      "name": "chk_t4",
+      "quil": "chk_t4.quil",
+      "kind": "raw",
+      "role": "pdiag",
+      "shots": 2000,
+      "anc_ideal": 0
+    }
+  ]
+}

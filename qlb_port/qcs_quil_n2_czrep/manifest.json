@@ -1,0 +1,61 @@
+{
+  "description": "repeated CNOT(q0 -> ancilla) on q0 = |0>",
+  "jobs": [
+    {
+      "name": "czrep_n0",
+      "quil": "czrep_n0.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": 0,
+      "shots": 2000
+    },
+    {
+      "name": "czrep_n1",
+      "quil": "czrep_n1.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": 1,
+      "shots": 2000
+    },
+    {
+      "name": "czrep_n2",
+      "quil": "czrep_n2.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": 2,
+      "shots": 2000
+    },
+    {
+      "name": "czrep_n3",
+      "quil": "czrep_n3.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": 3,
+      "shots": 2000
+    },
+    {
+      "name": "czrep_n4",
+      "quil": "czrep_n4.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": 4,
+      "shots": 2000
+    },
+    {
+      "name": "ctl_h_only",
+      "quil": "ctl_h_only.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": -1,
+      "shots": 2000
+    },
+    {
+      "name": "ctl_cz_only",
+      "quil": "ctl_cz_only.quil",
+      "kind": "raw",
+      "role": "czrep",
+      "n": -1,
+      "shots": 2000
+    }
+  ]
+}
