@@ -57,6 +57,12 @@ def main():
     print(f"   a + b x = {a:+.3f} + {b:.3f} * ({x:+.3f}) = {a + b * x:+.3f}")
     print(f"   toy noise v_meas = 0.02 + 0.6 v_ideal inverts to b = 1/0.6 = {1 / 0.6:.3f}, a = -0.02/0.6 = {-0.02 / 0.6:+.4f}")
 
+    print("\n8. repetition code with independent errors: P_L = sum_{k > d/2} C(d,k) p^k (1-p)^(d-k)")
+    for p in (0.03, 0.2, 0.4):
+        pl = [sum(math.comb(d, k) * p ** k * (1 - p) ** (d - k) for k in range(d // 2 + 1, d + 1))
+              for d in (3, 5, 7, 9)]
+        print(f"   p = {p}: d = 3, 5, 7, 9 -> " + ", ".join(f"{x:.2e}" for x in pl))
+
 
 if __name__ == "__main__":
     main()
