@@ -1,0 +1,245 @@
+{
+  "description": "[[4,2,2]] logical Bell state vs physical Bell state",
+  "jobs": [
+    {
+      "name": "c422_enc_r0_X",
+      "quil": "c422_enc_r0_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 0,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r0_Y",
+      "quil": "c422_enc_r0_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 0,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r0_Z",
+      "quil": "c422_enc_r0_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 0,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r2_X",
+      "quil": "c422_enc_r2_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 2,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r2_Y",
+      "quil": "c422_enc_r2_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 2,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r2_Z",
+      "quil": "c422_enc_r2_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 2,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r5_X",
+      "quil": "c422_enc_r5_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 5,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r5_Y",
+      "quil": "c422_enc_r5_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 5,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r5_Z",
+      "quil": "c422_enc_r5_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 5,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r10_X",
+      "quil": "c422_enc_r10_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 10,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r10_Y",
+      "quil": "c422_enc_r10_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 10,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_enc_r10_Z",
+      "quil": "c422_enc_r10_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "enc",
+      "rounds": 10,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r0_X",
+      "quil": "c422_bare_r0_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 0,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r0_Y",
+      "quil": "c422_bare_r0_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 0,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r0_Z",
+      "quil": "c422_bare_r0_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 0,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r2_X",
+      "quil": "c422_bare_r2_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 2,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r2_Y",
+      "quil": "c422_bare_r2_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 2,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r2_Z",
+      "quil": "c422_bare_r2_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 2,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r5_X",
+      "quil": "c422_bare_r5_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 5,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r5_Y",
+      "quil": "c422_bare_r5_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 5,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r5_Z",
+      "quil": "c422_bare_r5_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 5,
+      "basis": "Z",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r10_X",
+      "quil": "c422_bare_r10_X.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 10,
+      "basis": "X",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r10_Y",
+      "quil": "c422_bare_r10_Y.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 10,
+      "basis": "Y",
+      "shots": 2000
+    },
+    {
+      "name": "c422_bare_r10_Z",
+      "quil": "c422_bare_r10_Z.quil",
+      "kind": "raw",
+      "role": "c422",
+      "code": "bare",
+      "rounds": 10,
+      "basis": "Z",
+      "shots": 2000
+    }
+  ]
+}

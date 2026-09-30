@@ -1,0 +1,57 @@
+target: Cepheus-1-108Q   shots=2000
+  pinned logical->physical qubits: {0: 100, 1: 101, 2: 102, 3: 93}  (INITIAL_REWIRING NAIVE)
+loaded 24 jobs from ./manifest.json  (npos=None, m~=None, E=None)
+  compiled c422_enc_r0_X
+  compiled c422_enc_r0_Y
+  compiled c422_enc_r0_Z
+  compiled c422_enc_r2_X
+  compiled c422_enc_r2_Y
+  compiled c422_enc_r2_Z
+  compiled c422_enc_r5_X
+  compiled c422_enc_r5_Y
+  compiled c422_enc_r5_Z
+  compiled c422_enc_r10_X
+  compiled c422_enc_r10_Y
+  compiled c422_enc_r10_Z
+  compiled c422_bare_r0_X
+  compiled c422_bare_r0_Y
+  compiled c422_bare_r0_Z
+  compiled c422_bare_r2_X
+  compiled c422_bare_r2_Y
+  compiled c422_bare_r2_Z
+  compiled c422_bare_r5_X
+  compiled c422_bare_r5_Y
+  compiled c422_bare_r5_Z
+  compiled c422_bare_r10_X
+  compiled c422_bare_r10_Y
+  compiled c422_bare_r10_Z
+resuming: 1 jobs already in qcs_results_c422.json
+submitted 23 jobs
+
+  job          t   kind      QPU        exact    exact
+  c422_enc_r0_X  0   raw         +nan      +nan      +nan
+  c422_enc_r0_Y  0   raw         +nan      +nan      +nan
+  c422_enc_r0_Z  0   raw         +nan      +nan      +nan
+  c422_enc_r2_X  0   raw         +nan      +nan      +nan
+  c422_enc_r2_Y  0   raw         +nan      +nan      +nan
+  c422_enc_r2_Z  0   raw         +nan      +nan      +nan
+  c422_enc_r5_X  0   raw         +nan      +nan      +nan
+  c422_enc_r5_Y  0   raw         +nan      +nan      +nan
+  c422_enc_r10_X  0   raw         +nan      +nan      +nan
+  c422_enc_r10_Y  0   raw         +nan      +nan      +nan
+  c422_enc_r10_Z  0   raw         +nan      +nan      +nan
+  c422_bare_r0_X  0   raw         +nan      +nan      +nan
+  c422_bare_r0_Y  0   raw         +nan      +nan      +nan
+  c422_bare_r0_Z  0   raw         +nan      +nan      +nan
+  c422_bare_r2_X  0   raw         +nan      +nan      +nan
+  c422_bare_r2_Y  0   raw         +nan      +nan      +nan
+  c422_bare_r2_Z  0   raw         +nan      +nan      +nan
+  c422_bare_r5_X  0   raw         +nan      +nan      +nan
+  c422_bare_r5_Y  0   raw         +nan      +nan      +nan
+  c422_bare_r5_Z  0   raw         +nan      +nan      +nan
+  c422_bare_r10_X  0   raw         +nan      +nan      +nan
+  c422_bare_r10_Y  0   raw         +nan      +nan      +nan
+  c422_bare_r10_Z  0   raw         +nan      +nan      +nan
+
+total QPU execution time: 10303462 us  (10.3035 s billed)
+results written to qcs_results_c422.json
