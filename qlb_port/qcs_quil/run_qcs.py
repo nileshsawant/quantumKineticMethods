@@ -51,6 +51,8 @@ def _load_ro(result):
 def _observable(job, bits):
     """(value, rho) for a job given its ro bit array.  rho is None for alpha jobs."""
     bits = np.asarray(bits).astype(int)
+    if job["kind"] == "raw":                   # analysed offline from the stored bit strings
+        return float("nan"), None
     if job["kind"] == "cal":                   # fraction read back as prepared
         ints = (bits * (1 << np.arange(bits.shape[1]))).sum(axis=1)
         return float((ints == job["prepared"]).mean()), None
@@ -123,6 +125,7 @@ def main():
                     help="pin logical qubits 0,1,2,... to these physical qubits, "
                          "comma-separated (e.g. 90,99,101); forces NAIVE rewiring.")
     ap.add_argument("--out", default=os.path.join(_HERE, "qcs_results.json"))
+    ap.add_argument("--only", default=None, help="comma-separated job names to run (default: all)")
     args = ap.parse_args()
 
     qmap = None
@@ -169,8 +172,11 @@ def main():
     with open(os.path.join(args.dir, "manifest.json")) as fh:
         manifest = json.load(fh)
     jobs = manifest["jobs"]
+    if args.only:
+        keep = set(args.only.split(","))
+        jobs = manifest["jobs"] = [j for j in jobs if j["name"] in keep]
     print(f"loaded {len(jobs)} jobs from {args.dir}/manifest.json  "
-          f"(npos={manifest['npos']}, m~={manifest['mass']}, E={manifest['E']:.4f})")
+          f"(npos={manifest.get('npos')}, m~={manifest.get('mass')}, E={manifest.get('E')})")
 
     # compile every program first (free); only then spend QPU time running them.
     executables = {}
@@ -182,7 +188,7 @@ def main():
             raw = _pin_text(raw, qmap)
         prog = Program(raw)
         prog.wrap_in_numshots_loop(job.get("shots", args.shots))
-        executables[job["name"]] = qc.compile(prog)
+        executables[job["name"]] = qc.compile(prog, protoquil=True)   # as the QPU compiler (-P)
         print(f"  compiled {job['name']}")
     if args.compile_only:
         print("compile-only: all programs compiled, no QPU time used.")
@@ -211,6 +217,9 @@ def main():
     # submit everything first so the jobs queue together, then collect in order
     pending = [j for j in jobs if "counts" not in j]
     handles = {j["name"]: qc.qam.execute(executables[j["name"]]) for j in pending}
+    for j in pending:                             # job ids allow recovery if collection fails
+        j["job_id"] = str(getattr(handles[j["name"]], "job_id", ""))
+    save()
     print(f"submitted {len(handles)} jobs")
 
     ref_key = "emulator" if "emulator" in jobs[0] else "exact"
@@ -221,15 +230,19 @@ def main():
         val, rho = _observable(job, bits)
         dur = getattr(res, "execution_duration_microseconds", None)
         job["execution_us"] = float(dur) if dur else 0.0
-        ints = (bits * (1 << np.arange(bits.shape[1]))).sum(axis=1)
-        job["counts"] = {int(i): int(c) for i, c in zip(*np.unique(ints, return_counts=True))}
+        if job["kind"] == "raw":                  # registers can exceed 64 bits: keep every shot
+            job["bitstrings"] = ["".join(map(str, row)) for row in bits]
+            job["counts"] = {}
+        else:
+            ints = (bits * (1 << np.arange(bits.shape[1]))).sum(axis=1)
+            job["counts"] = {int(i): int(c) for i, c in zip(*np.unique(ints, return_counts=True))}
         job["qpu"] = val
         if rho is not None:
             job["qpu_rho"] = [float(v) for v in rho]
         save()
-        print(f"  {job['name']:11s} {job['t']:2d}   {job['kind']:8s} "
-              f"{val:+7.4f}   {job['exact']:+7.4f}   {job.get(ref_key, float('nan')):+7.4f}",
-              flush=True)
+        print(f"  {job['name']:11s} {job.get('t', 0):2d}   {job['kind']:8s} "
+              f"{val:+7.4f}   {job.get('exact', float('nan')):+7.4f}   "
+              f"{job.get(ref_key, float('nan')):+7.4f}", flush=True)
 
     save()
     total_us = manifest["total_execution_us"]
