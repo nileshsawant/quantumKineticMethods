@@ -145,6 +145,12 @@ def main():
     for (t, c), (m, _, _, _) in sorted(rows.items()):
         if c:
             print(f"   t = {t}: {m['k_par'] - m['k_chk']:.3f}")
+    print("\n per job: P(check ancilla = 1) for checks after steps 1, 2, ..., and P(final parity odd)")
+    for j in jobs:
+        if "bitstrings" in j:
+            b = np.array([[int(c) for c in s] for s in j["bitstrings"]])
+            print(f"   {j['name']:14s} " + " ".join(f"{x:.3f}" for x in b[:, 4:].mean(axis=0))
+                  + f"   odd {float((b[:, 0] != b[:, 1]).mean()):.3f}")
 
     import matplotlib
     matplotlib.use("Agg")
