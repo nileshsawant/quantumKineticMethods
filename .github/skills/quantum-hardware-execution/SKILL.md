@@ -55,9 +55,21 @@ qubits yourself from the **live** calibration.
 2. Build the circuit's **interaction graph** (which qubit pairs share a two-qubit gate). If it is a
    path or tree, it may embed into the coupling map without any SWAP.
 3. Enumerate embeddings of that graph into the coupling map (subgraph isomorphism; for chains, walk the
-   graph) and score each by the product of the fidelities it actually uses: two-qubit edges used,
-   readout of measured qubits, one-qubit fidelity of all qubits. Also try the permutations of the
-   logical-to-physical assignment.
+   graph) and score each by the product of the fidelities it actually uses, weighted by gate counts:
+   two-qubit edges used, readout of measured qubits, one-qubit fidelity of all qubits. The assignment
+   of logical to physical qubits matters, so different orientations of the same chain score differently.
+   Ready-made tool: [`select_qubits.py`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/select_qubits.py)
+   ([`select_layouts`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/select_qubits.py#L224),
+   branch-and-bound over SWAP-free embeddings, checked against brute force in
+   [`test_select_qubits.py`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/test_select_qubits.py)).
+   It reads a generic calibration JSON, a Rigetti QCS ISA
+   ([`calibration_from_qcs_isa`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/select_qubits.py#L82)),
+   or a Qiskit `Target`
+   ([`calibration_from_qiskit_target`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/select_qubits.py#L114)),
+   and takes the circuit as an edge list, Quil, OpenQASM, or a Qiskit circuit
+   ([`interaction_from_qiskit`](https://github.com/nileshsawant/quantumKineticMethods/blob/9f92b5bd032e134376fd47d56c0f7cd45931c202/qlb_port/select_qubits.py#L174)).
+   Example: `python3 qlb_port/select_qubits.py --qcs-isa isa.json --edges 0-1,1-3,2-3 --top 5`.
+   If no SWAP-free layout exists, reduce the interaction graph (different construction) or accept routing.
 4. Pin the best embedding (Qiskit: `initial_layout=`; Quil: `PRAGMA INITIAL_REWIRING "NAIVE"` with
    remapped qubit indices, see [`_pin_text`](https://github.com/nileshsawant/quantumKineticMethods/blob/ee60b02183c77d3cb9e1faaa31fe66484390e7c0/qlb_port/qcs_quil/run_qcs.py#L85)).
 5. Check the compiled program: no SWAPs, two-qubit count equal to the all-to-all count.
