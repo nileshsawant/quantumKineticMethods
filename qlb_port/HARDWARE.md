@@ -124,6 +124,13 @@ Give the position register the best-readout qubit and the spinor pair a
 high-fidelity CZ edge, then pass them as `--qubits <spinor0>,<spinor1>,<position>`
 (the run pins logical -> physical with NAIVE rewiring).
 
+`select_qubits.py` automates this for any circuit: it finds every SWAP-free placement
+of the circuit's interaction graph and ranks them by the calibrated fidelities they use.
+
+```bash
+python3 qlb_port/select_qubits.py --qcs Cepheus-1-108Q --quil qcs_quil/alpha_t1.quil --top 5
+```
+
 ---
 
 ## Plotting
