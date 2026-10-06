@@ -152,8 +152,8 @@ def main():
                         JT["even_all_t4_r1"]["qpu"], JT["even_all_t4_r2"]["qpu"]]
                        + [w["even_all_t4_native"]["qpu"] for w in TW],
         "odd parity": [JT["odd_all_t4_r1"]["qpu"], JT["odd_all_t4_r2"]["qpu"]],
-        "step-1 state,\nall qubits read": [JT["step1_all_t4_r1"]["qpu"], JT["step1_all_t4_r2"]["qpu"]],
-        "step-1 state,\n$q_1$ read": [JN["alpha_t4"]["qpu"], JR["alpha_t4"]["qpu"],
+        "original state,\nall qubits read": [JT["step1_all_t4_r1"]["qpu"], JT["step1_all_t4_r2"]["qpu"]],
+        "original state,\n$q_1$ read": [JN["alpha_t4"]["qpu"], JR["alpha_t4"]["qpu"],
                                       JT["step1_q1_t4_r1"]["qpu"], JT["step1_q1_t4_r2"]["qpu"]]
                                      + [w["step1_q1_t4_native"]["qpu"] for w in TW],
     }
@@ -197,11 +197,15 @@ def main():
     labels = {"raw": "raw", "ro": "readout-mitigated", "post": "parity post-selected",
               "ropost": "both"}
     for k, (key, col, al) in enumerate(cols):
-        axB.bar(ts + (k - 1.5) * w, D[key], w, color=col, alpha=al, label=labels[key])
+        axB.bar(ts + (k - 1.5) * w, D[key], w, color=col, alpha=al, label=labels[key] + " (run 1)")
     for t, nm in ((3, "pdens_t3"), (4, "pdens_t4")):
         for k, key in ((0, 2), (3, 3)):
             r = rep[nm][:, key]
-            axB.errorbar(t + (k - 1.5) * w, r.mean(), yerr=r.std(ddof=1), fmt="_", color="k", ms=8, lw=1)
+            x = t + (k - 1.5) * w
+            axB.plot([x + 0.07] * len(r), r, "o", color="k", ms=3.5, mfc="none", mew=0.9,
+                     label="runs 1-3" if (t, k) == (3, 0) else None)
+            axB.errorbar(x, r.mean(), yerr=r.std(ddof=1), fmt="_", color="k", ms=8, lw=1,
+                         label="mean $\\pm$ std, runs 1-3" if (t, k) == (3, 0) else None)
     axB.set_xticks(ts)
     axB.set_xlabel("step  $t$")
     axB.set_ylabel("TVD from exact density")
