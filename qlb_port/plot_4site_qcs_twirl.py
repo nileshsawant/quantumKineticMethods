@@ -19,6 +19,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from .plot_4site_qcs_parity import observables
+
 D = "qlb_port/qcs_quil_n2_twirl/"
 GROUPS = (("even_all_t4", "even-parity state"), ("step1_q1_t4", "original state, $q_1$ read"))
 
@@ -61,6 +63,19 @@ def main():
     allc = [s["ctl"] for s in stats.values()]
     print(f"pooled twirled: range {min(allp):+.3f}..{max(allp):+.3f}, mean {np.mean(allp):+.3f}; "
           f"controls: range {min(allc):+.3f}..{max(allc):+.3f}")
+    err_c = [abs(s["ctl"] - s["exact"]) for s in stats.values()]
+    err_t = [abs(s["pooled"] - s["exact"]) for s in stats.values()]
+    print("|error| untwirled " + " ".join(f"{e:.3f}" for e in err_c) + f"  mean {np.mean(err_c):.3f}")
+    print("|error| twirled   " + " ".join(f"{e:.3f}" for e in err_t) + f"  mean {np.mean(err_t):.3f}")
+    for r, R in rounds.items():
+        for nm, twirled in (("untwirled", False), ("twirled", True)):
+            p = np.zeros(16)
+            for j in R["jobs"]:
+                if j["group"] == "even_all_t4" and (j["variant"] >= 0) == twirled:
+                    for k, c in j["counts"].items():
+                        p[int(k)] += c
+            v, _, kept = observables(p / p.sum(), post=True)
+            print(f"  {r} even_all_t4 {nm}: parity post-selected {v:+.3f}, kept {kept:.3f}")
 
     fig, ax = plt.subplots(figsize=(8.5, 4.4))
     exact = stats[(GROUPS[0][0], "A")]["exact"]
