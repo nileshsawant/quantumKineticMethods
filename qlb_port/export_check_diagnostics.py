@@ -1,5 +1,5 @@
 """
-Diagnostic programs for the failing in-circuit parity checks (Section 5.5): where do the 17-25%
+Diagnostic programs for the failing in-circuit parity checks (Section 6.5): where do the 17-25%
 ancilla errors come from?
 
 On the same layout as export_parity_checks.py (logical 0 q0, 1 q1, 2 p0, 3 p1, 4-6 check ancillas):
@@ -9,7 +9,7 @@ On the same layout as export_parity_checks.py (logical 0 q0, 1 q1, 2 p0, 3 p1, 4
   chk_00    three parity checks on q0 q1 = |00>, no QLB gates
   chk_11    three parity checks on q0 q1 = |11>
   chk_bell  three parity checks on (|00> + |11>)/sqrt2 of q0 q1
-  chk_t4    the t = 4 QLB circuit with checks (as in Section 5.5), for a same-batch reference
+  chk_t4    the t = 4 QLB circuit with checks (as in Section 6.5), for a same-batch reference
 All ancillas ideally read 0 except in anc_cal.  Free; needs qiskit.
 
 Usage:

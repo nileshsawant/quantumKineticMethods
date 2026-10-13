@@ -33,22 +33,22 @@ def batches():
     d = np.load(B + "hw_4site_fourier_trembling.npz")
     out["Open Quantum (Sec. 3)"] = [(int(t), float(v), int(d["shots"])) for t, v in zip(d["t"], d["av_hw"])]
     J = json.load(open(B + "qcs_quil_n2_fourier/qcs_results_n2f_pinned.json"))["jobs"]
-    out["QCS raw (Sec. 4.3)"] = [(j["t"], j["qpu"], 2000) for j in J if j["kind"] == "alpha"]
+    out["QCS raw (Sec. 5.4)"] = [(j["t"], j["qpu"], 2000) for j in J if j["kind"] == "alpha"]
     J = json.load(open(B + "qcs_quil_n2_parity/qcs_results_parity_pinned.json"))["jobs"]
-    out["QCS even parity, raw (Sec. 4.5)"] = [(j["t"], j["qpu"], 2000) for j in J if j["kind"] == "palpha"]
+    out["QCS even parity, raw (Sec. 5.6)"] = [(j["t"], j["qpu"], 2000) for j in J if j["kind"] == "palpha"]
     J = json.load(open(B + "qcs_quil_n2_zne/qcs_results_zne.json"))["jobs"]
-    out["twirled, ZNE batch (Sec. 4.8)"] = [
+    out["twirled, ZNE batch (Sec. 5.9)"] = [
         (t, *pooled([j for j in J if j.get("group") == f"alpha_t{t}" and j.get("scale") == 1]))
         for t in range(1, 5)]
     J = json.load(open(B + "qcs_quil_n2_cdr/qcs_results_cdr.json"))["jobs"]
-    out["twirled, CDR batch (Sec. 4.10)"] = [
+    out["twirled, CDR batch (Sec. 5.11)"] = [
         (t, *pooled([j for j in J if j.get("group") == f"alpha_t{t}"])) for t in range(1, 5)]
     J = json.load(open(B + "qcs_quil_n2_pcheck/qcs_results_pcheck.json"))["jobs"]
     rows = []
     for t in range(1, 5):
         bits = [s for j in J if j["t"] == t and not j["checks"] for s in j["bitstrings"]]
         rows.append((t, float(np.mean([2 * int(s[1]) - 1 for s in bits])), len(bits)))
-    out["even parity, raw, new qubits (Sec. 5.5)"] = rows
+    out["even parity, raw, new qubits (Sec. 6.5)"] = rows
     return out
 
 
