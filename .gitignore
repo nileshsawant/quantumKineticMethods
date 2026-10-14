@@ -37,3 +37,6 @@ proposal/
 # Temporary files
 *.tmp
 *.bak
+
+# Private project material (separate private repo)
+ecqe/
