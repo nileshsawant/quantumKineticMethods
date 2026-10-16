@@ -90,7 +90,8 @@ def _pin_text(quil_text, mapping):
     out = ['PRAGMA INITIAL_REWIRING "NAIVE"']
     for line in quil_text.splitlines():
         s = line.strip()
-        if not s or s.startswith(("DECLARE", "PRAGMA", "HALT", "RESET", "#")):
+        if not s or s.startswith(("DECLARE", "PRAGMA", "HALT", "RESET", "#", "JUMP", "LABEL",
+                                  "SUB")):
             out.append(line)
             continue
         toks = s.split()

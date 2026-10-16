@@ -1,0 +1,1677 @@
+DECLARE ro BIT[210]
+PRAGMA INITIAL_REWIRING "NAIVE"
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[1]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[0]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[4]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[2]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[3]
+MEASURE 86 ro[5]
+MEASURE 68 ro[6]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[8]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[7]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[11]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[9]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[10]
+MEASURE 86 ro[12]
+MEASURE 68 ro[13]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[15]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[14]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[18]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[16]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[17]
+MEASURE 86 ro[19]
+MEASURE 68 ro[20]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[22]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[21]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[25]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[23]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[24]
+MEASURE 86 ro[26]
+MEASURE 68 ro[27]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[29]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[28]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[32]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[30]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[31]
+MEASURE 86 ro[33]
+MEASURE 68 ro[34]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[36]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[35]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[39]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[37]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[38]
+MEASURE 86 ro[40]
+MEASURE 68 ro[41]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[43]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[42]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[46]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[44]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[45]
+MEASURE 86 ro[47]
+MEASURE 68 ro[48]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[50]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[49]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[53]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[51]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[52]
+MEASURE 86 ro[54]
+MEASURE 68 ro[55]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[57]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[56]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[60]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[58]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[59]
+MEASURE 86 ro[61]
+MEASURE 68 ro[62]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[64]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[63]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[67]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[65]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[66]
+MEASURE 86 ro[68]
+MEASURE 68 ro[69]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[71]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[70]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[74]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[72]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[73]
+MEASURE 86 ro[75]
+MEASURE 68 ro[76]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[78]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[77]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[81]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[79]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[80]
+MEASURE 86 ro[82]
+MEASURE 68 ro[83]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[85]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[84]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[88]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[86]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[87]
+MEASURE 86 ro[89]
+MEASURE 68 ro[90]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[92]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[91]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[95]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[93]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[94]
+MEASURE 86 ro[96]
+MEASURE 68 ro[97]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[99]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[98]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[102]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[100]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[101]
+MEASURE 86 ro[103]
+MEASURE 68 ro[104]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[106]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[105]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[109]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[107]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[108]
+MEASURE 86 ro[110]
+MEASURE 68 ro[111]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[113]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[112]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[116]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[114]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[115]
+MEASURE 86 ro[117]
+MEASURE 68 ro[118]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[120]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[119]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[123]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[121]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[122]
+MEASURE 86 ro[124]
+MEASURE 68 ro[125]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[127]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[126]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[130]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[128]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[129]
+MEASURE 86 ro[131]
+MEASURE 68 ro[132]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[134]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[133]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[137]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[135]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[136]
+MEASURE 86 ro[138]
+MEASURE 68 ro[139]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[141]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[140]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[144]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[142]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[143]
+MEASURE 86 ro[145]
+MEASURE 68 ro[146]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[148]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[147]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[151]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[149]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[150]
+MEASURE 86 ro[152]
+MEASURE 68 ro[153]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[155]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[154]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[158]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[156]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[157]
+MEASURE 86 ro[159]
+MEASURE 68 ro[160]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[162]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[161]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[165]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[163]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[164]
+MEASURE 86 ro[166]
+MEASURE 68 ro[167]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[169]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[168]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[172]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[170]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[171]
+MEASURE 86 ro[173]
+MEASURE 68 ro[174]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[176]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[175]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[179]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[177]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[178]
+MEASURE 86 ro[180]
+MEASURE 68 ro[181]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[183]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[182]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[186]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[184]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[185]
+MEASURE 86 ro[187]
+MEASURE 68 ro[188]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[190]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[189]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[193]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[191]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[192]
+MEASURE 86 ro[194]
+MEASURE 68 ro[195]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[197]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[196]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[200]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[198]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[199]
+MEASURE 86 ro[201]
+MEASURE 68 ro[202]
+DELAY 68 0.0002
+DELAY 77 0.0002
+DELAY 86 0.0002
+DELAY 95 0.0002
+DELAY 104 0.0002
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[204]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(7.853981633974483) 95
+RZ(-pi) 104
+CZ 95 104
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[203]
+RZ(-pi/2) 95
+RX(pi/2) 95
+RZ(pi) 104
+CZ 95 104
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ(-pi/2) 95
+MEASURE 104 ro[207]
+RZ(-pi/2) 77
+RX(pi/2) 77
+RZ(7.853981633974483) 77
+RZ(-pi) 86
+CZ 77 86
+RZ(pi/2) 95
+RX(-pi/2) 95
+CZ 95 86
+RZ((-3*pi)/2) 95
+RX(pi/2) 95
+RZ((3*pi)/2) 95
+RZ(pi) 86
+MEASURE 95 ro[205]
+CZ 77 68
+RZ((-3*pi)/2) 77
+RX(pi/2) 77
+RZ((3*pi)/2) 77
+RZ(pi) 68
+MEASURE 77 ro[206]
+MEASURE 86 ro[208]
+MEASURE 68 ro[209]
