@@ -112,11 +112,12 @@ def repcode(res):
                 np.mean(pred[:, 0] != obs[:, 0]), det.mean(), len(bits), (dq != ref[R_na:]).mean(0))
 
     rows = {}
-    for scheme, f in (("end", "repcode_end.json"), ("mid", "repcode_mid.json"), ("echo", "repcode_mid_echo.json")):
+    for scheme, f in (("end", "repcode_end.json"), ("mid", "repcode_mid.json"), ("echo", "repcode_mid_echo.json"),
+                      ("rerun", "repcode_end_rerun.json")):
         for j in load(res, f)["jobs"]:
             bits = np.array([[int(c) for c in s] for s in j["bitstrings"]])
             code, d, R, s = j["code"], j["d"], j["rounds"], j["state"]
-            if scheme == "end":
+            if scheme in ("end", "rerun"):
                 ci, cn, rna = endq.to_stim(code, d, R, s), endq.to_stim(code, d, R, s, NOISE), d - 1
             else:
                 ci = midq.to_stim(code, d, R, s, False)
@@ -139,6 +140,31 @@ def repcode(res):
                 e, m = rows[("end", code, R, s)], rows[("mid", code, R, s)]
                 print(f"   {code:5s}  {s}     {R}       {e[1]:.3f}     {' '.join(f'{x:.3f}' for x in e[5])}"
                       f"          {m[1]:.3f}     {' '.join(f'{x:.3f}' for x in m[5])}")
+    print("\n6. end-only, original run vs rerun after the device was recalibrated (data qubits 104, 86, 68)")
+    print("   code  state  R    original: majority  data qubits      rerun: majority  data qubits")
+    for code in ("bit", "phase"):
+        for s in (0, 1):
+            for R in (1, 2, 3):
+                e, r = rows[("end", code, R, s)], rows[("rerun", code, R, s)]
+                print(f"   {code:5s}  {s}     {R}       {e[1]:.3f}     {' '.join(f'{x:.3f}' for x in e[5])}"
+                      f"       {r[1]:.3f}     {' '.join(f'{x:.3f}' for x in r[5])}")
+    print("   largest |P(data error | previous shot wrong) - P(data error | previous shot right)|, bit code |1_L>:")
+    for scheme, f in (("end", "repcode_end.json"), ("rerun", "repcode_end_rerun.json"), ("mid", "repcode_mid.json")):
+        dev = []
+        for j in load(res, f)["jobs"]:
+            if j["code"] == "bit" and j["state"] == 1:
+                b = np.array([[int(c) for c in s] for s in j["bitstrings"]])
+                for k in (-3, -2, -1):
+                    e = b[:, k] != 1
+                    dev.append(abs(e[1:][e[:-1]].mean() - e[1:][~e[:-1]].mean()))
+        print(f"   {scheme:5s} {max(dev):.3f}")
+    ab = load(res, "ablate_r1.json")
+    print("\n7. one-round bit-flip program with |1_L>, parts removed (device-native, not recompiled);")
+    print("   error of each qubit, range over the passes")
+    print("   variant                " + "  ".join(f"  q{q}    " for q in ab["order"]))
+    for v in dict.fromkeys(r["variant"] for r in ab["runs"]):
+        e = np.array([[r["error"][q] for q in ab["order"]] for r in ab["runs"] if r["variant"] == v])
+        print(f"   {v:22s} " + "  ".join(f"{lo:.2f}-{hi:.2f}" for lo, hi in zip(e.min(0), e.max(0))))
 
 
 def main():
