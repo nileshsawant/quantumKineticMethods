@@ -127,6 +127,7 @@ def main():
                          "comma-separated (e.g. 90,99,101); forces NAIVE rewiring.")
     ap.add_argument("--out", default=os.path.join(_HERE, "qcs_results.json"))
     ap.add_argument("--only", default=None, help="comma-separated job names to run (default: all)")
+    ap.add_argument("--save-native", default=None, help="also write each native program to this folder")
     args = ap.parse_args()
 
     qmap = None
@@ -190,6 +191,10 @@ def main():
         prog = Program(raw)
         prog.wrap_in_numshots_loop(job.get("shots", args.shots))
         executables[job["name"]] = qc.compile(prog, protoquil=True)   # as the QPU compiler (-P)
+        if args.save_native:
+            os.makedirs(args.save_native, exist_ok=True)
+            with open(os.path.join(args.save_native, job["quil"]), "w") as fh:
+                fh.write(str(qc.compiler.quil_to_native_quil(prog, protoquil=True)))
         print(f"  compiled {job['name']}")
     if args.compile_only:
         print("compile-only: all programs compiled, no QPU time used.")

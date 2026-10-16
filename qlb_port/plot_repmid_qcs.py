@@ -109,7 +109,7 @@ def repcode(res):
         dq = bits[:, R_na:]
         return (np.mean(dq[:, 0] != ref[R_na]),
                 np.mean((dq.sum(1) > d / 2).astype(int) != int(ref[R_na:].sum() > d / 2)),
-                np.mean(pred[:, 0] != obs[:, 0]), det.mean(), len(bits))
+                np.mean(pred[:, 0] != obs[:, 0]), det.mean(), len(bits), (dq != ref[R_na:]).mean(0))
 
     rows = {}
     for scheme, f in (("end", "repcode_end.json"), ("mid", "repcode_mid.json"), ("echo", "repcode_mid_echo.json")):
@@ -131,6 +131,14 @@ def repcode(res):
             for scheme in ("end", "mid", "echo"):
                 v = np.mean([rows[(scheme, code, R, s)][:4] for s in (0, 1)], axis=0)
                 print(f"   {code:5s} {R}   {scheme:5s}   {v[0]:.3f}      {v[1]:.3f}     {v[2]:.3f}     {v[3]:.3f}")
+    print("\n5. by logical state (data qubits 104, 86, 68): majority-vote error and error of each data qubit")
+    print("   code  state  R    end: majority  data qubits          every round: majority  data qubits")
+    for code in ("bit", "phase"):
+        for s in (0, 1):
+            for R in (1, 2, 3):
+                e, m = rows[("end", code, R, s)], rows[("mid", code, R, s)]
+                print(f"   {code:5s}  {s}     {R}       {e[1]:.3f}     {' '.join(f'{x:.3f}' for x in e[5])}"
+                      f"          {m[1]:.3f}     {' '.join(f'{x:.3f}' for x in m[5])}")
 
 
 def main():
