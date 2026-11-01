@@ -10,6 +10,7 @@ Run on a compute node with the qiskit module (guppylang installed in its venv):
     module load qiskit/aer-gpu
     PYTHONPATH=. python3 -m qlb_port.guppy_port [--shots 4000]
     PYTHONPATH=. python3 -m qlb_port.guppy_port --noise [--shots 2000]   # Helios-like depolarizing noise
+    PYTHONPATH=. python3 -m qlb_port.guppy_port --counts                 # two-qubit counts of whole runs
 
 The --noise study converts the published Helios average infidelities (arXiv:2511.05465: two-qubit
 7.9e-4, single-qubit 2.5e-5, state preparation and measurement 4.8e-4) to depolarizing probabilities
@@ -17,6 +18,7 @@ p = r (d+1)/d, assuming Selene draws a uniformly random non-identity Pauli with 
 no memory, leakage, crosstalk or coherent errors, so it is a lower bound on the noise of the device.
 """
 import argparse
+import json
 import os
 import time
 
@@ -105,6 +107,40 @@ def instance(dim, n_pos, steps, m_tilde, velocity):
     return qc
 
 
+def two_qubit_count(qc, two_qubit):
+    t = transpile(qc, basis_gates=["rz", "ry", "rx", two_qubit], optimization_level=3, seed_transpiler=7)
+    return int(t.count_ops().get(two_qubit, 0))
+
+
+def counts_study(out="qlb_port/guppy_counts.json"):
+    """Two-qubit counts (CX and arbitrary-angle ZZ) of one step on its own, of the packet preparation, and
+    of whole runs (preparation + T steps, density readout) transpiled at once. In a whole run the
+    inverse Fourier transform that ends one streaming step cancels the transform that starts the next,
+    so the cost is an overhead N0 plus a marginal cost k per step, fitted from T=4 and T=8."""
+    cases = [("1D, 4 sites", 1, 2, 4), ("1D, 16 sites", 1, 4, 20), ("1D, 64 sites", 1, 6, 20),
+             ("3D, 4^3 sites", 3, 2, 8), ("3D, 8^3 sites", 3, 3, 8), ("3D, 16^3 sites", 3, 4, 8)]
+    rows = []
+    for label, dim, n_pos, t_plan in cases:
+        step = (sweep.sweep_circuit("x", n_pos, m_tilde=0.3, streaming_method="fourier") if dim == 1
+                else threed.sweep3d_circuit(n_pos, n_pos, n_pos, m_tilde=0.3, streaming_method="fourier"))
+        r = {"label": label, "dim": dim, "n_pos": n_pos, "qubits": step.num_qubits, "steps_planned": t_plan}
+        for g in ("cx", "rzz"):
+            n = {T: two_qubit_count(instance(dim, n_pos, T, 0.3, False), g) for T in (0, 4, 8, t_plan)}
+            k = (n[8] - n[4]) / 4
+            r.update({f"{g}_single_step": two_qubit_count(step, g), f"{g}_prep": n[0], f"{g}_T4": n[4],
+                      f"{g}_T8": n[8], f"{g}_per_step": k, f"{g}_overhead": n[4] - 4 * k,
+                      f"{g}_total": n[t_plan], f"{g}_total_linear": n[4] - 4 * k + k * t_plan})
+        rows.append(r)
+        print(f"{label:16s} q={r['qubits']:2d} | single step CX {r['cx_single_step']:3d} ZZ {r['rzz_single_step']:3d} | "
+              f"prep CX {r['cx_prep']:3d} ZZ {r['rzz_prep']:3d} | per step CX {r['cx_per_step']:5.1f} "
+              f"ZZ {r['rzz_per_step']:5.1f} | overhead CX {r['cx_overhead']:5.0f} ZZ {r['rzz_overhead']:5.0f} | "
+              f"T={t_plan}: CX {r['cx_total']:4d} ({r['cx_total_linear']:.0f}) ZZ {r['rzz_total']:4d} "
+              f"({r['rzz_total_linear']:.0f}) | steps x single step ZZ {r['rzz_prep'] + t_plan * r['rzz_single_step']}",
+              flush=True)
+    json.dump(rows, open(out, "w"), indent=1)
+    print(f"wrote {out}")
+
+
 def x_marginal(prob, n_pos):
     """Marginal probability along x (register on qubits 2 .. 1+n_pos)."""
     x = (np.arange(len(prob)) >> 2) & (2 ** n_pos - 1)
@@ -150,35 +186,51 @@ def noise_study(shots, out="qlb_port/guppy_noise"):
 
     np.savez(out + ".npz", shots=shots, **{k: np.array(v) for k, v in zb.items()},
              **{f"m3d_{k}": np.array(v) for k, v in d3.items()})
+    plot_noise(out)
+
+
+def plot_noise(out="qlb_port/guppy_noise"):
+    """Draw the noise-study figure from the saved .npz."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    d = np.load(out + ".npz")
+    shots = int(d["shots"])
     fig, (a, b) = plt.subplots(1, 2, figsize=(9, 3.2))
-    a.plot(ts, zb["exact"], "o-", color="0.5", label="exact")
-    a.errorbar(ts, zb["noisy"], yerr=zb["sd"], fmt="s", color="C3", ms=4, capsize=2,
+    a.plot(d["t"], d["exact"], "o-", color="0.5", label="exact")
+    a.errorbar(d["t"], d["noisy"], yerr=d["sd"], fmt="s", color="C3", ms=4, capsize=2,
                label=f"Selene, Helios-like noise ({shots} shots)")
     a.set_xlabel("time step $t$")
     a.set_ylabel(r"$\langle\alpha_x\rangle$")
     a.set_title("(a) 1D, 16 sites, 6 qubits", loc="left", fontsize=10)
     a.legend(frameon=False, fontsize=8)
-    mx_e, mx_n = d3["16_8"]
+    mx_e, mx_n = d["m3d_16_8"]
     xs = np.arange(16)
     b.plot(xs, mx_e, "-", color="0.5", label="exact")
     b.plot(xs, mx_n, "o", color="C3", mfc="none", label="Selene, Helios-like noise")
     b.set_xlabel("$x$")
     b.set_ylabel("marginal density")
     b.set_title("(b) 3D, $16^3$ sites, 14 qubits, $t=8$", loc="left", fontsize=10)
-    b.legend(frameon=False, fontsize=8)
+    b.set_ylim(0, 1.35 * max(mx_e.max(), mx_n.max()))
+    b.legend(frameon=False, fontsize=8, loc="upper right")
     fig.tight_layout()
-    fig.savefig(out + ".png", dpi=150)
-    print(f"\nwrote {out}.npz and {out}.png")
+    fig.savefig(out + ".png", dpi=200)
+    print(f"wrote {out}.png")
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--shots", type=int, default=4000)
     ap.add_argument("--noise", action="store_true", help="run the Helios-like noise study instead")
+    ap.add_argument("--counts", action="store_true", help="two-qubit gate counts of whole runs")
+    ap.add_argument("--plot-noise", action="store_true", help="redraw the noise figure from guppy_noise.npz")
     args = ap.parse_args()
+    if args.plot_noise:
+        plot_noise()
+        return
+    if args.counts:
+        counts_study()
+        return
     if args.noise:
         noise_study(args.shots)
         return
